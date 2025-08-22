@@ -1,1 +1,5 @@
 # ryusei_cafe
+
+Sistema de um manga café 
+
+LEMBRAR DE PEGAR O ARQUIVO DO DOCS E BOTAR AQUI QUANDO ESTIVER PRONTO

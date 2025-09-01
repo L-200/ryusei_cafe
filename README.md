@@ -1,5 +1,3 @@
 # ryusei_cafe
 
-Sistema de um manga café 
-
-LEMBRAR DE PEGAR O ARQUIVO DO DOCS E BOTAR AQUI QUANDO ESTIVER PRONTO
+Sistema de um manga café desenvolvido em java para a disciplina de Programação Orientada a Objetos

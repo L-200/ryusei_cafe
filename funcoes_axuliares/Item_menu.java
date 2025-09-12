@@ -28,4 +28,12 @@ public class Item_menu {
     public void precoAtualiza (float novo_preco) {
         this.preco = novo_preco;
     }
+
+    public void mostraItem() {
+        System.out.println("Nome: " + this.nome);
+        System.out.println("Ingredientes: " + this.ingredientes);
+        System.out.println("Quantidade vendida: " + this.qtdVenda);
+        System.out.println("Preço: R$" + this.preco);
+    }
+    
 }

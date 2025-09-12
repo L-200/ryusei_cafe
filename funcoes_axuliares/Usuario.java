@@ -24,5 +24,13 @@ public class Usuario {
     public void mudaAssinatura(char novaAssinatura) {
         this.assinatura = novaAssinatura;
     }
+
+    public void mostraUsuario() {
+        System.out.println("Nome: " + this.nome);
+        System.out.println("CPF: " + this.cpf);
+        System.out.println("Telefone: " + this.telefone);
+        System.out.println("Email: " + this.email);
+        System.out.println("Assinatura: " + this.assinatura);
+    }
     
 }

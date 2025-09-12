@@ -12,7 +12,7 @@ public class Manga {
     private int estoque;
     //private int qtdLeitura_manga; *como não vamos emprestar mangas, sugiro retirar isso
 
-    public void criarManga(String id, String Nome, String[] auto, String[] gen, String ser, int vol, String local, int qVen, int estoque){
+    public void novoManga(String id, String Nome, String[] auto, String[] gen, String ser, int vol, String local, int qVen, int estoque){
         this.id = id;
         this.nome = Nome;
         this.autores = auto;
@@ -61,6 +61,27 @@ public class Manga {
         this.estoque += mangas_novos;
     }
     
+    public void mostraManga() {
+        System.out.println("ID: " + this.id);
+        System.out.println("Nome: " + this.nome);
+        System.out.print("Autores: ");
+        for (String autor : this.autores) {
+            System.out.print(autor + " ");
+        }
+        System.out.println();
+        System.out.print("Gêneros: ");
+        for (String genero : this.generos) {
+            System.out.print(genero + " ");
+        }
+        System.out.println();
+        System.out.println("Série: " + this.serie);
+        System.out.println("Volume: " + this.volume);
+        System.out.println("Localização: " + this.localizacao);
+        System.out.println("Quantidade vendida: " + this.qtdVenda);
+        System.out.println("Estoque disponível: " + this.estoque);
+        //System.out.println("Quantidade de leituras: " + this.qtdLeitura_manga);
+    }
+
     /*public void qtdLeituraAtualiza(int qtd){
         this.qtdLeitura += qtd;
     }*/

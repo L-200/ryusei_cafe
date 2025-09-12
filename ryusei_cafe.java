@@ -75,7 +75,7 @@ Bem-vindo ao sistema do ryusei cafe!
 
                     case 2:
                     funcoes_axuliares.Manga manga = new funcoes_axuliares.Manga();
-                    manga.novoManga("001", "Naruto", new String[]{"Masashi Kishimoto"}, new String[]{"Ação", "Aventura"}, "Naruto", 1, "Prateleira 1", 0, 10);
+                    manga.novoManga("Naruto", new String[]{"Masashi Kishimoto"}, new String[]{"Ação", "Aventura"}, "Naruto", 1, "Prateleira 1", 0, 10);
                     System.out.println("Manga adicionado com sucesso!");
                     System.out.println("");
                     System.out.println("Dados do manga:");

@@ -2,13 +2,11 @@ package funcoes_axuliares;
 
 public class Item_menu {
     private String nome;
-    private String ingredientes;
     private int qtdVenda;
     private float preco;
 
     public void novoItem(String nome, String ingredientes, float preco) {
         this.nome = nome;
-        this.ingredientes = ingredientes;
         this.qtdVenda = 0;
         this.preco = preco;
     }
@@ -17,9 +15,6 @@ public class Item_menu {
         this.nome = novo_nome;
     }
 
-    public void ingredientesAtualiza (String nova_lista_ingredientes) {
-        this.ingredientes = nova_lista_ingredientes;
-    }
 
     public void vendasAtualiza (int qntd_novas_vendas) {
         this.qtdVenda += qntd_novas_vendas;
@@ -31,9 +26,8 @@ public class Item_menu {
 
     public void mostraItem() {
         System.out.println("Nome: " + this.nome);
-        System.out.println("Ingredientes: " + this.ingredientes);
         System.out.println("Quantidade vendida: " + this.qtdVenda);
         System.out.println("Preço: R$" + this.preco);
     }
-    
+
 }

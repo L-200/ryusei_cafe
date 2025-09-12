@@ -1,7 +1,9 @@
 package funcoes_axuliares;
 
 public class Manga {
-     private String id;
+
+    private static int nextid = 1;
+    private String id;
     private String nome;
     private String[] autores; //Pode haver multiplos
     private String[] generos; //geralmente tem multiplos
@@ -12,8 +14,9 @@ public class Manga {
     private int estoque;
     //private int qtdLeitura_manga; *como não vamos emprestar mangas, sugiro retirar isso
 
-    public void novoManga(String id, String Nome, String[] auto, String[] gen, String ser, int vol, String local, int qVen, int estoque){
-        this.id = id;
+    public void novoManga(String Nome, String[] auto, String[] gen, String ser, int vol, String local, int qVen, int estoque){
+        this.id = nextid + "";
+        nextid++;
         this.nome = Nome;
         this.autores = auto;
         this.generos = gen;

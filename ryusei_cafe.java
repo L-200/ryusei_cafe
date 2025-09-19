@@ -1,4 +1,4 @@
-import funcoes_axuliares.*;
+import ryuccino.*;
 import java.util.Scanner;
 
    
@@ -64,7 +64,7 @@ Bem-vindo ao sistema do ryusei cafe!
                     String telefone = sc.next();
                     System.out.println("Qual o email do cliente?");
                     String email = sc.next();
-                    funcoes_axuliares.Usuario usr = new funcoes_axuliares.Usuario();
+                    ryuccino.Usuario usr = new ryuccino.Usuario();
                     usr.criarUsuario(cpf, nome, telefone, email, 'A');
                     System.out.println("Cliente " + nome + " adicionado com sucesso!");
                     System.out.println("");
@@ -74,7 +74,7 @@ Bem-vindo ao sistema do ryusei cafe!
                     break;
 
                     case 2:
-                    funcoes_axuliares.Manga manga = new funcoes_axuliares.Manga();
+                    ryuccino.Manga manga = new ryuccino.Manga();
                     manga.novoManga("Naruto", new String[]{"Masashi Kishimoto"}, new String[]{"Ação", "Aventura"}, "Naruto", 1, "Prateleira 1", 0, 10);
                     System.out.println("Manga adicionado com sucesso!");
                     System.out.println("");

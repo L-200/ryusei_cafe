@@ -1,4 +1,4 @@
-package funcoes_axuliares;
+package ryuccino;
 
 public class Pagamento {
 
@@ -24,4 +24,15 @@ public class Pagamento {
     public void Pagamento () { //chamado quando a pessoa realizar o pagamento para mudar o status
         this.status = "pago";
     }
+
+    public void mostraPagamento() {
+        System.out.println("ID do processo: " + this.idProcesso);
+        System.out.println("Usuário: " + this.usuario);
+        System.out.println("Valor: R$" + this.valor);
+        System.out.println("Tipo: " + this.tipo);
+        System.out.println("Método: " + this.metodo);
+        System.out.println("Data: " + this.data);
+        System.out.println("Status: " + this.status);
+    }
+    
 }

@@ -1,4 +1,4 @@
-package ryuccino;
+package funcoes_auxiliares;
 
 public class Pagamento {
 
@@ -11,7 +11,7 @@ public class Pagamento {
     private String data; //25/08/2025, etc
     private String status; //pendente, pago...
 
-    public void novoPagamento(String id, String usr, float val, String type, String met, String da, String stt){
+    public void novoPagamento(String usr, float val, String type, String met, String da, String stt){
         this.idProcesso = nextid + "";
         nextid++;
         this.usuario = usr;

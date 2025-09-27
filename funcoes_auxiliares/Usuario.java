@@ -1,4 +1,4 @@
-package ryuccino;
+package funcoes_auxiliares;
 
 public class Usuario {
 

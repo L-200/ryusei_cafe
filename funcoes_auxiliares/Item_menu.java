@@ -4,11 +4,14 @@ public class Item_menu {
     private String nome;
     private int qtdVenda;
     private float preco;
+    private int id_item;
 
-    public void novoItem(String nome, String ingredientes, float preco) {
+    //construtor da classe
+    public Item_menu(String nome, String ingredientes, float preco, int id_item) {
         this.nome = nome;
         this.qtdVenda = 0;
         this.preco = preco;
+        this.id_item = id_item;
     }
 
     public void nomeAtualiza(String novo_nome) {

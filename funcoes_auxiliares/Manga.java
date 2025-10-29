@@ -14,7 +14,8 @@ public class Manga {
     private int estoque;
     //private int qtdLeitura_manga; *como não vamos emprestar mangas, sugiro retirar isso
 
-    public void novoManga(String Nome, String[] auto, String[] gen, String ser, int vol, String local, int qVen, int estoque){
+    //construtor do manga
+    public Manga(String Nome, String[] auto, String[] gen, String ser, int vol, String local, int qVen, int estoque){
         this.id = nextid + "";
         nextid++;
         this.nome = Nome;
@@ -26,6 +27,10 @@ public class Manga {
         this.qtdVenda = qVen;
         this.estoque = estoque;
         //this.qtdLeitura = qLei;
+    }
+
+    public String getNome() {
+        return this.nome;
     }
 
   /*public void idAtualiza(String id){ 

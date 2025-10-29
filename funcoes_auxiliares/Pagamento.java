@@ -11,7 +11,8 @@ public class Pagamento {
     private String data; //25/08/2025, etc
     private String status; //pendente, pago...
 
-    public void novoPagamento(String usr, float val, String type, String met, String da, String stt){
+    //construtor da classe
+    public Pagamento(String usr, float val, String type, String met, String da, String stt){
         this.idProcesso = nextid + "";
         nextid++;
         this.usuario = usr;
@@ -21,7 +22,7 @@ public class Pagamento {
         this.data = da;
         this.status = stt;
     }
-    public void Pagamento () { //chamado quando a pessoa realizar o pagamento para mudar o status
+    public void Pago() { //chamado quando a pessoa realizar o pagamento para mudar o status
         this.status = "pago";
     }
 

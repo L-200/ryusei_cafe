@@ -9,12 +9,13 @@ public class Usuario {
     //classe historico de compra
     char assinatura;
     
-    public void criarUsuario(String CPF, String Nome, String Telefone, String Email, char Assinatura) {
-        this.cpf = CPF;
-        this.nome = Nome;
-        this.telefone = Telefone;
-        this.email = Email;
-        this.assinatura = Assinatura;
+    //construtor
+    public Usuario(String cpf, String nome, String email, String telefone, char assinatura) {
+        this.cpf = cpf;
+        this.nome = nome;
+        this.email = email;
+        this.telefone = telefone;
+        this.assinatura = assinatura;
     }
     
     public void checarAssinatura () {

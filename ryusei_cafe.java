@@ -1,18 +1,6 @@
 import funcoes_auxiliares.*;
 import java.util.Scanner;
 
-   
-// nao sei se funciona, nem se é uma boa ideia
-/*
-class item_do_Estoque{
-    String nome;
-    int qtd;
-}
-class Estoque_Geral{
-    item_do_Estoque[] estq_ger;
-}
-*/
-
 //vai ser a nossa main
 public class ryusei_cafe {
     public static void main (String[] args) {
@@ -42,14 +30,20 @@ public class ryusei_cafe {
 Bem-vindo ao sistema do ryusei cafe!
 
 """;
+        
         System.out.print(art);
+        SistemaDeBusca sistema_ryusei = new SistemaDeBusca();
+        System.out.println("Sistema foi inicializado.");
         boolean system_on = true;
         while (system_on) {
             System.out.println("O que deseja fazer?");
             System.out.println("1 - Adicionar novo cliente");
             System.out.println("2 - Adicionar novo manga");
             System.out.println("3 - Adicionar novo pagamento");
-            System.out.println("4 - Sair do sistema");
+            System.out.println("4 - Pesquisar cliente");
+            System.out.println("5 - Pesquisar manga");
+            System.out.println("6 - Pesquisar pagamento");
+            System.out.println("7 - Sair do sistema");
             Scanner sc = new Scanner(System.in);
             int escolha = sc.nextInt();
             sc.nextLine();
@@ -69,12 +63,11 @@ Bem-vindo ao sistema do ryusei cafe!
                     System.out.println("Qual o email do cliente?");
                     String email = sc.next();
 
-                    funcoes_auxiliares.Usuario usr = new funcoes_auxiliares.Usuario();
-                    usr.criarUsuario(cpf, nome, telefone, email, 'A');
+                    Usuario Ususario_novo = sistema_ryusei.adicionaUsuario(cpf, nome, email, telefone, 'A');
                     System.out.println("Cliente " + nome + " adicionado com sucesso!");
                     System.out.println("");
                     System.out.println("Dados do cliente:");
-                    usr.mostraUsuario();
+                    Ususario_novo.mostraUsuario();
                     System.out.println("");
                     break;
 
@@ -106,8 +99,7 @@ Bem-vindo ao sistema do ryusei cafe!
                     int estoque = sc.nextInt();
                     sc.nextLine();
 
-                    funcoes_auxiliares.Manga manga = new funcoes_auxiliares.Manga();
-                    manga.novoManga(nome_manga, autores, generos, serie, volume, localizacao, 0, estoque);
+                    Manga manga = sistema_ryusei.adicionaManga(nome_manga, autores, generos, serie, volume, localizacao, estoque);
                     System.out.println("Manga " + nome_manga + " adicionado com sucesso!");
                     System.out.println("");
                     System.out.println("Dados do manga:");
@@ -136,16 +128,15 @@ Bem-vindo ao sistema do ryusei cafe!
                     System.out.println("Qual o status do pagamento? (ex: pendente, pago)");
                     String status = sc.nextLine();
                     
-                    funcoes_auxiliares.Pagamento pagamento = new funcoes_auxiliares.Pagamento();
-                    pagamento.novoPagamento(id_usuario, valor, tipo, metodo, data, status);
-                    System.out.println("Pagamento de R$" + valor + " adicionado com sucesso!");
+                    Pagamento pagamento = sistema_ryusei.adicionaPagamento(id_usuario, valor, tipo, metodo, data, status);
                     System.out.println("");
                     System.out.println("Dados do pagamento:");
                     pagamento.mostraPagamento();
                     System.out.println("");
                     break;
-
-                    case 4:
+                    
+                    
+                    case 7:
                     System.out.println("Saindo do sistema...");
                     system_on = false;
                     sc.close();

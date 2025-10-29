@@ -46,4 +46,32 @@ public class SistemaDeBusca {
 
     //buscas
 
+    public Optional<Usuario> buscarUsuarioPorCpf(String cpf_desejado) {
+        return usuarios.stream()
+        .filter(usuario -> usuario.getCpf().equals(cpf_desejado))
+        .findFirst();
+    }
+
+    public Boolean cliente_existe (String cpf) {
+        return buscarUsuarioPorCpf(cpf).isPresent();
+    }
+
+    public Optional<Manga> buscaMangaPorNome (String nome_desejado) {
+        return mangas.stream()
+        .filter(manga -> manga.getNome().equals(nome_desejado))
+        .findFirst();
+    }
+
+    public Optional<Pagamento> buscaPagamentoPorID (String ID_do_item_desejado) {
+        return pagamentos.stream()
+        .filter(pagamento -> pagamento.getID_pagamento().equals(ID_do_item_desejado))
+        .findFirst();
+    }
+
+    public Optional<Item_menu> buscaItemPorID (int id_desejado) {
+        return itens_menu.stream()
+        .filter(item_menu -> item_menu.getID_menu() == id_desejado)
+        .findFirst();
+    }
+    
 }

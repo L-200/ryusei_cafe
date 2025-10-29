@@ -1,4 +1,6 @@
 import funcoes_auxiliares.*;
+
+import java.util.Optional;
 import java.util.Scanner;
 
 //vai ser a nossa main
@@ -35,6 +37,7 @@ Bem-vindo ao sistema do ryusei cafe!
         SistemaDeBusca sistema_ryusei = new SistemaDeBusca();
         System.out.println("Sistema foi inicializado.");
         boolean system_on = true;
+        Scanner sc = new Scanner(System.in);
         while (system_on) {
             System.out.println("O que deseja fazer?");
             System.out.println("1 - Adicionar novo cliente");
@@ -44,7 +47,6 @@ Bem-vindo ao sistema do ryusei cafe!
             System.out.println("5 - Pesquisar manga");
             System.out.println("6 - Pesquisar pagamento");
             System.out.println("7 - Sair do sistema");
-            Scanner sc = new Scanner(System.in);
             int escolha = sc.nextInt();
             sc.nextLine();
             switch (escolha) {
@@ -52,16 +54,16 @@ Bem-vindo ao sistema do ryusei cafe!
                 case 1:
                     System.out.println("Adicionar novo cliente");
                     System.out.println("Qual o CPF do cliente?");
-                    String cpf = sc.next();
+                    String cpf = sc.nextLine();
 
                     System.out.println("Qual o nome do cliente?");
-                    String nome = sc.next();    
+                    String nome = sc.nextLine();   
 
                     System.out.println("Qual o telefone do cliente?");
-                    String telefone = sc.next();
+                    String telefone = sc.nextLine();
 
                     System.out.println("Qual o email do cliente?");
-                    String email = sc.next();
+                    String email = sc.nextLine();
 
                     Usuario Ususario_novo = sistema_ryusei.adicionaUsuario(cpf, nome, email, telefone, 'A');
                     System.out.println("Cliente " + nome + " adicionado com sucesso!");
@@ -109,9 +111,13 @@ Bem-vindo ao sistema do ryusei cafe!
 
                     case 3:
                     System.out.println("Adicionar novo pagamento");
-                    System.out.println("Qual o ID do usuário?");
+                    System.out.println("Qual o CPF do usuário?");
                     String id_usuario = sc.nextLine();
-
+                    if (sistema_ryusei.cliente_existe(id_usuario) != true) {
+                        System.out.println("Não existe cliente com esse cpf!");
+                        System.out.println("");
+                        break;
+                    }
                     System.out.println("Qual o valor do pagamento?");
                     float valor = sc.nextFloat();
                     sc.nextLine();
@@ -135,7 +141,56 @@ Bem-vindo ao sistema do ryusei cafe!
                     System.out.println("");
                     break;
                     
-                    
+                    case 4:
+                    System.out.println("Pesquisar por usuário");
+                    System.out.println("Qual o CPF do cliente?");
+                    String CPF = sc.nextLine();
+                    Optional<Usuario> usuario_procurado = sistema_ryusei.buscarUsuarioPorCpf(CPF);
+                    if (usuario_procurado.isPresent()) {
+                        Usuario usuario_achado = usuario_procurado.get();
+                        System.out.println("Usuário achado com sucesso!");
+                        System.out.println("");
+                        System.out.println("Dados do cliente");
+                        usuario_achado.mostraUsuario();
+                    } else {
+                        System.out.println("Usuário com CPF " + CPF + "não foi encontrado");
+                        System.out.println("");
+                    }
+
+                    case 5:
+                    System.out.println("Buscando por Manga");
+                    System.out.println("Qual o nome do manga?");
+                    String nome_manga_procurado = sc.nextLine();
+                    Optional<Manga> manga_procurado = sistema_ryusei.buscaMangaPorNome(nome_manga_procurado);
+                    if (manga_procurado.isPresent()) {
+                        Manga manga_achado = manga_procurado.get();
+                        System.out.println("Manga encontrado com sucesso!");
+                        System.out.println("");
+                        System.out.println("Dados do Manga:");
+                        manga_achado.mostraManga();
+                    } else {
+                        System.out.println("Manga com o nome " + nome_manga_procurado + "não encontrado");
+                        System.out.println("");
+                    }
+                    break;
+
+                    case 6:
+                    System.out.println("Pesquisar pagamento");
+                    System.out.println("Qual o ID do pagamento?");
+                    String id_do_pagamento_desejado = sc.nextLine();
+                    Optional <Pagamento> pagamento_procurado = sistema_ryusei.buscaPagamentoPorID(id_do_pagamento_desejado);
+                    if (pagamento_procurado.isPresent()) {
+                        Pagamento pagamento_achado = pagamento_procurado.get();
+                        System.out.println("Pagamento encontrado com sucesso!");
+                        System.out.println("");
+                        System.out.println("Dados do Pagamento:");
+                        pagamento_achado.mostraPagamento();
+                    } else {
+                        System.out.println("Pagamento de ID " + id_do_pagamento_desejado + "não encontrado!");
+                        System.out.println("");
+                    }
+                    break;
+
                     case 7:
                     System.out.println("Saindo do sistema...");
                     system_on = false;

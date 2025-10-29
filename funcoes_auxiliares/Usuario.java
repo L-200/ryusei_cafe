@@ -33,5 +33,9 @@ public class Usuario {
         System.out.println("Email: " + this.email);
         System.out.println("Assinatura: " + this.assinatura);
     }
+
+    public String getCpf () {
+        return this.cpf;
+    }
     
 }

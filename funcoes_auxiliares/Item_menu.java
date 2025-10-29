@@ -33,4 +33,8 @@ public class Item_menu {
         System.out.println("Preço: R$" + this.preco);
     }
 
+    public int getID_menu () {
+        return this.id_item;
+    }
+
 }

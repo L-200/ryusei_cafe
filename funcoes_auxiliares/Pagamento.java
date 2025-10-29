@@ -3,7 +3,7 @@ package funcoes_auxiliares;
 public class Pagamento {
 
     private static int nextid = 1;
-    private String idProcesso;
+    private String id_pagamento;
     private String usuario; //ID ou nome
     private float valor;
     private String tipo;
@@ -13,7 +13,7 @@ public class Pagamento {
 
     //construtor da classe
     public Pagamento(String usr, float val, String type, String met, String da, String stt){
-        this.idProcesso = nextid + "";
+        this.id_pagamento = nextid + "";
         nextid++;
         this.usuario = usr;
         this.valor = val;
@@ -27,13 +27,17 @@ public class Pagamento {
     }
 
     public void mostraPagamento() {
-        System.out.println("ID do processo: " + this.idProcesso);
+        System.out.println("ID do processo: " + this.id_pagamento);
         System.out.println("Usuário: " + this.usuario);
         System.out.println("Valor: R$" + this.valor);
         System.out.println("Tipo: " + this.tipo);
         System.out.println("Método: " + this.metodo);
         System.out.println("Data: " + this.data);
         System.out.println("Status: " + this.status);
+    }
+
+    public String getID_pagamento () {
+        return this.id_pagamento;
     }
     
 }

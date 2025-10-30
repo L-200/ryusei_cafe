@@ -14,8 +14,14 @@ public class Carrinho_de_compras {
     }
 
     public void adicionaItem_carrinho (Vendivel item) {
+        if (item.getEstoque() <= 0) {
+            System.out.println("Desculpe, o item " + item.getNome() + " está sem estoque no momento.");
+            return;
+        }
+
         System.out.println("Adicionado o item " + item.getNome());
         this.itens_no_carrinho.add(item);
+        item.qntdVendas_e_estoqueAtualiza(1);
     }
 
     public float calcula_total () {

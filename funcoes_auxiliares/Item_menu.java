@@ -7,15 +7,18 @@ public class Item_menu implements Vendivel {
     private static int nextid = 1;
     private int id;
     private String ingredientes;
+    private int estoque;
 
     //construtor da classe
-    public Item_menu(String nome, String ingredientes, float preco) {
+    public Item_menu(String nome, String ingredientes, float preco, int estoque) {
         this.nome = nome;
         this.qtdVenda = 0;
         this.preco = preco;
         this.id = nextid;
         nextid++;
         this.ingredientes = ingredientes;
+        this.qtdVenda = 0;
+        this.estoque = estoque;
         
     }
 
@@ -33,8 +36,15 @@ public class Item_menu implements Vendivel {
         return this.preco;
     }
 
-    public void vendasAtualiza (int qntd_novas_vendas) {
+    @Override
+    public int getEstoque() {
+        return this.estoque;
+    }
+
+    @Override
+    public void qntdVendas_e_estoqueAtualiza(int qntd_novas_vendas) {
         this.qtdVenda += qntd_novas_vendas;
+        this.estoque -= qntd_novas_vendas;
     }
 
     public void precoAtualiza (float novo_preco) {
@@ -47,6 +57,7 @@ public class Item_menu implements Vendivel {
         System.out.println("Lista de ingerdientes: " + this.ingredientes);
         System.out.println("Quantidade vendida: " + this.qtdVenda);
         System.out.println("Preço: R$" + this.preco);
+        System.out.println("Quantidade do item em estoque: " + this.estoque);
     }
 
     public int getID_menu () {

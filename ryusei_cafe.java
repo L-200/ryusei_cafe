@@ -157,7 +157,10 @@ Bem-vindo ao sistema do ryusei cafe!
                     System.out.println("Qual o preço do item?");
                     float preco_item = sc.nextFloat();
                     sc.nextLine();
-                    Item_menu item_novo = sistema_ryusei.adiciona_item(nome_item, ingredientes_item, preco_item);
+                    System.out.println("Qual o estoque inicial do item?");
+                    int estoque_item = sc.nextInt();
+                    sc.nextLine();
+                    Item_menu item_novo = sistema_ryusei.adiciona_item(nome_item, ingredientes_item, preco_item, estoque_item);
                     System.out.println("Item " + nome_item + " adicionado com sucesso!");
                     System.out.println("");
                     System.out.println("Dados do item:");

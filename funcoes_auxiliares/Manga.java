@@ -41,6 +41,17 @@ public class Manga implements Vendivel {
         return this.preco;
     }
 
+    @Override
+    public int getEstoque() {
+        return this.estoque;
+    }
+
+    @Override
+    public void qntdVendas_e_estoqueAtualiza(int qntd_novas_vendas) {
+        this.qtdVenda += qntd_novas_vendas;
+        this.estoque -= qntd_novas_vendas;
+    }
+
   /*public void idAtualiza(String id){ 
         this.id = id;
     } não vamos precisar trocar o id de um item*/
@@ -66,15 +77,6 @@ public class Manga implements Vendivel {
 
     public void localizacaoAtualiza(String local){
         this.localizacao = local;
-    }
-
-    public void qtdVendaAtualiza(int qtd){
-        this.qtdVenda += qtd;
-        this.estoque -= qtd;
-    }
-
-    public void estoqueAtualiza (int mangas_novos) {
-        this.estoque += mangas_novos;
     }
     
     public void mostraManga() {

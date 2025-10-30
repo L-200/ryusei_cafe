@@ -31,8 +31,8 @@ public class SistemaDeBusca {
         return novo_manga;
     }
 
-    public Item_menu adiciona_item(String nome, String ingredientes, float preco) {
-        Item_menu novo_item = new Item_menu(nome, ingredientes, preco);
+    public Item_menu adiciona_item(String nome, String ingredientes, float preco, int estoque) {
+        Item_menu novo_item = new Item_menu(nome, ingredientes, preco, estoque);
         this.itens_menu.add(novo_item);
         return novo_item;
     }

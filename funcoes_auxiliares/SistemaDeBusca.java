@@ -25,14 +25,14 @@ public class SistemaDeBusca {
         return novo_usuario;
     }
 
-    public Manga adicionaManga(String nome, String[] autores, String[] generos, String serie, int volume, String localizacao, int estoque) {
-        Manga novo_manga = new Manga(nome, autores, generos, serie, volume, localizacao, volume, estoque);
+    public Manga adicionaManga(String nome, String[] autores, String[] generos, String serie, int volume, String localizacao, int estoqu, float preco) {
+        Manga novo_manga = new Manga(nome, autores, generos, serie, volume, localizacao, estoqu, preco);
         this.mangas.add(novo_manga);
         return novo_manga;
     }
 
-    public Item_menu adiciona_item(String nome, String ingredientes, float preco, int id_item) {
-        Item_menu novo_item = new Item_menu(nome, ingredientes, preco, id_item);
+    public Item_menu adiciona_item(String nome, String ingredientes, float preco) {
+        Item_menu novo_item = new Item_menu(nome, ingredientes, preco);
         this.itens_menu.add(novo_item);
         return novo_item;
     }

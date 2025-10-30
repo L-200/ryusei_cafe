@@ -43,10 +43,12 @@ Bem-vindo ao sistema do ryusei cafe!
             System.out.println("1 - Adicionar novo cliente");
             System.out.println("2 - Adicionar novo manga");
             System.out.println("3 - Adicionar novo pagamento");
-            System.out.println("4 - Pesquisar cliente");
-            System.out.println("5 - Pesquisar manga");
-            System.out.println("6 - Pesquisar pagamento");
-            System.out.println("7 - Sair do sistema");
+            System.out.println("4 - Adicionar novo item do menu");
+            System.out.println("5 - Pesquisar cliente");
+            System.out.println("6 - Pesquisar manga");
+            System.out.println("7 - Pesquisar pagamento");
+            System.out.println("8 - Realizar compras");
+            System.out.println("9 - Sair do sistema");
             int escolha = sc.nextInt();
             sc.nextLine();
             switch (escolha) {
@@ -101,7 +103,11 @@ Bem-vindo ao sistema do ryusei cafe!
                     int estoque = sc.nextInt();
                     sc.nextLine();
 
-                    Manga manga = sistema_ryusei.adicionaManga(nome_manga, autores, generos, serie, volume, localizacao, estoque);
+                    System.out.println("Qual o preço inicial do Manga?");
+                    float preco_manga = sc.nextFloat();
+                    sc.nextLine();
+
+                    Manga manga = sistema_ryusei.adicionaManga(nome_manga, autores, generos, serie, volume, localizacao, estoque, preco_manga);
                     System.out.println("Manga " + nome_manga + " adicionado com sucesso!");
                     System.out.println("");
                     System.out.println("Dados do manga:");
@@ -140,8 +146,25 @@ Bem-vindo ao sistema do ryusei cafe!
                     pagamento.mostraPagamento();
                     System.out.println("");
                     break;
+
+                    case 4: 
+                    System.out.println("Adicionar novo item do menu");
+                    System.out.println("Qual o nome do item?");
+                    String nome_item = sc.nextLine();
+                    System.out.println("Quais os ingredientes do item?");
+                    String ingredientes_item = sc.nextLine();
+                    System.out.println("Qual o preço do item?");
+                    float preco_item = sc.nextFloat();
+                    sc.nextLine();
+                    Item_menu item_novo = sistema_ryusei.adiciona_item(nome_item, ingredientes_item, preco_item);
+                    System.out.println("Item " + nome_item + " adicionado com sucesso!");
+                    System.out.println("");
+                    System.out.println("Dados do item:");
+                    item_novo.mostraItem();
+                    System.out.println("");
+                    break;
                     
-                    case 4:
+                    case 5:
                     System.out.println("Pesquisar por usuário");
                     System.out.println("Qual o CPF do cliente?");
                     String CPF = sc.nextLine();
@@ -157,7 +180,7 @@ Bem-vindo ao sistema do ryusei cafe!
                         System.out.println("");
                     }
 
-                    case 5:
+                    case 6:
                     System.out.println("Buscando por Manga");
                     System.out.println("Qual o nome do manga?");
                     String nome_manga_procurado = sc.nextLine();
@@ -169,12 +192,12 @@ Bem-vindo ao sistema do ryusei cafe!
                         System.out.println("Dados do Manga:");
                         manga_achado.mostraManga();
                     } else {
-                        System.out.println("Manga com o nome " + nome_manga_procurado + "não encontrado");
+                        System.out.println("Manga com o nome " + nome_manga_procurado + " não encontrado");
                         System.out.println("");
                     }
                     break;
 
-                    case 6:
+                    case 7:
                     System.out.println("Pesquisar pagamento");
                     System.out.println("Qual o ID do pagamento?");
                     String id_do_pagamento_desejado = sc.nextLine();
@@ -186,12 +209,62 @@ Bem-vindo ao sistema do ryusei cafe!
                         System.out.println("Dados do Pagamento:");
                         pagamento_achado.mostraPagamento();
                     } else {
-                        System.out.println("Pagamento de ID " + id_do_pagamento_desejado + "não encontrado!");
+                        System.out.println("Pagamento de ID " + id_do_pagamento_desejado + " não encontrado!");
                         System.out.println("");
                     }
                     break;
 
-                    case 7:
+                    case 8:
+                    System.out.println("Realizar compras");
+                    Boolean flag_carrinho = true;
+                    Carrinho_de_compras meu_carrinho = new Carrinho_de_compras();
+                    System.out.println("Carrinho iniciado com sucesso!");
+                    while (flag_carrinho) {
+                        System.out.println("O que deseja inserir no carrinho?");
+                        System.out.println("1 - Manga");
+                        System.out.println("2 - Item do menu");
+                        System.out.println("3 - Já terminei de adicionar itens e quero ver o total");
+                        int escolha_carrinho = sc.nextInt();
+                        sc.nextLine();
+                        switch (escolha_carrinho) {
+                            case 1:
+                                System.out.println("Qual o nome do manga que deseja adicionar?");
+                                String nome_manga_carrinho = sc.nextLine();
+                                Optional<Manga> manga_carrinho_procurado = sistema_ryusei.buscaMangaPorNome(nome_manga_carrinho);
+                                if (manga_carrinho_procurado.isPresent()) {
+                                    Manga manga_carrinho_achado = manga_carrinho_procurado.get();
+                                    meu_carrinho.adicionaItem_carrinho(manga_carrinho_achado);
+                                    System.out.println("Manga " + nome_manga_carrinho + " adicionado ao carrinho com sucesso!");
+                                } else {
+                                    System.out.println("Manga com o nome " + nome_manga_carrinho + " não encontrado");
+                                }
+                                break;
+                            case 2:
+                                System.out.println("Qual o ID do item do menu que deseja adicionar?");
+                                int id_item_carrinho = sc.nextInt();
+                                sc.nextLine();
+                                Optional<Item_menu> item_carrinho_procurado = sistema_ryusei.buscaItemPorID(id_item_carrinho);
+                                if (item_carrinho_procurado.isPresent()) {
+                                    Item_menu item_carrinho_achado = item_carrinho_procurado.get();
+                                    meu_carrinho.adicionaItem_carrinho(item_carrinho_achado);//MESMA FUNÇÃO DO CASE ANTERIOR, POLIMORFISMO!
+                                    System.out.println("Item do menu de ID " + id_item_carrinho + " adicionado ao carrinho com sucesso!");
+                                } else {
+                                    System.out.println("Item do menu com o ID " + id_item_carrinho + " não encontrado");
+                                }
+                                break;
+                            case 3:
+                                System.out.println("Finalizando carrinho...");
+                                flag_carrinho = false;
+                                break;
+                            default:
+                                System.out.println("Opção inválida. Tente novamente.");
+                                break;
+                    }
+                }
+                    meu_carrinho.calcula_total();
+                    break;
+
+                    case 9:
                     System.out.println("Saindo do sistema...");
                     system_on = false;
                     sc.close();

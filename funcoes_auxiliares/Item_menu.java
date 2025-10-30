@@ -6,6 +6,7 @@ public class Item_menu implements Vendivel {
     private float preco;
     private static int nextid = 1;
     private int id;
+    private String ingredientes;
 
     //construtor da classe
     public Item_menu(String nome, String ingredientes, float preco) {
@@ -13,6 +14,9 @@ public class Item_menu implements Vendivel {
         this.qtdVenda = 0;
         this.preco = preco;
         this.id = nextid;
+        nextid++;
+        this.ingredientes = ingredientes;
+        
     }
 
     public void nomeAtualiza(String novo_nome) {
@@ -40,6 +44,7 @@ public class Item_menu implements Vendivel {
     public void mostraItem() {
         System.out.println("Nome: " + this.nome);
         System.out.println("ID do item no menu: " + this.id);
+        System.out.println("Lista de ingerdientes: " + this.ingredientes);
         System.out.println("Quantidade vendida: " + this.qtdVenda);
         System.out.println("Preço: R$" + this.preco);
     }

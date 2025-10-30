@@ -51,6 +51,7 @@ Bem-vindo ao sistema do ryusei cafe!
             System.out.println("9 - Sair do sistema");
             int escolha = sc.nextInt();
             sc.nextLine();
+            System.out.println("");
             switch (escolha) {
 
                 case 1:
@@ -261,7 +262,9 @@ Bem-vindo ao sistema do ryusei cafe!
                                 break;
                     }
                 }
-                    meu_carrinho.calcula_total();
+                    float total_a_ser_pago = meu_carrinho.calcula_total();
+                    System.out.println("Total a ser pago: R$" + total_a_ser_pago);
+                    System.out.println("");
                     break;
 
                     case 9:

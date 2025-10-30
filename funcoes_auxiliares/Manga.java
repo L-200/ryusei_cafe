@@ -1,6 +1,6 @@
 package funcoes_auxiliares;
 
-public class Manga {
+public class Manga implements Vendivel {
 
     private static int nextid = 1;
     private String id;
@@ -12,10 +12,11 @@ public class Manga {
     private String localizacao;
     private int qtdVenda;
     private int estoque;
+    private float preco;
     //private int qtdLeitura_manga; *como não vamos emprestar mangas, sugiro retirar isso
 
     //construtor do manga
-    public Manga(String Nome, String[] auto, String[] gen, String ser, int vol, String local, int qVen, int estoque){
+    public Manga(String Nome, String[] auto, String[] gen, String ser, int vol, String local, int estoque, float preco){
         this.id = nextid + "";
         nextid++;
         this.nome = Nome;
@@ -24,13 +25,20 @@ public class Manga {
         this.serie = ser;
         this.volume = vol;
         this.localizacao = local;
-        this.qtdVenda = qVen;
+        this.qtdVenda = 0;
         this.estoque = estoque;
+        this.preco = preco;
         //this.qtdLeitura = qLei;
     }
 
+    @Override
     public String getNome() {
         return this.nome;
+    }
+
+    @Override
+    public float getPrecoVenda() {
+        return this.preco;
     }
 
   /*public void idAtualiza(String id){ 

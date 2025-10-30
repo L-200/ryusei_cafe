@@ -1,23 +1,33 @@
 package funcoes_auxiliares;
 
-public class Item_menu {
+public class Item_menu implements Vendivel {
     private String nome;
     private int qtdVenda;
     private float preco;
-    private int id_item;
+    private static int nextid = 1;
+    private int id;
 
     //construtor da classe
-    public Item_menu(String nome, String ingredientes, float preco, int id_item) {
+    public Item_menu(String nome, String ingredientes, float preco) {
         this.nome = nome;
         this.qtdVenda = 0;
         this.preco = preco;
-        this.id_item = id_item;
+        this.id = nextid;
     }
 
     public void nomeAtualiza(String novo_nome) {
         this.nome = novo_nome;
     }
 
+    @Override
+    public String getNome() {
+        return this.nome;
+    }
+
+    @Override
+    public float getPrecoVenda() {
+        return this.preco;
+    }
 
     public void vendasAtualiza (int qntd_novas_vendas) {
         this.qtdVenda += qntd_novas_vendas;
@@ -29,12 +39,13 @@ public class Item_menu {
 
     public void mostraItem() {
         System.out.println("Nome: " + this.nome);
+        System.out.println("ID do item no menu: " + this.id);
         System.out.println("Quantidade vendida: " + this.qtdVenda);
         System.out.println("Preço: R$" + this.preco);
     }
 
     public int getID_menu () {
-        return this.id_item;
+        return this.id;
     }
 
 }

@@ -48,9 +48,10 @@ Bem-vindo ao sistema do ryusei cafe!
             System.out.println("6 - Pesquisar cliente");
             System.out.println("7 - Pesquisar funcionário");
             System.out.println("8 - Pesquisar manga");
-            System.out.println("9 - Pesquisar pagamento");
-            System.out.println("10 - Realizar compras");
-            System.out.println("11 - Sair do sistema");
+            System.out.println("9 - Pesquisar item do menu");
+            System.out.println("10 - Pesquisar pagamento");
+            System.out.println("11 - Realizar compras");
+            System.out.println("12 - Sair do sistema");
             int escolha = sc.nextInt();
             sc.nextLine();
             System.out.println("");
@@ -207,6 +208,7 @@ Bem-vindo ao sistema do ryusei cafe!
                         System.out.println("Usuário com CPF " + CPF + "não foi encontrado");
                         System.out.println("");
                     }
+                    break;
 
                     case 7:
                     System.out.println("Pesquisar por funcionário");
@@ -226,6 +228,24 @@ Bem-vindo ao sistema do ryusei cafe!
                     break;
 
                     case 8:
+                    System.out.println("Buscando por Item do Menu");
+                    System.out.println("Qual o ID do item do menu?");
+                    int id_item_procurado = sc.nextInt();
+                    sc.nextLine();
+                    Optional<Item_menu> item_procurado = sistema_ryusei.buscaItemPorID(id_item_procurado);
+                    if (item_procurado.isPresent()) {
+                        Item_menu item_achado = item_procurado.get();
+                        System.out.println("Item do menu encontrado com sucesso!");
+                        System.out.println("");
+                        System.out.println("Dados do Item do Menu:");
+                        item_achado.mostraItem();
+                    } else {
+                        System.out.println("Item do menu com o ID " + id_item_procurado + " não encontrado");
+                        System.out.println("");
+                    }
+                    break;
+
+                    case 9:
                     System.out.println("Buscando por Manga");
                     System.out.println("Qual o nome do manga?");
                     String nome_manga_procurado = sc.nextLine();
@@ -242,7 +262,7 @@ Bem-vindo ao sistema do ryusei cafe!
                     }
                     break;
 
-                    case 9:
+                    case 10:
                     System.out.println("Pesquisar pagamento");
                     System.out.println("Qual o ID do pagamento?");
                     String id_do_pagamento_desejado = sc.nextLine();
@@ -259,7 +279,7 @@ Bem-vindo ao sistema do ryusei cafe!
                     }
                     break;
 
-                    case 10:
+                    case 11:
                     System.out.println("Realizar compras");
                     Boolean flag_carrinho = true;
                     Carrinho_de_compras meu_carrinho = new Carrinho_de_compras();
@@ -311,7 +331,7 @@ Bem-vindo ao sistema do ryusei cafe!
                     System.out.println("");
                     break;
 
-                    case 11:
+                    case 12:
                     System.out.println("Saindo do sistema...");
                     system_on = false;
                     sc.close();

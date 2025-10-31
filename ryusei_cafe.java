@@ -57,6 +57,7 @@ Bem-vindo ao sistema do ryusei cafe!
             System.out.println("");
             switch (escolha) {
 
+
                 case 1:
                     System.out.println("Adicionar novo cliente");
                     System.out.println("Qual o CPF do cliente?");
@@ -73,34 +74,44 @@ Bem-vindo ao sistema do ryusei cafe!
 
                     Usuario Ususario_novo = sistema_ryusei.adicionaUsuario(cpf, nome, email, telefone, 'A');
                     System.out.println("Cliente " + nome + " adicionado com sucesso!");
+           
                     System.out.println("");
                     System.out.println("Dados do cliente:");
                     Ususario_novo.mostraUsuario();
                     System.out.println("");
                     break;
 
+
                     case 2:
                     System.out.println("Adicionar novo funcionário");
                     System.out.println("Qual o CPF do funcionário?");
                     String cpf_func = sc.nextLine();
+
                     System.out.println("Qual o nome do funcionário?");
                     String nome_func = sc.nextLine();
+
                     System.out.println("Qual o telefone do funcionário?");
                     String telefone_func = sc.nextLine();
+
                     System.out.println("Qual o email do funcionário?");
                     String email_func = sc.nextLine();
+
                     System.out.println("Qual o salário do funcionário?");
                     double salario_func = sc.nextDouble();
                     sc.nextLine();
+
                     System.out.println("Qual a função do funcionário? (Ex: Vendedor, Gerente, Atendente)");
                     String funcao_func = sc.nextLine();
+
                     Funcionario funcionario_novo = sistema_ryusei.adicionaFuncionario(cpf_func, nome_func, telefone_func, email_func, salario_func, funcao_func);
                     System.out.println("Funcionário " + nome_func + " adicionado com sucesso!");
+
                     System.out.println("");
                     System.out.println("Dados do funcionário:");
                     funcionario_novo.mostraFuncionario();
                     System.out.println("");
                     break;
+
 
                     case 3:
                     System.out.println("Adicionar novo manga");
@@ -135,21 +146,25 @@ Bem-vindo ao sistema do ryusei cafe!
 
                     Manga manga = sistema_ryusei.adicionaManga(nome_manga, autores, generos, serie, volume, localizacao, estoque, preco_manga);
                     System.out.println("Manga " + nome_manga + " adicionado com sucesso!");
+
                     System.out.println("");
                     System.out.println("Dados do manga:");
                     manga.mostraManga();
                     System.out.println("");
                     break;
 
+
                     case 4:
                     System.out.println("Adicionar novo pagamento");
                     System.out.println("Qual o CPF do usuário?");
                     String id_usuario = sc.nextLine();
+
                     if (sistema_ryusei.cliente_existe(id_usuario) != true) {
                         System.out.println("Não existe cliente com esse cpf!");
                         System.out.println("");
                         break;
                     }
+
                     System.out.println("Qual o valor do pagamento?");
                     float valor = sc.nextFloat();
                     sc.nextLine();
@@ -167,39 +182,49 @@ Bem-vindo ao sistema do ryusei cafe!
                     String status = sc.nextLine();
                     
                     Pagamento pagamento = sistema_ryusei.adicionaPagamento(id_usuario, valor, tipo, metodo, data, status);
+
                     System.out.println("");
                     System.out.println("Dados do pagamento:");
                     pagamento.mostraPagamento();
                     System.out.println("");
                     break;
 
+
                     case 5: 
                     System.out.println("Adicionar novo item do menu");
                     System.out.println("Qual o nome do item?");
                     String nome_item = sc.nextLine();
+
                     System.out.println("Quais os ingredientes do item?");
                     String ingredientes_item = sc.nextLine();
+
                     System.out.println("Qual o preço do item?");
                     float preco_item = sc.nextFloat();
                     sc.nextLine();
+                    
                     System.out.println("Qual o estoque inicial do item?");
                     int estoque_item = sc.nextInt();
                     sc.nextLine();
+                    
                     Item_menu item_novo = sistema_ryusei.adiciona_item(nome_item, ingredientes_item, preco_item, estoque_item);
                     System.out.println("Item " + nome_item + " adicionado com sucesso!");
+
                     System.out.println("");
                     System.out.println("Dados do item:");
                     item_novo.mostraItem();
                     System.out.println("");
                     break;
                     
+
                     case 6:
                     System.out.println("Pesquisar por cliente");
                     System.out.println("Qual o CPF do cliente?");
                     String CPF = sc.nextLine();
+
                     Optional<Usuario> usuario_procurado = sistema_ryusei.buscarUsuarioPorCpf(CPF);
                     if (usuario_procurado.isPresent()) {
                         Usuario usuario_achado = usuario_procurado.get();
+
                         System.out.println("Usuário achado com sucesso!");
                         System.out.println("");
                         System.out.println("Dados do cliente");
@@ -214,10 +239,12 @@ Bem-vindo ao sistema do ryusei cafe!
                     System.out.println("Pesquisar por funcionário");
                     System.out.println("Qual o CPF do funcionário?");
                     String CPF_func = sc.nextLine();
+
                     Optional<Funcionario> funcionario_procurado = sistema_ryusei.buscarFuncionarioPorCpf(CPF_func);
                     if (funcionario_procurado.isPresent()) {
                         Funcionario funcionario_achado = funcionario_procurado.get();
                         System.out.println("Funcionário achado com sucesso!");
+
                         System.out.println("");
                         System.out.println("Dados do funcionário");
                         funcionario_achado.mostraFuncionario();
@@ -232,10 +259,12 @@ Bem-vindo ao sistema do ryusei cafe!
                     System.out.println("Qual o ID do item do menu?");
                     int id_item_procurado = sc.nextInt();
                     sc.nextLine();
+
                     Optional<Item_menu> item_procurado = sistema_ryusei.buscaItemPorID(id_item_procurado);
                     if (item_procurado.isPresent()) {
                         Item_menu item_achado = item_procurado.get();
                         System.out.println("Item do menu encontrado com sucesso!");
+
                         System.out.println("");
                         System.out.println("Dados do Item do Menu:");
                         item_achado.mostraItem();
@@ -249,10 +278,12 @@ Bem-vindo ao sistema do ryusei cafe!
                     System.out.println("Buscando por Manga");
                     System.out.println("Qual o nome do manga?");
                     String nome_manga_procurado = sc.nextLine();
+
                     Optional<Manga> manga_procurado = sistema_ryusei.buscaMangaPorNome(nome_manga_procurado);
                     if (manga_procurado.isPresent()) {
                         Manga manga_achado = manga_procurado.get();
                         System.out.println("Manga encontrado com sucesso!");
+
                         System.out.println("");
                         System.out.println("Dados do Manga:");
                         manga_achado.mostraManga();
@@ -266,10 +297,12 @@ Bem-vindo ao sistema do ryusei cafe!
                     System.out.println("Pesquisar pagamento");
                     System.out.println("Qual o ID do pagamento?");
                     String id_do_pagamento_desejado = sc.nextLine();
+
                     Optional <Pagamento> pagamento_procurado = sistema_ryusei.buscaPagamentoPorID(id_do_pagamento_desejado);
                     if (pagamento_procurado.isPresent()) {
                         Pagamento pagamento_achado = pagamento_procurado.get();
                         System.out.println("Pagamento encontrado com sucesso!");
+
                         System.out.println("");
                         System.out.println("Dados do Pagamento:");
                         pagamento_achado.mostraPagamento();
@@ -279,45 +312,55 @@ Bem-vindo ao sistema do ryusei cafe!
                     }
                     break;
 
+
                     case 11:
                     System.out.println("Realizar compras");
                     Boolean flag_carrinho = true;
                     Carrinho_de_compras meu_carrinho = new Carrinho_de_compras();
                     System.out.println("Carrinho iniciado com sucesso!");
+
                     while (flag_carrinho) {
                         System.out.println("O que deseja inserir no carrinho?");
                         System.out.println("1 - Manga");
-                        System.out.println("3 - Item do menu");
-                        System.out.println("4 - Já terminei de adicionar itens e quero ver o total");
+                        System.out.println("2 - Item do menu");
+                        System.out.println("3 - Já terminei de adicionar itens e quero ver o total");
                         int escolha_carrinho = sc.nextInt();
                         sc.nextLine();
                         switch (escolha_carrinho) {
+
                             case 1:
                                 System.out.println("Qual o nome do manga que deseja adicionar?");
                                 String nome_manga_carrinho = sc.nextLine();
+
                                 Optional<Manga> manga_carrinho_procurado = sistema_ryusei.buscaMangaPorNome(nome_manga_carrinho);
+                       
                                 if (manga_carrinho_procurado.isPresent()) {
                                     Manga manga_carrinho_achado = manga_carrinho_procurado.get();
                                     meu_carrinho.adicionaItem_carrinho(manga_carrinho_achado);
                                     System.out.println("Manga " + nome_manga_carrinho + " adicionado ao carrinho com sucesso!");
+                 
                                 } else {
                                     System.out.println("Manga com o nome " + nome_manga_carrinho + " não encontrado");
                                 }
                                 break;
-                            case 3:
+   
+                            case 2:
                                 System.out.println("Qual o ID do item do menu que deseja adicionar?");
                                 int id_item_carrinho = sc.nextInt();
                                 sc.nextLine();
+
                                 Optional<Item_menu> item_carrinho_procurado = sistema_ryusei.buscaItemPorID(id_item_carrinho);
                                 if (item_carrinho_procurado.isPresent()) {
                                     Item_menu item_carrinho_achado = item_carrinho_procurado.get();
                                     meu_carrinho.adicionaItem_carrinho(item_carrinho_achado);//MESMA FUNÇÃO DO CASE ANTERIOR, POLIMORFISMO!
                                     System.out.println("Item do menu de ID " + id_item_carrinho + " adicionado ao carrinho com sucesso!");
+                                
                                 } else {
                                     System.out.println("Item do menu com o ID " + id_item_carrinho + " não encontrado");
                                 }
                                 break;
-                            case 4:
+                            
+                            case 3:
                                 System.out.println("Finalizando carrinho...");
                                 flag_carrinho = false;
                                 break;
@@ -331,6 +374,7 @@ Bem-vindo ao sistema do ryusei cafe!
                     System.out.println("");
                     break;
 
+                    
                     case 12:
                     System.out.println("Saindo do sistema...");
                     system_on = false;

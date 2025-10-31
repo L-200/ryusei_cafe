@@ -41,14 +41,16 @@ Bem-vindo ao sistema do ryusei cafe!
         while (system_on) {
             System.out.println("O que deseja fazer?");
             System.out.println("1 - Adicionar novo cliente");
-            System.out.println("2 - Adicionar novo manga");
-            System.out.println("3 - Adicionar novo pagamento");
-            System.out.println("4 - Adicionar novo item do menu");
-            System.out.println("5 - Pesquisar cliente");
-            System.out.println("6 - Pesquisar manga");
-            System.out.println("7 - Pesquisar pagamento");
-            System.out.println("8 - Realizar compras");
-            System.out.println("9 - Sair do sistema");
+            System.out.println("2 - Adicionar novo funcionário");
+            System.out.println("3 - Adicionar novo manga");
+            System.out.println("4 - Adicionar novo pagamento");
+            System.out.println("5 - Adicionar novo item do menu");
+            System.out.println("6 - Pesquisar cliente");
+            System.out.println("7 - Pesquisar funcionário");
+            System.out.println("8 - Pesquisar manga");
+            System.out.println("9 - Pesquisar pagamento");
+            System.out.println("10 - Realizar compras");
+            System.out.println("11 - Sair do sistema");
             int escolha = sc.nextInt();
             sc.nextLine();
             System.out.println("");
@@ -76,8 +78,30 @@ Bem-vindo ao sistema do ryusei cafe!
                     System.out.println("");
                     break;
 
-
                     case 2:
+                    System.out.println("Adicionar novo funcionário");
+                    System.out.println("Qual o CPF do funcionário?");
+                    String cpf_func = sc.nextLine();
+                    System.out.println("Qual o nome do funcionário?");
+                    String nome_func = sc.nextLine();
+                    System.out.println("Qual o telefone do funcionário?");
+                    String telefone_func = sc.nextLine();
+                    System.out.println("Qual o email do funcionário?");
+                    String email_func = sc.nextLine();
+                    System.out.println("Qual o salário do funcionário?");
+                    double salario_func = sc.nextDouble();
+                    sc.nextLine();
+                    System.out.println("Qual a função do funcionário? (Ex: Vendedor, Gerente, Atendente)");
+                    String funcao_func = sc.nextLine();
+                    Funcionario funcionario_novo = sistema_ryusei.adicionaFuncionario(cpf_func, nome_func, telefone_func, email_func, salario_func, funcao_func);
+                    System.out.println("Funcionário " + nome_func + " adicionado com sucesso!");
+                    System.out.println("");
+                    System.out.println("Dados do funcionário:");
+                    funcionario_novo.mostraFuncionario();
+                    System.out.println("");
+                    break;
+
+                    case 3:
                     System.out.println("Adicionar novo manga");
                     System.out.println("Qual o nome do manga?");
                     String nome_manga = sc.nextLine();
@@ -116,7 +140,7 @@ Bem-vindo ao sistema do ryusei cafe!
                     System.out.println("");
                     break;
 
-                    case 3:
+                    case 4:
                     System.out.println("Adicionar novo pagamento");
                     System.out.println("Qual o CPF do usuário?");
                     String id_usuario = sc.nextLine();
@@ -148,7 +172,7 @@ Bem-vindo ao sistema do ryusei cafe!
                     System.out.println("");
                     break;
 
-                    case 4: 
+                    case 5: 
                     System.out.println("Adicionar novo item do menu");
                     System.out.println("Qual o nome do item?");
                     String nome_item = sc.nextLine();
@@ -168,8 +192,8 @@ Bem-vindo ao sistema do ryusei cafe!
                     System.out.println("");
                     break;
                     
-                    case 5:
-                    System.out.println("Pesquisar por usuário");
+                    case 6:
+                    System.out.println("Pesquisar por cliente");
                     System.out.println("Qual o CPF do cliente?");
                     String CPF = sc.nextLine();
                     Optional<Usuario> usuario_procurado = sistema_ryusei.buscarUsuarioPorCpf(CPF);
@@ -184,7 +208,24 @@ Bem-vindo ao sistema do ryusei cafe!
                         System.out.println("");
                     }
 
-                    case 6:
+                    case 7:
+                    System.out.println("Pesquisar por funcionário");
+                    System.out.println("Qual o CPF do funcionário?");
+                    String CPF_func = sc.nextLine();
+                    Optional<Funcionario> funcionario_procurado = sistema_ryusei.buscarFuncionarioPorCpf(CPF_func);
+                    if (funcionario_procurado.isPresent()) {
+                        Funcionario funcionario_achado = funcionario_procurado.get();
+                        System.out.println("Funcionário achado com sucesso!");
+                        System.out.println("");
+                        System.out.println("Dados do funcionário");
+                        funcionario_achado.mostraFuncionario();
+                    } else {
+                        System.out.println("Funcionário com CPF " + CPF_func + "não foi encontrado");
+                        System.out.println("");
+                    }
+                    break;
+
+                    case 8:
                     System.out.println("Buscando por Manga");
                     System.out.println("Qual o nome do manga?");
                     String nome_manga_procurado = sc.nextLine();
@@ -201,7 +242,7 @@ Bem-vindo ao sistema do ryusei cafe!
                     }
                     break;
 
-                    case 7:
+                    case 9:
                     System.out.println("Pesquisar pagamento");
                     System.out.println("Qual o ID do pagamento?");
                     String id_do_pagamento_desejado = sc.nextLine();
@@ -218,7 +259,7 @@ Bem-vindo ao sistema do ryusei cafe!
                     }
                     break;
 
-                    case 8:
+                    case 10:
                     System.out.println("Realizar compras");
                     Boolean flag_carrinho = true;
                     Carrinho_de_compras meu_carrinho = new Carrinho_de_compras();
@@ -226,8 +267,8 @@ Bem-vindo ao sistema do ryusei cafe!
                     while (flag_carrinho) {
                         System.out.println("O que deseja inserir no carrinho?");
                         System.out.println("1 - Manga");
-                        System.out.println("2 - Item do menu");
-                        System.out.println("3 - Já terminei de adicionar itens e quero ver o total");
+                        System.out.println("3 - Item do menu");
+                        System.out.println("4 - Já terminei de adicionar itens e quero ver o total");
                         int escolha_carrinho = sc.nextInt();
                         sc.nextLine();
                         switch (escolha_carrinho) {
@@ -243,7 +284,7 @@ Bem-vindo ao sistema do ryusei cafe!
                                     System.out.println("Manga com o nome " + nome_manga_carrinho + " não encontrado");
                                 }
                                 break;
-                            case 2:
+                            case 3:
                                 System.out.println("Qual o ID do item do menu que deseja adicionar?");
                                 int id_item_carrinho = sc.nextInt();
                                 sc.nextLine();
@@ -256,7 +297,7 @@ Bem-vindo ao sistema do ryusei cafe!
                                     System.out.println("Item do menu com o ID " + id_item_carrinho + " não encontrado");
                                 }
                                 break;
-                            case 3:
+                            case 4:
                                 System.out.println("Finalizando carrinho...");
                                 flag_carrinho = false;
                                 break;
@@ -270,7 +311,7 @@ Bem-vindo ao sistema do ryusei cafe!
                     System.out.println("");
                     break;
 
-                    case 9:
+                    case 11:
                     System.out.println("Saindo do sistema...");
                     system_on = false;
                     sc.close();

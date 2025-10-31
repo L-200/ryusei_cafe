@@ -1,2 +1,5 @@
 # Ignorar arquivos gerados na compilação
 *.class
+
+# Ignorar arquivos de documentação gerados pelo javadoc
+/docs/

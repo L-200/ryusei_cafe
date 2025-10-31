@@ -8,6 +8,7 @@ public class SistemaDeBusca {
 
     private List<Manga> mangas;
     private List<Usuario> usuarios;
+    private List<Funcionario> funcionarios;
     private List<Pagamento> pagamentos;
     private List<Item_menu> itens_menu;
 
@@ -16,6 +17,7 @@ public class SistemaDeBusca {
         this.usuarios = new ArrayList<>();
         this.pagamentos = new ArrayList<>();
         this.itens_menu = new ArrayList<>();
+        this.funcionarios = new ArrayList<>();
     }
 
     public Usuario adicionaUsuario(String cpf, String nome, String email, String telefone, char Assinatura) {
@@ -23,6 +25,12 @@ public class SistemaDeBusca {
         Usuario novo_usuario = new Usuario(cpf, nome, email, telefone, Assinatura);
         this.usuarios.add(novo_usuario);
         return novo_usuario;
+    }
+
+    public Funcionario adicionaFuncionario(String cpf, String nome, String telefone, String email, double salario, String funcao) {
+        Funcionario novo_funcionario = new Funcionario(cpf, nome, telefone, email, salario, funcao);
+        this.funcionarios.add(novo_funcionario);
+        return novo_funcionario;
     }
 
     public Manga adicionaManga(String nome, String[] autores, String[] generos, String serie, int volume, String localizacao, int estoqu, float preco) {
@@ -49,6 +57,12 @@ public class SistemaDeBusca {
     public Optional<Usuario> buscarUsuarioPorCpf(String cpf_desejado) {
         return usuarios.stream()
         .filter(usuario -> usuario.getCpf().equals(cpf_desejado))
+        .findFirst();
+    }
+
+    public Optional<Funcionario> buscarFuncionarioPorCpf(String cpf_desejado) {
+        return funcionarios.stream()
+        .filter(funcionario -> funcionario.getCpf().equals(cpf_desejado))
         .findFirst();
     }
 

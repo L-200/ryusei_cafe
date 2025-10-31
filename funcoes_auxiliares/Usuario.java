@@ -1,20 +1,13 @@
 package funcoes_auxiliares;
 
-public class Usuario {
+public class Usuario extends Pessoa {
 
-    private String cpf;
-    private String nome;
-    private String telefone;
-    private String email;
     //classe historico de compra
-    char assinatura;
+    private char assinatura;
     
     //construtor
     public Usuario(String cpf, String nome, String email, String telefone, char assinatura) {
-        this.cpf = cpf;
-        this.nome = nome;
-        this.email = email;
-        this.telefone = telefone;
+        super(cpf, nome, telefone, email);
         this.assinatura = assinatura;
     }
     
@@ -27,15 +20,11 @@ public class Usuario {
     }
 
     public void mostraUsuario() {
-        System.out.println("Nome: " + this.nome);
-        System.out.println("CPF: " + this.cpf);
-        System.out.println("Telefone: " + this.telefone);
-        System.out.println("Email: " + this.email);
+        System.out.println("Nome: " + getNome());
+        System.out.println("CPF: " + getCpf());
+        System.out.println("Telefone: " + getTelefone());
+        System.out.println("Email: " + getEmail());
         System.out.println("Assinatura: " + this.assinatura);
     }
 
-    public String getCpf () {
-        return this.cpf;
-    }
-    
 }

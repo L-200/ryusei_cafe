@@ -10,7 +10,7 @@ public class Funcionario extends Pessoa {
     public Funcionario(String cpf, String nome, String telefone, String email, 
                        double salario, String funcao) {
         
-        // chamando o construtor da superclasse 'Pessoa' primeiro.
+        // chamando o construtor da superclasse 'Pessoa' primeiro
         super(cpf, nome, telefone, email);
 
         this.salario = salario;

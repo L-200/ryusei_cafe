@@ -2,4 +2,4 @@
 *.class
 
 # Ignorar arquivos de documentação gerados pelo javadoc
-/docs/
+#/docs/

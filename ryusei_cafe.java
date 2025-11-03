@@ -1,4 +1,5 @@
 import funcoes_auxiliares.*;
+import pessoa.*;
 
 import java.util.Optional;
 import java.util.Scanner;

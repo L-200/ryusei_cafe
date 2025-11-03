@@ -1,4 +1,4 @@
-package funcoes_auxiliares;
+package pessoa;
 
 public class Usuario extends Pessoa {
 

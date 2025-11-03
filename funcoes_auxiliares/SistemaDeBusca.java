@@ -1,4 +1,6 @@
 package funcoes_auxiliares;
+import pessoa.Funcionario;
+import pessoa.Usuario;
 
 import java.util.ArrayList;
 import java.util.List;

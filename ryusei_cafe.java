@@ -373,6 +373,34 @@ Bem-vindo ao sistema do ryusei cafe!
                     float total_a_ser_pago = meu_carrinho.calcula_total();
                     System.out.println("Total a ser pago: R$" + total_a_ser_pago);
                     System.out.println("");
+
+                    System.out.println("Qual o método de pagamento? (ex: cartão, pix, dinheiro)");
+                    String metodo_pagamento = sc.nextLine();
+
+                    System.out.println("Qual a data do pagamento? (formato: DD/MM/AAAA)");
+                    String data_pagamento = sc.nextLine();
+
+                    System.out.println("Qual o CPF do cliente que está realizando a compra?");
+                    String cpf_cliente_compra = sc.nextLine();
+                    if (sistema_ryusei.cliente_existe(cpf_cliente_compra) != true) {
+                        System.out.println("Não existe cliente com esse cpf! Realize o cadastro antes da compra.");
+                        System.out.println("");
+                        break;
+                    }
+
+                    Pagamento pagamento_carrinho = sistema_ryusei.adicionaPagamento("compra_carrinho", total_a_ser_pago, "compra", metodo_pagamento, data_pagamento, "pendente");
+                    System.out.println("Cliente consegue realizar o pagamento agora?");
+                    String confirma_pagamento = sc.nextLine();
+
+                    if (confirma_pagamento.equalsIgnoreCase("sim")) {
+                        pagamento_carrinho.Pago();
+                        System.out.println("Pagamento realizado com sucesso!");
+                        System.out.println("Dados do pagamento:");
+                        pagamento_carrinho.mostraPagamento();
+
+                    } else {
+                        System.out.println("Pagamento não realizado. Status permanece como pendente.");
+                    }
                     break;
 
                     

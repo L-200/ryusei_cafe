@@ -52,7 +52,8 @@ Bem-vindo ao sistema do ryusei cafe!
             System.out.println("9 - Pesquisar item do menu");
             System.out.println("10 - Pesquisar pagamento");
             System.out.println("11 - Realizar compras");
-            System.out.println("12 - Sair do sistema");
+            System.out.println("12 - Realizar pagamento posteriormente");
+            System.out.println("13 - Sair do sistema");
             int escolha = sc.nextInt();
             sc.nextLine();
             System.out.println("");
@@ -405,6 +406,28 @@ Bem-vindo ao sistema do ryusei cafe!
 
                     
                     case 12:
+                    System.out.println("Realizar pagamento posteriormente");
+
+                    System.out.println("Qual o ID do pagamento que deseja realizar?");
+                    String id_pagamento_posterior = sc.nextLine();
+
+                    Optional <Pagamento> pagamento_posterior_procurado = sistema_ryusei.buscaPagamentoPorID(id_pagamento_posterior);
+                    
+                    if (pagamento_posterior_procurado.isPresent()) {
+                        Pagamento pagamento_posterior_achado = pagamento_posterior_procurado.get();
+                        pagamento_posterior_achado.Pago();
+                        System.out.println("Pagamento realizado com sucesso!");
+                        System.out.println("Dados do pagamento:");
+                        pagamento_posterior_achado.mostraPagamento();
+                    } else {
+                    
+                        System.out.println("Pagamento de ID " + id_pagamento_posterior + " não encontrado!");
+                        System.out.println("");
+                    }
+                    break;
+
+
+                    case 13:
                     System.out.println("Saindo do sistema...");
                     system_on = false;
                     sc.close();

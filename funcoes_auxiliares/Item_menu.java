@@ -26,6 +26,14 @@ public class Item_menu implements Vendivel {
         this.nome = novo_nome;
     }
 
+    public String getIngredientes() {
+        return this.ingredientes;
+    }
+    
+    public float getPreco() {
+        return this.preco;
+    }
+
     @Override
     public String getNome() {
         return this.nome;
@@ -47,6 +55,11 @@ public class Item_menu implements Vendivel {
         this.estoque -= qntd_novas_vendas;
     }
 
+    @Override 
+    public void add_estoque(int qntd_novo_estoque) {
+        this.estoque += qntd_novo_estoque;
+    }
+
     public void precoAtualiza (float novo_preco) {
         this.preco = novo_preco;
     }
@@ -64,4 +77,8 @@ public class Item_menu implements Vendivel {
         return this.id;
     }
 
+    public void setID_menu (int novo_id) {
+        this.id = novo_id;
+    }
+    
 }

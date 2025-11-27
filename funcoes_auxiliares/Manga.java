@@ -52,9 +52,39 @@ public class Manga implements Vendivel {
         this.estoque -= qntd_novas_vendas;
     }
 
-  /*public void idAtualiza(String id){ 
-        this.id = id;
-    } não vamos precisar trocar o id de um item*/
+    @Override
+    public void add_estoque(int qntd_novo_estoque) {
+        this.estoque += qntd_novo_estoque;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public String[] getAutores() {
+        return this.autores;
+    }
+
+    public String[] getGeneros() {
+        return this.generos;
+    }
+
+    public String getSerie() {
+        return this.serie;
+    }
+
+    public int getVolume() {
+        return this.volume;
+    }
+
+    public String getLocalizacao() {
+        return this.localizacao;
+    }
+
+    public float getPreco() {
+        return this.preco;
+    }
+
     public void nomeAtualiza(String Nome){
         this.nome = Nome;
     }

@@ -19,6 +19,10 @@ public class Usuario extends Pessoa {
         this.assinatura = novaAssinatura;
     }
 
+    public char getAssinatura() {
+        return this.assinatura;
+    }
+
     public void mostraUsuario() {
         System.out.println("Nome: " + getNome());
         System.out.println("CPF: " + getCpf());

@@ -38,6 +38,15 @@ Bem-vindo ao sistema do ryusei cafe!
         SistemaDeBusca sistema_ryusei = new SistemaDeBusca();
         System.out.println("Sistema foi inicializado.");
         boolean system_on = true;
+        // Carregar dados dos arquivos CSV
+        sistema_ryusei.carregarUsuariosCSV();
+        sistema_ryusei.carregarFuncionariosCSV();
+        sistema_ryusei.carregarMangasCSV();
+        sistema_ryusei.carregarMenuCSV();
+        sistema_ryusei.carregarPagamentosCSV();
+
+        System.out.println("Dados carregados.");
+
         Scanner sc = new Scanner(System.in);
         while (system_on) {
             System.out.println("O que deseja fazer?");
@@ -53,7 +62,9 @@ Bem-vindo ao sistema do ryusei cafe!
             System.out.println("10 - Pesquisar pagamento");
             System.out.println("11 - Realizar compras");
             System.out.println("12 - Realizar pagamento posteriormente");
-            System.out.println("13 - Sair do sistema");
+            System.out.println("13 - Adicionar estoque a um item do menu");
+            System.out.println("14 - Adicionar estoque a um manga");
+            System.out.println("15 - Sair do sistema");
             int escolha = sc.nextInt();
             sc.nextLine();
             System.out.println("");
@@ -426,12 +437,57 @@ Bem-vindo ao sistema do ryusei cafe!
                     }
                     break;
 
-
                     case 13:
+                    System.out.println("Adicionar estoque a um item do menu");
+                    System.out.println("Qual o ID do item do menu?");
+                    int id_item_estoque = sc.nextInt();
+                    sc.nextLine();
+                    Optional<Item_menu> item_estoque_procurado = sistema_ryusei.buscaItemPorID(id_item_estoque);
+                    if (item_estoque_procurado.isPresent()) {
+                        Item_menu item_estoque_achado = item_estoque_procurado.get();
+                        System.out.println("Qual a quantidade de estoque que deseja adicionar?");
+                        int qtd_estoque_adicionar = sc.nextInt();
+                        sc.nextLine();
+                        item_estoque_achado.add_estoque(qtd_estoque_adicionar);
+                        System.out.println("Estoque adicionado com sucesso!");
+                        System.out.println("Estoque atual do item: " + item_estoque_achado.getEstoque());
+                    } else {
+                        System.out.println("Item do menu com o ID " + id_item_estoque + " não encontrado");
+                    }
+                    break;
+
+                    case 14:
+                    System.out.println("Adicionar estoque a um manga");
+                    System.out.println("Qual o nome do manga?");
+                    String nome_manga_estoque = sc.nextLine();
+                    Optional<Manga> manga_estoque_procurado = sistema_ryusei.buscaMangaPorNome(nome_manga_estoque);
+                    if (manga_estoque_procurado.isPresent()) {
+                        Manga manga_estoque_achado = manga_estoque_procurado.get();
+                        System.out.println("Qual a quantidade de estoque que deseja adicionar?");
+                        int qtd_estoque_manga_adicionar = sc.nextInt();
+                        sc.nextLine();
+                        manga_estoque_achado.add_estoque(qtd_estoque_manga_adicionar);
+                        System.out.println("Estoque adicionado com sucesso!");
+                        System.out.println("Estoque atual do manga: " + manga_estoque_achado.getEstoque());
+                    } else {
+                        System.out.println("Manga com o nome " + nome_manga_estoque + " não encontrado");
+                    }
+                    break;
+
+                    case 15:
+
+                    sistema_ryusei.salvarUsuariosCSV();
+                    sistema_ryusei.salvarFuncionariosCSV();
+                    sistema_ryusei.salvarMangasCSV();
+                    sistema_ryusei.salvarMenuCSV();
+                    sistema_ryusei.salvarPagamentosCSV();
+
+                    System.out.println("Dados salvos com sucesso.");
                     System.out.println("Saindo do sistema...");
                     system_on = false;
                     sc.close();
                     break;
+
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
                     break;

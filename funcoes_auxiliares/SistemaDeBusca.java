@@ -2,6 +2,9 @@ package funcoes_auxiliares;
 import pessoa.Funcionario;
 import pessoa.Usuario;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +23,70 @@ public class SistemaDeBusca {
         this.pagamentos = new ArrayList<>();
         this.itens_menu = new ArrayList<>();
         this.funcionarios = new ArrayList<>();
+    }
+
+    public void carregarUsuariosCSV() {
+    try (BufferedReader br = new BufferedReader(new FileReader("usuarios.csv"))) {
+        String linha;
+        while ((linha = br.readLine()) != null) {
+            String[] p = linha.split(";");
+            adicionaUsuario(p[0], p[1], p[2], p[3], p[4].charAt(0));
+        }
+    } catch (Exception e) {}
+}
+
+    public void carregarFuncionariosCSV() {
+        try (BufferedReader br = new BufferedReader(new FileReader("funcionarios.csv"))) {
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                String[] p = linha.split(";");
+                adicionaFuncionario(p[0], p[1], p[2], p[3],
+                                    Double.parseDouble(p[4]), p[5]);
+            }
+        } catch (Exception e) {}
+    }
+
+    public void carregarMangasCSV() {
+        try (BufferedReader br = new BufferedReader(new FileReader("mangas.csv"))) {
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                String[] p = linha.split(";");
+                String[] autores = p[1].split(",");
+                String[] generos = p[2].split(",");
+
+                adicionaManga(p[0], autores, generos, p[3],
+                            Integer.parseInt(p[4]),
+                            p[5],
+                            Integer.parseInt(p[6]),
+                            Float.parseFloat(p[7]));
+            }
+        } catch (Exception e) {}
+    }
+
+    public void carregarMenuCSV() {
+        try (BufferedReader br = new BufferedReader(new FileReader("menu.csv"))) {
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                String[] p = linha.split(";");
+                Item_menu item = adiciona_item(p[1], p[2],
+                                            Float.parseFloat(p[3]),
+                                            Integer.parseInt(p[4]));
+                item.setID_menu(Integer.parseInt(p[0]));
+            }
+        } catch (Exception e) {}
+    }
+
+    public void carregarPagamentosCSV() {
+        try (BufferedReader br = new BufferedReader(new FileReader("pagamentos.csv"))) {
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                String[] p = linha.split(";");
+                Pagamento pag = adicionaPagamento(p[1],
+                                                Float.parseFloat(p[2]),
+                                                p[3], p[4], p[5], p[6]);
+                pag.setID_pagamento(p[0]);
+            }
+        } catch (Exception e) {}
     }
 
     public Usuario adicionaUsuario(String cpf, String nome, String email, String telefone, char Assinatura) {
@@ -90,4 +157,74 @@ public class SistemaDeBusca {
         .findFirst();
     }
     
+    public void salvarUsuariosCSV() {
+    try (PrintWriter pw = new PrintWriter("usuarios.csv")) {
+        for (Usuario u : usuarios) {
+            pw.println(u.getCpf() + ";" +
+                       u.getNome() + ";" +
+                       u.getEmail() + ";" +
+                       u.getTelefone() + ";" +
+                       u.getAssinatura());
+        }
+    } catch (Exception e) { System.out.println("Erro ao salvar usuarios.csv"); }
+}
+
+    public void salvarFuncionariosCSV() {
+        try (PrintWriter pw = new PrintWriter("funcionarios.csv")) {
+            for (Funcionario f : funcionarios) {
+                pw.println(f.getCpf() + ";" +
+                        f.getNome() + ";" +
+                        f.getTelefone() + ";" +
+                        f.getEmail() + ";" +
+                        f.getSalario() + ";" +
+                        f.getFuncao());
+            }
+        } catch (Exception e) { System.out.println("Erro ao salvar funcionarios.csv"); }
+    }
+
+    public void salvarMangasCSV() {
+        try (PrintWriter pw = new PrintWriter("mangas.csv")) {
+            for (Manga m : mangas) {
+
+                String autores = String.join(",", m.getAutores());
+                String generos = String.join(",", m.getGeneros());
+
+                pw.println(m.getNome() + ";" +
+                        autores + ";" +
+                        generos + ";" +
+                        m.getSerie() + ";" +
+                        m.getVolume() + ";" +
+                        m.getLocalizacao() + ";" +
+                        m.getEstoque() + ";" +
+                        m.getPreco());
+            }
+        } catch (Exception e) { System.out.println("Erro ao salvar mangas.csv"); }
+    }
+
+    public void salvarMenuCSV() {
+        try (PrintWriter pw = new PrintWriter("menu.csv")) {
+            for (Item_menu i : itens_menu) {
+                pw.println(i.getID_menu() + ";" +
+                        i.getNome() + ";" +
+                        i.getIngredientes() + ";" +
+                        i.getPreco() + ";" +
+                        i.getEstoque());
+            }
+        } catch (Exception e) { System.out.println("Erro ao salvar menu.csv"); }
+    }
+
+    public void salvarPagamentosCSV() {
+        try (PrintWriter pw = new PrintWriter("pagamentos.csv")) {
+            for (Pagamento p : pagamentos) {
+                pw.println(p.getID_pagamento() + ";" +
+                        p.getUsuario() + ";" +
+                        p.getValor() + ";" +
+                        p.getTipo() + ";" +
+                        p.getMetodo() + ";" +
+                        p.getData() + ";" +
+                        p.getStatus());
+            }
+        } catch (Exception e) { System.out.println("Erro ao salvar pagamentos.csv"); }
+    }
+
 }

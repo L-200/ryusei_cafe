@@ -39,5 +39,37 @@ public class Pagamento {
     public String getID_pagamento () {
         return this.id_pagamento;
     }
+
+    public String getStatus () {
+        return this.status;
+    }
+
+    public float getValor () {
+        return this.valor;
+    }
+
+    public String getUsuario () {
+        return this.usuario;
+    }
+
+    public String getTipo () {
+        return this.tipo;
+    }
+
+    public String getMetodo () {
+        return this.metodo;
+    }
+
+    public String getData () {
+        return this.data;
+    }
+
+    public void setStatus (String novo_status) {
+        this.status = novo_status;
+    }
+    
+    public void setID_pagamento (String novo_id) {
+        this.id_pagamento = novo_id;
+    }
     
 }

@@ -29,4 +29,4 @@ Sistema de um manga café desenvolvido em java para a disciplina de Programaçã
 2) Executar o código:
     ```bash
     java ryusei_cafe
-    ```funcionando
+    ```

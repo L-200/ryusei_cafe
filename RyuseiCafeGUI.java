@@ -228,7 +228,7 @@ public class RyuseiCafeGUI extends JFrame {
         return carrinhoPanel;
     }
 
-    // --- Métodos de Ação (Ações da GUI ligadas à lógica de negócios) ---
+    // Métodos de Ação (Ações da GUI ligadas à lógica de negócios)
     
     private void buscarUsuario(ActionEvent e) {
         String cpf = cpfField.getText().trim();

@@ -113,15 +113,80 @@ public class SistemaDeBusca {
         this.itens_menu.add(novo_item);
         return novo_item;
     }
+    
+    // Sobrecarga para adicionar um objeto Pagamento já criado (usado no fluxo de compra)
+    public void adicionaPagamento(Pagamento p) {
+        this.pagamentos.add(p);
+    }
      
+    // Método original usado para carregar o CSV
     public Pagamento adicionaPagamento(String usr, float val, String type, String met, String da, String stt) {
         Pagamento novo_pagamento = new Pagamento(usr, val, type, met, da, stt);
         this.pagamentos.add(novo_pagamento);
         return novo_pagamento;
     }
+    
+    public void mostraUsuarios() {
+        if (usuarios.isEmpty()) {
+            System.out.println("Nenhum usuário cadastrado.");
+            return;
+        }
+        System.out.println("\n--- LISTA DE USUÁRIOS ---");
+        for (Usuario u : usuarios) {
+            u.mostraUsuario();
+            System.out.println("-------------------------");
+        }
+    }
 
+    public void mostraFuncionarios() {
+        if (funcionarios.isEmpty()) {
+            System.out.println("Nenhum funcionário cadastrado.");
+            return;
+        }
+        System.out.println("\n--- LISTA DE FUNCIONÁRIOS ---");
+        for (Funcionario f : funcionarios) {
+            f.mostraFuncionario();
+            System.out.println("-----------------------------");
+        }
+    }
 
-    //buscas
+    public void mostraMangas() {
+        if (mangas.isEmpty()) {
+            System.out.println("Nenhum mangá cadastrado.");
+            return;
+        }
+        System.out.println("\n--- LISTA DE MANGÁS ---");
+        for (Manga m : mangas) {
+            m.mostraManga();
+            System.out.println("-------------------------");
+        }
+    }
+
+    public void mostraMenu() {
+        if (itens_menu.isEmpty()) {
+            System.out.println("Nenhum item no menu do café.");
+            return;
+        }
+        System.out.println("\n--- MENU DO CAFÉ ---");
+        for (Item_menu i : itens_menu) {
+            i.mostraItem();
+            System.out.println("--------------------");
+        }
+    }
+    
+    public void mostraPagamentos() {
+        if (pagamentos.isEmpty()) {
+            System.out.println("Nenhum pagamento registrado.");
+            return;
+        }
+        System.out.println("\n--- LISTA DE PAGAMENTOS ---");
+        for (Pagamento p : pagamentos) {
+            p.mostraPagamento();
+            System.out.println("---------------------------");
+        }
+    }
+
+    // buscas
 
     public Optional<Usuario> buscarUsuarioPorCpf(String cpf_desejado) {
         return usuarios.stream()
@@ -142,6 +207,13 @@ public class SistemaDeBusca {
     public Optional<Manga> buscaMangaPorNome (String nome_desejado) {
         return mangas.stream()
         .filter(manga -> manga.getNome().equals(nome_desejado))
+        .findFirst();
+    }
+    
+    // Função de busca para Item_menu por nome, adicionada para o menu interativo
+    public Optional<Item_menu> buscaItemMenuPorNome (String nome_desejado) {
+        return itens_menu.stream()
+        .filter(item_menu -> item_menu.getNome().equalsIgnoreCase(nome_desejado))
         .findFirst();
     }
 
@@ -209,6 +281,7 @@ public class SistemaDeBusca {
                         i.getIngredientes() + ";" +
                         i.getPreco() + ";" +
                         i.getEstoque());
+                        i.getQtdVenda();
             }
         } catch (Exception e) { System.out.println("Erro ao salvar menu.csv"); }
     }

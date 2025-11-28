@@ -80,5 +80,9 @@ public class Item_menu implements Vendivel {
     public void setID_menu (int novo_id) {
         this.id = novo_id;
     }
+
+    public int getQtdVenda() {
+        return this.qtdVenda;
+    }
     
 }

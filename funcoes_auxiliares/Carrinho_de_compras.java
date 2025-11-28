@@ -2,6 +2,8 @@ package funcoes_auxiliares;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Carrinho_de_compras {
 
@@ -21,7 +23,6 @@ public class Carrinho_de_compras {
 
         System.out.println("Adicionado o item " + item.getNome());
         this.itens_no_carrinho.add(item);
-        item.qntdVendas_e_estoqueAtualiza(1);
     }
 
     public float calcula_total () {
@@ -41,4 +42,32 @@ public class Carrinho_de_compras {
         System.out.println("----------------------------");
         return total;
     }
+
+    // Método Getter para acessar a lista de itens no carrinho
+    public List<Vendivel> itensNoCarrinho() {
+        return this.itens_no_carrinho;
+    }
+    
+    public void limparCarrinho() {
+        this.itens_no_carrinho.clear();
+    }
+
+    public void AtualizaEstoquePosVenda() {
+    // Cria um mapa para armazenar o item e sua quantidade
+    Map<Vendivel, Integer> contagemItens = new HashMap<>();
+
+    // Percorre a lista original contando as repetições
+    for (Vendivel item : itens_no_carrinho) {
+        contagemItens.put(item, contagemItens.getOrDefault(item, 0) + 1);
+    }
+
+    // Itera sobre os itens únicos e passa a quantidade total
+    for (Map.Entry<Vendivel, Integer> entry : contagemItens.entrySet()) {
+        Vendivel item = entry.getKey();
+        int quantidade = entry.getValue();
+
+        // Passa a quantidade como argumento
+        item.qntdVendas_e_estoqueAtualiza(quantidade); 
+    }
+}
 }

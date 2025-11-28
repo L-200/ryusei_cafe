@@ -9,10 +9,10 @@ Sistema de um manga café desenvolvido em java para a disciplina de Programaçã
 ## Modo de execução:
 1) Compilar o código:
     ```bash
-    javac ryusei_cafe.java
+    javac RyuseiCafeGUI.java
     ``` 
 
 2) Executar o programa:
     ```bash
-    java ryusei_cafe
+    java RyuseiCafeGUI
     ```

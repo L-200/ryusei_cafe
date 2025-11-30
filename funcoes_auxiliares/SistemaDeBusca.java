@@ -68,7 +68,7 @@ public class SistemaDeBusca {
             String linha;
             while ((linha = br.readLine()) != null) {
                 String[] p = linha.split(";");
-                Item_menu item = adiciona_item(p[1], p[2],
+                Item_menu item = adicionaItem(p[1], p[2],
                                             Float.parseFloat(p[3]),
                                             Integer.parseInt(p[4]));
                 item.setID_menu(Integer.parseInt(p[0]));
@@ -108,7 +108,7 @@ public class SistemaDeBusca {
         return novo_manga;
     }
 
-    public Item_menu adiciona_item(String nome, String ingredientes, float preco, int estoque) {
+    public Item_menu adicionaItem(String nome, String ingredientes, float preco, int estoque) {
         Item_menu novo_item = new Item_menu(nome, ingredientes, preco, estoque);
         this.itens_menu.add(novo_item);
         return novo_item;

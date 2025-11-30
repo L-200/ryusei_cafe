@@ -81,7 +81,7 @@ public class RyuseiCafeGUI extends JFrame {
         if (sistema.buscarUsuarioPorCpf("111").isEmpty()) {
             sistema.adicionaUsuario("111", "João Silva", "joao@email.com", "9999-0000", 'A');
             sistema.adicionaManga("One Piece Vol 1", new String[]{"Oda"}, new String[]{"Shonen"}, "One Piece", 1, "A1", 10, 29.90f);
-            sistema.adiciona_item("Cappuccino", "Leite, café, cacau", 8.50f, 50);
+            sistema.adicionaItem("Cappuccino", "Leite, café, cacau", 8.50f, 50);
         }
         System.out.println("Dados carregados. Usuário de teste: 111.");
     }

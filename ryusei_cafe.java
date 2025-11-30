@@ -4,15 +4,16 @@ import pessoa.*;
 import java.util.Optional;
 import java.util.Scanner;
 
-//vai ser a nossa main
+// vai ser a nossa main
 public class ryusei_cafe {
-    public static void main (String[] args) {
+
+    private static SistemaDeBusca sistema_ryusei;
+    private static Scanner sc = new Scanner(System.in);
+
+    public static void main(String[] args) {
         String art = """
-    ______   ___   _ ____  _____ ___ 
-    |  _ \\ \\ / / | | / ___|| ____|_ _|
-    | |_) \\ V /| | | \\___ \\|  _|  | | 
-    |  _ < | | | |_| |___) | |___ | | 
-    |_| \\_\\|_|  \\___/|____/|_____|___|
+ ===RYUSEI CAFE===
+  #############
    ..
       ..  ..
             ..
@@ -31,467 +32,396 @@ public class ryusei_cafe {
 #################
         
 Bem-vindo ao sistema do ryusei cafe!
-
 """;
-        
+
         System.out.print(art);
-        SistemaDeBusca sistema_ryusei = new SistemaDeBusca();
+        sistema_ryusei = new SistemaDeBusca();
         System.out.println("Sistema foi inicializado.");
-        boolean system_on = true;
+
         // Carregar dados dos arquivos CSV
-        sistema_ryusei.carregarUsuariosCSV();
-        sistema_ryusei.carregarFuncionariosCSV();
-        sistema_ryusei.carregarMangasCSV();
-        sistema_ryusei.carregarMenuCSV();
-        sistema_ryusei.carregarPagamentosCSV();
+        carregarDados();
 
-        System.out.println("Dados carregados.");
-
-        Scanner sc = new Scanner(System.in);
+        boolean system_on = true;
         while (system_on) {
-            System.out.println("O que deseja fazer?");
-            System.out.println("1 - Adicionar novo cliente");
-            System.out.println("2 - Adicionar novo funcionário");
-            System.out.println("3 - Adicionar novo manga");
-            System.out.println("4 - Adicionar novo pagamento");
-            System.out.println("5 - Adicionar novo item do menu");
-            System.out.println("6 - Pesquisar cliente");
-            System.out.println("7 - Pesquisar funcionário");
-            System.out.println("8 - Pesquisar manga");
-            System.out.println("9 - Pesquisar item do menu");
-            System.out.println("10 - Pesquisar pagamento");
-            System.out.println("11 - Realizar compras");
-            System.out.println("12 - Realizar pagamento posteriormente");
-            System.out.println("13 - Adicionar estoque a um item do menu");
-            System.out.println("14 - Adicionar estoque a um manga");
-            System.out.println("15 - Sair do sistema");
-            int escolha = sc.nextInt();
-            sc.nextLine();
-            System.out.println("");
-            switch (escolha) {
+            exibirMenuPrincipal();
+            int opcao = lerOpcao();
 
-
+            switch (opcao) {
                 case 1:
-                    System.out.println("Adicionar novo cliente");
-                    System.out.println("Qual o CPF do cliente?");
-                    String cpf = sc.nextLine();
-
-                    System.out.println("Qual o nome do cliente?");
-                    String nome = sc.nextLine();   
-
-                    System.out.println("Qual o telefone do cliente?");
-                    String telefone = sc.nextLine();
-
-                    System.out.println("Qual o email do cliente?");
-                    String email = sc.nextLine();
-
-                    Usuario Ususario_novo = sistema_ryusei.adicionaUsuario(cpf, nome, email, telefone, 'A');
-                    System.out.println("Cliente " + nome + " adicionado com sucesso!");
-           
-                    System.out.println("");
-                    System.out.println("Dados do cliente:");
-                    Ususario_novo.mostraUsuario();
-                    System.out.println("");
+                    menuPessoas();
                     break;
-
-
-                    case 2:
-                    System.out.println("Adicionar novo funcionário");
-                    System.out.println("Qual o CPF do funcionário?");
-                    String cpf_func = sc.nextLine();
-
-                    System.out.println("Qual o nome do funcionário?");
-                    String nome_func = sc.nextLine();
-
-                    System.out.println("Qual o telefone do funcionário?");
-                    String telefone_func = sc.nextLine();
-
-                    System.out.println("Qual o email do funcionário?");
-                    String email_func = sc.nextLine();
-
-                    System.out.println("Qual o salário do funcionário?");
-                    double salario_func = sc.nextDouble();
-                    sc.nextLine();
-
-                    System.out.println("Qual a função do funcionário? (Ex: Vendedor, Gerente, Atendente)");
-                    String funcao_func = sc.nextLine();
-
-                    Funcionario funcionario_novo = sistema_ryusei.adicionaFuncionario(cpf_func, nome_func, telefone_func, email_func, salario_func, funcao_func);
-                    System.out.println("Funcionário " + nome_func + " adicionado com sucesso!");
-
-                    System.out.println("");
-                    System.out.println("Dados do funcionário:");
-                    funcionario_novo.mostraFuncionario();
-                    System.out.println("");
+                case 2:
+                    menuMangas();
                     break;
-
-
-                    case 3:
-                    System.out.println("Adicionar novo manga");
-                    System.out.println("Qual o nome do manga?");
-                    String nome_manga = sc.nextLine();
-
-                    System.out.println("Quem são os autores do manga? (separados por vírgula)");
-                    String autores_input = sc.nextLine();
-                    String[] autores = autores_input.split(",");
-
-                    System.out.println("Quais os gêneros do manga? (separados por vírgula)");
-                    String generos_input = sc.nextLine();
-                    String[] generos = generos_input.split(",");
-
-                    System.out.println("Qual a série do manga?");
-                    String serie = sc.nextLine();
-
-                    System.out.println("Qual o volume do manga?");
-                    int volume = sc.nextInt();
-                    sc.nextLine();
-
-                    System.out.println("Qual a localização do manga na loja?");
-                    String localizacao = sc.nextLine();
-
-                    System.out.println("Qual o estoque inicial do manga?");
-                    int estoque = sc.nextInt();
-                    sc.nextLine();
-
-                    System.out.println("Qual o preço inicial do Manga?");
-                    float preco_manga = sc.nextFloat();
-                    sc.nextLine();
-
-                    Manga manga = sistema_ryusei.adicionaManga(nome_manga, autores, generos, serie, volume, localizacao, estoque, preco_manga);
-                    System.out.println("Manga " + nome_manga + " adicionado com sucesso!");
-
-                    System.out.println("");
-                    System.out.println("Dados do manga:");
-                    manga.mostraManga();
-                    System.out.println("");
+                case 3:
+                    menuMenuCafe();
                     break;
-
-
-                    case 4:
-                    System.out.println("Adicionar novo pagamento");
-                    System.out.println("Qual o CPF do usuário?");
-                    String id_usuario = sc.nextLine();
-
-                    if (sistema_ryusei.cliente_existe(id_usuario) != true) {
-                        System.out.println("Não existe cliente com esse cpf!");
-                        System.out.println("");
-                        break;
-                    }
-
-                    System.out.println("Qual o valor do pagamento?");
-                    float valor = sc.nextFloat();
-                    sc.nextLine();
-
-                    System.out.println("Qual o tipo do pagamento? (ex: compra, assinatura)");
-                    String tipo = sc.nextLine();
-
-                    System.out.println("Qual o método do pagamento? (ex: cartão, pix, dinheiro)");
-                    String metodo = sc.nextLine();
-
-                    System.out.println("Qual a data do pagamento? (formato: DD/MM/AAAA)");
-                    String data = sc.nextLine();
-
-                    System.out.println("Qual o status do pagamento? (ex: pendente, pago)");
-                    String status = sc.nextLine();
-                    
-                    Pagamento pagamento = sistema_ryusei.adicionaPagamento(id_usuario, valor, tipo, metodo, data, status);
-
-                    System.out.println("");
-                    System.out.println("Dados do pagamento:");
-                    pagamento.mostraPagamento();
-                    System.out.println("");
+                case 4:
+                    realizarCompra();
                     break;
-
-
-                    case 5: 
-                    System.out.println("Adicionar novo item do menu");
-                    System.out.println("Qual o nome do item?");
-                    String nome_item = sc.nextLine();
-
-                    System.out.println("Quais os ingredientes do item?");
-                    String ingredientes_item = sc.nextLine();
-
-                    System.out.println("Qual o preço do item?");
-                    float preco_item = sc.nextFloat();
-                    sc.nextLine();
-                    
-                    System.out.println("Qual o estoque inicial do item?");
-                    int estoque_item = sc.nextInt();
-                    sc.nextLine();
-                    
-                    Item_menu item_novo = sistema_ryusei.adiciona_item(nome_item, ingredientes_item, preco_item, estoque_item);
-                    System.out.println("Item " + nome_item + " adicionado com sucesso!");
-
-                    System.out.println("");
-                    System.out.println("Dados do item:");
-                    item_novo.mostraItem();
-                    System.out.println("");
+                case 5:
+                    mostrarPagamentos();
                     break;
-                    
-
-                    case 6:
-                    System.out.println("Pesquisar por cliente");
-                    System.out.println("Qual o CPF do cliente?");
-                    String CPF = sc.nextLine();
-
-                    Optional<Usuario> usuario_procurado = sistema_ryusei.buscarUsuarioPorCpf(CPF);
-                    if (usuario_procurado.isPresent()) {
-                        Usuario usuario_achado = usuario_procurado.get();
-
-                        System.out.println("Usuário achado com sucesso!");
-                        System.out.println("");
-                        System.out.println("Dados do cliente");
-                        usuario_achado.mostraUsuario();
-                    } else {
-                        System.out.println("Usuário com CPF " + CPF + "não foi encontrado");
-                        System.out.println("");
-                    }
+                case 6:
+                    system_on = sairESalvar();
                     break;
-
-                    case 7:
-                    System.out.println("Pesquisar por funcionário");
-                    System.out.println("Qual o CPF do funcionário?");
-                    String CPF_func = sc.nextLine();
-
-                    Optional<Funcionario> funcionario_procurado = sistema_ryusei.buscarFuncionarioPorCpf(CPF_func);
-                    if (funcionario_procurado.isPresent()) {
-                        Funcionario funcionario_achado = funcionario_procurado.get();
-                        System.out.println("Funcionário achado com sucesso!");
-
-                        System.out.println("");
-                        System.out.println("Dados do funcionário");
-                        funcionario_achado.mostraFuncionario();
-                    } else {
-                        System.out.println("Funcionário com CPF " + CPF_func + "não foi encontrado");
-                        System.out.println("");
-                    }
-                    break;
-
-                    case 8:
-                    System.out.println("Buscando por Item do Menu");
-                    System.out.println("Qual o ID do item do menu?");
-                    int id_item_procurado = sc.nextInt();
-                    sc.nextLine();
-
-                    Optional<Item_menu> item_procurado = sistema_ryusei.buscaItemPorID(id_item_procurado);
-                    if (item_procurado.isPresent()) {
-                        Item_menu item_achado = item_procurado.get();
-                        System.out.println("Item do menu encontrado com sucesso!");
-
-                        System.out.println("");
-                        System.out.println("Dados do Item do Menu:");
-                        item_achado.mostraItem();
-                    } else {
-                        System.out.println("Item do menu com o ID " + id_item_procurado + " não encontrado");
-                        System.out.println("");
-                    }
-                    break;
-
-                    case 9:
-                    System.out.println("Buscando por Manga");
-                    System.out.println("Qual o nome do manga?");
-                    String nome_manga_procurado = sc.nextLine();
-
-                    Optional<Manga> manga_procurado = sistema_ryusei.buscaMangaPorNome(nome_manga_procurado);
-                    if (manga_procurado.isPresent()) {
-                        Manga manga_achado = manga_procurado.get();
-                        System.out.println("Manga encontrado com sucesso!");
-
-                        System.out.println("");
-                        System.out.println("Dados do Manga:");
-                        manga_achado.mostraManga();
-                    } else {
-                        System.out.println("Manga com o nome " + nome_manga_procurado + " não encontrado");
-                        System.out.println("");
-                    }
-                    break;
-
-                    case 10:
-                    System.out.println("Pesquisar pagamento");
-                    System.out.println("Qual o ID do pagamento?");
-                    String id_do_pagamento_desejado = sc.nextLine();
-
-                    Optional <Pagamento> pagamento_procurado = sistema_ryusei.buscaPagamentoPorID(id_do_pagamento_desejado);
-                    if (pagamento_procurado.isPresent()) {
-                        Pagamento pagamento_achado = pagamento_procurado.get();
-                        System.out.println("Pagamento encontrado com sucesso!");
-
-                        System.out.println("");
-                        System.out.println("Dados do Pagamento:");
-                        pagamento_achado.mostraPagamento();
-                    } else {
-                        System.out.println("Pagamento de ID " + id_do_pagamento_desejado + " não encontrado!");
-                        System.out.println("");
-                    }
-                    break;
-
-
-                    case 11:
-                    System.out.println("Realizar compras");
-                    Boolean flag_carrinho = true;
-                    Carrinho_de_compras meu_carrinho = new Carrinho_de_compras();
-                    System.out.println("Carrinho iniciado com sucesso!");
-
-                    while (flag_carrinho) {
-                        System.out.println("O que deseja inserir no carrinho?");
-                        System.out.println("1 - Manga");
-                        System.out.println("2 - Item do menu");
-                        System.out.println("3 - Já terminei de adicionar itens e quero ver o total");
-                        int escolha_carrinho = sc.nextInt();
-                        sc.nextLine();
-                        switch (escolha_carrinho) {
-
-                            case 1:
-                                System.out.println("Qual o nome do manga que deseja adicionar?");
-                                String nome_manga_carrinho = sc.nextLine();
-
-                                Optional<Manga> manga_carrinho_procurado = sistema_ryusei.buscaMangaPorNome(nome_manga_carrinho);
-                       
-                                if (manga_carrinho_procurado.isPresent()) {
-                                    Manga manga_carrinho_achado = manga_carrinho_procurado.get();
-                                    meu_carrinho.adicionaItem_carrinho(manga_carrinho_achado);
-                                    System.out.println("Manga " + nome_manga_carrinho + " adicionado ao carrinho com sucesso!");
-                 
-                                } else {
-                                    System.out.println("Manga com o nome " + nome_manga_carrinho + " não encontrado");
-                                }
-                                break;
-   
-                            case 2:
-                                System.out.println("Qual o ID do item do menu que deseja adicionar?");
-                                int id_item_carrinho = sc.nextInt();
-                                sc.nextLine();
-
-                                Optional<Item_menu> item_carrinho_procurado = sistema_ryusei.buscaItemPorID(id_item_carrinho);
-                                if (item_carrinho_procurado.isPresent()) {
-                                    Item_menu item_carrinho_achado = item_carrinho_procurado.get();
-                                    meu_carrinho.adicionaItem_carrinho(item_carrinho_achado);//MESMA FUNÇÃO DO CASE ANTERIOR, POLIMORFISMO!
-                                    System.out.println("Item do menu de ID " + id_item_carrinho + " adicionado ao carrinho com sucesso!");
-                                
-                                } else {
-                                    System.out.println("Item do menu com o ID " + id_item_carrinho + " não encontrado");
-                                }
-                                break;
-                            
-                            case 3:
-                                System.out.println("Finalizando carrinho...");
-                                flag_carrinho = false;
-                                break;
-                            default:
-                                System.out.println("Opção inválida. Tente novamente.");
-                                break;
-                    }
-                }
-                    float total_a_ser_pago = meu_carrinho.calcula_total();
-                    System.out.println("Total a ser pago: R$" + total_a_ser_pago);
-                    System.out.println("");
-
-                    System.out.println("Qual o método de pagamento? (ex: cartão, pix, dinheiro)");
-                    String metodo_pagamento = sc.nextLine();
-
-                    System.out.println("Qual a data do pagamento? (formato: DD/MM/AAAA)");
-                    String data_pagamento = sc.nextLine();
-
-                    System.out.println("Qual o CPF do cliente que está realizando a compra?");
-                    String cpf_cliente_compra = sc.nextLine();
-                    if (sistema_ryusei.cliente_existe(cpf_cliente_compra) != true) {
-                        System.out.println("Não existe cliente com esse cpf! Realize o cadastro antes da compra.");
-                        System.out.println("");
-                        break;
-                    }
-
-                    Pagamento pagamento_carrinho = sistema_ryusei.adicionaPagamento("compra_carrinho", total_a_ser_pago, "compra", metodo_pagamento, data_pagamento, "pendente");
-                    System.out.println("Cliente consegue realizar o pagamento agora?");
-                    String confirma_pagamento = sc.nextLine();
-
-                    if (confirma_pagamento.equalsIgnoreCase("sim")) {
-                        pagamento_carrinho.Pago();
-                        System.out.println("Pagamento realizado com sucesso!");
-                        System.out.println("Dados do pagamento:");
-                        pagamento_carrinho.mostraPagamento();
-
-                    } else {
-                        System.out.println("Pagamento não realizado. Status permanece como pendente.");
-                    }
-                    break;
-
-                    
-                    case 12:
-                    System.out.println("Realizar pagamento posteriormente");
-
-                    System.out.println("Qual o ID do pagamento que deseja realizar?");
-                    String id_pagamento_posterior = sc.nextLine();
-
-                    Optional <Pagamento> pagamento_posterior_procurado = sistema_ryusei.buscaPagamentoPorID(id_pagamento_posterior);
-                    
-                    if (pagamento_posterior_procurado.isPresent()) {
-                        Pagamento pagamento_posterior_achado = pagamento_posterior_procurado.get();
-                        pagamento_posterior_achado.Pago();
-                        System.out.println("Pagamento realizado com sucesso!");
-                        System.out.println("Dados do pagamento:");
-                        pagamento_posterior_achado.mostraPagamento();
-                    } else {
-                    
-                        System.out.println("Pagamento de ID " + id_pagamento_posterior + " não encontrado!");
-                        System.out.println("");
-                    }
-                    break;
-
-                    case 13:
-                    System.out.println("Adicionar estoque a um item do menu");
-                    System.out.println("Qual o ID do item do menu?");
-                    int id_item_estoque = sc.nextInt();
-                    sc.nextLine();
-                    Optional<Item_menu> item_estoque_procurado = sistema_ryusei.buscaItemPorID(id_item_estoque);
-                    if (item_estoque_procurado.isPresent()) {
-                        Item_menu item_estoque_achado = item_estoque_procurado.get();
-                        System.out.println("Qual a quantidade de estoque que deseja adicionar?");
-                        int qtd_estoque_adicionar = sc.nextInt();
-                        sc.nextLine();
-                        item_estoque_achado.add_estoque(qtd_estoque_adicionar);
-                        System.out.println("Estoque adicionado com sucesso!");
-                        System.out.println("Estoque atual do item: " + item_estoque_achado.getEstoque());
-                    } else {
-                        System.out.println("Item do menu com o ID " + id_item_estoque + " não encontrado");
-                    }
-                    break;
-
-                    case 14:
-                    System.out.println("Adicionar estoque a um manga");
-                    System.out.println("Qual o nome do manga?");
-                    String nome_manga_estoque = sc.nextLine();
-                    Optional<Manga> manga_estoque_procurado = sistema_ryusei.buscaMangaPorNome(nome_manga_estoque);
-                    if (manga_estoque_procurado.isPresent()) {
-                        Manga manga_estoque_achado = manga_estoque_procurado.get();
-                        System.out.println("Qual a quantidade de estoque que deseja adicionar?");
-                        int qtd_estoque_manga_adicionar = sc.nextInt();
-                        sc.nextLine();
-                        manga_estoque_achado.add_estoque(qtd_estoque_manga_adicionar);
-                        System.out.println("Estoque adicionado com sucesso!");
-                        System.out.println("Estoque atual do manga: " + manga_estoque_achado.getEstoque());
-                    } else {
-                        System.out.println("Manga com o nome " + nome_manga_estoque + " não encontrado");
-                    }
-                    break;
-
-                    case 15:
-
-                    sistema_ryusei.salvarUsuariosCSV();
-                    sistema_ryusei.salvarFuncionariosCSV();
-                    sistema_ryusei.salvarMangasCSV();
-                    sistema_ryusei.salvarMenuCSV();
-                    sistema_ryusei.salvarPagamentosCSV();
-
-                    System.out.println("Dados salvos com sucesso.");
-                    System.out.println("Saindo do sistema...");
-                    system_on = false;
-                    sc.close();
-                    break;
-
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
                     break;
             }
         }
+    }
+
+    // --- Métodos de Suporte ---
+
+    private static void carregarDados() {
+        sistema_ryusei.carregarUsuariosCSV();
+        sistema_ryusei.carregarFuncionariosCSV();
+        sistema_ryusei.carregarMangasCSV();
+        sistema_ryusei.carregarMenuCSV();
+        sistema_ryusei.carregarPagamentosCSV();
+        System.out.println("Dados carregados.");
+    }
+
+    private static void exibirMenuPrincipal() {
+        System.out.println("\n==================================");
+        System.out.println("     MENU PRINCIPAL RYUSEI CAFE   ");
+        System.out.println("==================================");
+        System.out.println("1. Gerenciar Pessoas (Usuários/Funcionários)");
+        System.out.println("2. Gerenciar Mangás");
+        System.out.println("3. Gerenciar Menu do Café");
+        System.out.println("4. Realizar Nova Compra (Carrinho)");
+        System.out.println("5. Mostrar todos os Pagamentos");
+        System.out.println("6. Sair e Salvar Dados");
+        System.out.print("Escolha uma opção: ");
+    }
+
+    private static int lerOpcao() {
+        try {
+            return Integer.parseInt(sc.nextLine());
+        } catch (NumberFormatException e) {
+            return -1; // Opção inválida
+        }
+    }
+
+    private static boolean sairESalvar() {
+        sistema_ryusei.salvarUsuariosCSV();
+        sistema_ryusei.salvarFuncionariosCSV();
+        sistema_ryusei.salvarMangasCSV();
+        sistema_ryusei.salvarMenuCSV();
+        sistema_ryusei.salvarPagamentosCSV();
+
+        System.out.println("Dados salvos com sucesso.");
+        System.out.println("Saindo do sistema...");
+        sc.close();
+        return false;
+    }
+
+    //métodos de automação de funcionalidades do menu
+    private static void adicionarUsuario() {
+        System.out.print("CPF: ");
+        String cpf = sc.nextLine();
+        System.out.print("Nome: ");
+        String nome = sc.nextLine();
+        System.out.print("Telefone: ");
+        String telefone = sc.nextLine();
+        System.out.print("Email: ");
+        String email = sc.nextLine();
+        System.out.print("Assinatura (A, B, C): ");
+        char assinatura = sc.nextLine().toUpperCase().charAt(0);
+
+        sistema_ryusei.adicionaUsuario(cpf, nome, telefone, email, assinatura);
+        System.out.println("Usuário " + nome + " adicionado com sucesso.");
+    }
+
+    private static void adicionaFuncionário() {
+        System.out.print("CPF: ");
+        String cpf = sc.nextLine();
+        System.out.print("Nome: ");
+        String nome = sc.nextLine();
+        System.out.print("Telefone: ");
+        String telefone = sc.nextLine();
+        System.out.print("Email: ");
+        String email = sc.nextLine();
+        System.out.println("Salário: ");
+        double salario = Double.parseDouble(sc.nextLine());
+        System.out.print("Cargo: ");
+        String cargo = sc.nextLine();
+
+        sistema_ryusei.adicionaFuncionario(cpf, nome, telefone, email, salario, cargo);
+        System.out.println("Funcionário " + nome + " adicionado com sucesso.");
+    }
+
+    private static void buscarUsuario() {
+        System.out.print("Digite o CPF do usuário para buscar: ");
+        String cpf = sc.nextLine();
+        Optional<Usuario> usuario_opt = sistema_ryusei.buscarUsuarioPorCpf(cpf);
+
+        if (usuario_opt.isPresent()) {
+            usuario_opt.get().mostraUsuario();
+        } else {
+            System.out.println("Usuário com CPF " + cpf + " não encontrado.");
+        }
+    }
+
+    private static void buscarManga() {
+        System.out.print("Digite o Nome do mangá para buscar: ");
+        String nome = sc.nextLine();
+        Optional<Manga> manga_opt = sistema_ryusei.buscaMangaPorNome(nome);
+
+        if (manga_opt.isPresent()) {
+            manga_opt.get().mostraManga();
+        } else {
+            System.out.println("Mangá com nome '" + nome + "' não encontrado.");
+        }
+    }
+
+    private static void adicionarEstoqueManga() {
+        System.out.print("Nome do mangá para adicionar estoque: ");
+        String nome_manga = sc.nextLine();
+        Optional<Manga> manga_estoque_procurado = sistema_ryusei.buscaMangaPorNome(nome_manga);
+
+        if (manga_estoque_procurado.isPresent()) {
+            Manga manga_estoque_achado = manga_estoque_procurado.get();
+            System.out.print("Qual a quantidade de estoque que deseja adicionar?: ");
+            int qtd_estoque_manga_adicionar = lerOpcao();
+            if (qtd_estoque_manga_adicionar > 0) {
+                manga_estoque_achado.add_estoque(qtd_estoque_manga_adicionar);
+                System.out.println("Estoque adicionado com sucesso!");
+                System.out.println("Estoque atual do mangá: " + manga_estoque_achado.getEstoque());
+            } else {
+                System.out.println("Quantidade inválida.");
+            }
+        } else {
+            System.out.println("Mangá com o nome '" + nome_manga + "' não encontrado");
+        }
+    }
+
+    private static void adicionarItemMenu() {
+        System.out.print("Nome do item do menu para adicionar: ");
+        String nome_item = sc.nextLine();
+        Optional<Item_menu> item_menu_procurado = sistema_ryusei.buscaItemMenuPorNome(nome_item);
+
+        if (item_menu_procurado.isPresent()) {
+            System.out.println("Item do menu com o nome '" + nome_item + "' já existe.");
+        } else {
+            System.out.print("Ingredientes do item: ");
+            String ingredientes = sc.nextLine();
+            System.out.print("Preço do item: ");
+            float preco = Float.parseFloat(sc.nextLine());
+            System.out.print("Estoque inicial do item: ");
+            int estoque = Integer.parseInt(sc.nextLine());
+
+            sistema_ryusei.adicionaItem(nome_item, ingredientes, preco, estoque);
+            System.out.println("Item do menu '" + nome_item + "' adicionado com sucesso.");
+        }
+    }
+
+    private static void adicionarEstoqueMenu() {
+        System.out.print("Nome do item do menu para adicionar estoque: ");
+        String nome_item = sc.nextLine();
+        Optional<Item_menu> item_estoque_procurado = sistema_ryusei.buscaItemMenuPorNome(nome_item);
+
+        if (item_estoque_procurado.isPresent()) {
+            Item_menu item_estoque_achado = item_estoque_procurado.get();
+            System.out.print("Qual a quantidade de estoque que deseja adicionar?: ");
+            int qtd_estoque_item_adicionar = lerOpcao();
+            if (qtd_estoque_item_adicionar > 0) {
+                item_estoque_achado.add_estoque(qtd_estoque_item_adicionar);
+                System.out.println("Estoque adicionado com sucesso!");
+                System.out.println("Estoque atual do item: " + item_estoque_achado.getEstoque());
+            } else {
+                System.out.println("Quantidade inválida.");
+            }
+        } else {
+            System.out.println("Item do menu com o nome '" + nome_item + "' não encontrado");
+        }
+    }
+
+    // --- Menus ---
+
+    private static void menuPessoas() {
+        System.out.println("\n--- Gerenciar Pessoas ---");
+        System.out.println("1. Adicionar Novo Usuário");
+        System.out.println("2. Adicionar novo Funcionário");
+        System.out.println("3. Buscar Usuário por CPF");
+        System.out.println("4. Listar Todos os Usuários");
+        System.out.println("5. Listar Todos os Funcionários");
+        System.out.println("6. Voltar ao Menu Principal");
+        System.out.print("Escolha uma opção: ");
+
+        int opcao = lerOpcao();
+        switch (opcao) {
+            case 1:
+                adicionarUsuario();
+                break;
+            case 2:
+                adicionaFuncionário();
+                break;
+            case 3:
+                buscarUsuario();
+                break;
+            case 4:
+                sistema_ryusei.mostraUsuarios();
+                break;
+            case 5:
+                sistema_ryusei.mostraFuncionarios();
+                break;
+            case 6:
+                break;
+            default:
+                System.out.println("Opção inválida.");
+        }
+    }
+
+
+    private static void menuMangas() {
+        System.out.println("\n--- Gerenciar Mangás ---");
+        System.out.println("1. Listar Todos os Mangás");
+        System.out.println("2. Buscar Mangá por Nome");
+        System.out.println("3. Adicionar Estoque em Mangá");
+        System.out.println("4. Voltar ao Menu Principal");
+        System.out.print("Escolha uma opção: ");
+
+        int opcao = lerOpcao();
+        switch (opcao) {
+            case 1:
+                sistema_ryusei.mostraMangas();
+                break;
+            case 2:
+                buscarManga();
+                break;
+            case 3:
+                adicionarEstoqueManga();
+                break;
+            case 4:
+                break;
+            default:
+                System.out.println("Opção inválida.");
+        }
+    }
+    
+    private static void menuMenuCafe() {
+        System.out.println("\n--- Gerenciar Menu Café ---");
+        System.out.println("1. Adicionar Novo Item ao Menu");
+        System.out.println("2. Listar Todos os Itens do Menu");
+        System.out.println("3. Adicionar Estoque em Item do Menu");
+        System.out.println("4. Voltar ao Menu Principal");
+        System.out.print("Escolha uma opção: ");
+
+        int opcao = lerOpcao();
+        switch (opcao) {
+            case 1:
+                adicionarItemMenu();
+                break;
+            case 2:
+                sistema_ryusei.mostraMenu();
+                break;
+            case 3:
+                adicionarEstoqueMenu();
+                break;
+            case 4:
+                break;
+            default:
+                System.out.println("Opção inválida.");
+        }
+    }
+
+
+    private static void realizarCompra() {
+        Carrinho_de_compras carrinho = new Carrinho_de_compras();
+        boolean comprando = true;
+
+        System.out.println("\n--- INICIANDO NOVA COMPRA ---");
+        
+        System.out.print("Digite o CPF do usuário para esta compra: ");
+        String cpf_usuario = sc.nextLine();
+        Optional<Usuario> usuario_opt = sistema_ryusei.buscarUsuarioPorCpf(cpf_usuario);
+        
+        if (!usuario_opt.isPresent()) {
+            System.out.println("Usuário não encontrado. Cancelando compra.");
+            return;
+        }
+        Usuario usuario = usuario_opt.get();
+        System.out.println("Usuário: " + usuario.getNome() + " (Assinatura: " + usuario.getAssinatura() + ")");
+
+
+        while (comprando) {
+            System.out.println("\n--- Adicionar Item ---");
+            System.out.println("1. Adicionar Mangá");
+            System.out.println("2. Adicionar Item do Menu");
+            System.out.println("3. Finalizar Compra");
+            System.out.print("Opção: ");
+
+            int opcao = lerOpcao();
+            String nome_item;
+            Optional<? extends Vendivel> item_opt = Optional.empty();
+
+            switch (opcao) {
+                case 1:
+                    System.out.print("Nome do Mangá: ");
+                    nome_item = sc.nextLine();
+                    item_opt = sistema_ryusei.buscaMangaPorNome(nome_item);
+                    break;
+                case 2:
+                    System.out.print("Nome do Item do Menu: ");
+                    nome_item = sc.nextLine();
+                    item_opt = sistema_ryusei.buscaItemMenuPorNome(nome_item);
+                    break;
+                case 3:
+                    comprando = false;
+                    break;
+                default:
+                    System.out.println("Opção inválida.");
+                    continue;
+            }
+
+            if (item_opt.isPresent()) {
+                Vendivel item = item_opt.get();
+                carrinho.adicionaItem_carrinho(item);
+            } else if (opcao != 3) {
+                System.out.println("Item não encontrado.");
+            }
+        }
+
+        if (carrinho.itensNoCarrinho().isEmpty()) {
+            System.out.println("Carrinho vazio. Compra cancelada.");
+            return;
+        }
+
+        // Finalização
+        float total = carrinho.calcula_total();
+        System.out.println("Valor Total: R$" + String.format("%.2f", total));
+        
+        // Simular Pagamento
+        System.out.print("Tipo (Compra/Serviço): ");
+        String tipo = sc.nextLine();
+        System.out.print("Método de Pagamento (Cartão/Pix/Dinheiro): ");
+        String metodo = sc.nextLine();
+        
+        // Usar data atual (simplificado como 'hoje')
+        String data = java.time.LocalDate.now().toString(); 
+        
+        // Cria o pagamento inicialmente como "pendente"
+        Pagamento novo_pagamento = new Pagamento(usuario.getCpf(), total, tipo, metodo, data, "pendente");
+
+        System.out.print("Confirmar pagamento (S/N)? ");
+        String confirmacao = sc.nextLine().toUpperCase();
+        
+        if (confirmacao.equals("S")) {
+            novo_pagamento.Pago(); // Altera o status para 'pago'
+            sistema_ryusei.adicionaPagamento(novo_pagamento);
+            System.out.println("Pagamento concluído e registrado no sistema!");
+            novo_pagamento.mostraPagamento();
+            // Atualiza o estoque dos itens vendidos
+            carrinho.AtualizaEstoquePosVenda();
+        } else {
+            System.out.println("Pagamento cancelado. Itens do carrinho descartados.");
+        }
+    }
+    
+    private static void mostrarPagamentos() {
+        System.out.println("\n--- Histórico de Pagamentos ---");
+        sistema_ryusei.mostraPagamentos();
     }
 }

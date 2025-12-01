@@ -32,6 +32,7 @@ public class RyuseiCafeGUI extends JFrame {
     private JButton addItemButton;
     private JTable cartTable;
     private DefaultTableModel cartModel;
+    private DefaultTableModel pagamentosModel;
     private JLabel totalLabel;
     private JButton finalizarButton;
 
@@ -402,23 +403,69 @@ public class RyuseiCafeGUI extends JFrame {
     private JPanel createPagamentosPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        JLabel title = new JLabel("Módulo de Pagamentos (Simplificado)", SwingConstants.CENTER);
+
+        // Título
+        JLabel title = new JLabel("Histórico de Pagamentos", SwingConstants.CENTER);
         title.setFont(new Font("SansSerif", Font.BOLD, 24));
         panel.add(title, BorderLayout.NORTH);
+
+        // Tabela de Pagamentos
+        String[] colunas = {"CPF Cliente", "Valor Total", "Tipo", "Método", "Data", "Status"};
         
-        JTextArea textArea = new JTextArea("Esta seção exibira o Histórico de Pagamentos registrados.\n\nAção acionaria: sistema.mostraPagamentos().", 15, 40);
-        textArea.setEditable(false);
-        panel.add(new JScrollPane(textArea), BorderLayout.CENTER);
+        // Inicializa o modelo da tabela (0 linhas inicialmente)
+        pagamentosModel = new DefaultTableModel(colunas, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Deixa a tabela apenas para leitura
+            }
+        };
         
-        JButton refreshBtn = new JButton("Listar Pagamentos no Console (Teste)");
-        refreshBtn.addActionListener(e -> {
-            JOptionPane.showMessageDialog(panel, "Listando pagamentos no console. Verifique a saída da IDE.", "Info", JOptionPane.INFORMATION_MESSAGE);
-            sistema.mostraPagamentos();
-        });
+        JTable tabelaPagamentos = new JTable(pagamentosModel);
+        tabelaPagamentos.setFillsViewportHeight(true);
         
-        panel.add(refreshBtn, BorderLayout.SOUTH);
+        // Adiciona a tabela dentro de uma barra de rolagem (ScrollPane)
+        JScrollPane scrollPane = new JScrollPane(tabelaPagamentos);
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        // 3. Botão de Atualizar (Rodapé)
+        JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton btnAtualizar = new JButton("Atualizar Lista");
+        btnAtualizar.addActionListener(e -> atualizarTabelaPagamentos());
+        
+        footerPanel.add(btnAtualizar);
+        panel.add(footerPanel, BorderLayout.SOUTH);
+
+        // Carrega os dados iniciais
+        atualizarTabelaPagamentos();
+
         return panel;
     }
+
+    private void atualizarTabelaPagamentos() {
+        // Limpa a tabela atual
+        pagamentosModel.setRowCount(0);
+
+        // Busca a lista do sistema
+        java.util.List<Pagamento> lista = sistema.getListaPagamentos(); 
+
+        if (lista == null || lista.isEmpty()) {
+            // Se não houver pagamentos, não faz nada ou mostra mensagem no console
+            return;
+        }
+
+        // Itera sobre a lista e adiciona as linhas
+        for (Pagamento p : lista) {
+            pagamentosModel.addRow(new Object[]{
+                p.getUsuario(),       // Ajuste para o nome do seu getter de CPF
+                String.format("R$ %.2f", p.getValor()),
+                p.getTipo(),             // Compra ou Serviço
+                p.getMetodo(),           // Pix, Cartão, etc
+                p.getData(),
+                p.getStatus()            // Pendente ou Pago
+            });
+        }
+}
+
 
     // Main Method
     public static void main(String[] args) {

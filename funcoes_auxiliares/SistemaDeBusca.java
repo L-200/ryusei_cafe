@@ -187,6 +187,11 @@ public class SistemaDeBusca {
         }
     }
 
+    // para a GUI
+    public List<Pagamento> getListaPagamentos() {
+    return this.pagamentos; // Ou o nome da sua variável de lista
+}
+
     // buscas
 
     public Optional<Usuario> buscarUsuarioPorCpf(String cpf_desejado) {

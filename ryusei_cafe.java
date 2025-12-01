@@ -211,8 +211,10 @@ Bem-vindo ao sistema do ryusei cafe!
             float preco = Float.parseFloat(sc.nextLine());
             System.out.print("Estoque inicial do item: ");
             int estoque = Integer.parseInt(sc.nextLine());
+            System.out.print("Quantidade inicial de vendas do item: ");
+            int qtdVenda = Integer.parseInt(sc.nextLine());
 
-            sistema_ryusei.adicionaItem(nome_item, ingredientes, preco, estoque);
+            sistema_ryusei.adicionaItem(nome_item, ingredientes, preco, estoque, qtdVenda);
             System.out.println("Item do menu '" + nome_item + "' adicionado com sucesso.");
         }
     }

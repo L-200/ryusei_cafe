@@ -70,7 +70,8 @@ public class SistemaDeBusca {
                 String[] p = linha.split(";");
                 Item_menu item = adicionaItem(p[1], p[2],
                                             Float.parseFloat(p[3]),
-                                            Integer.parseInt(p[4]));
+                                            Integer.parseInt(p[4]),
+                                            Integer.parseInt(p[5]));
                 item.setID_menu(Integer.parseInt(p[0]));
             }
         } catch (Exception e) {}
@@ -108,8 +109,8 @@ public class SistemaDeBusca {
         return novo_manga;
     }
 
-    public Item_menu adicionaItem(String nome, String ingredientes, float preco, int estoque) {
-        Item_menu novo_item = new Item_menu(nome, ingredientes, preco, estoque);
+    public Item_menu adicionaItem(String nome, String ingredientes, float preco, int estoque, int qtdVenda) {
+        Item_menu novo_item = new Item_menu(nome, ingredientes, preco, estoque, qtdVenda);
         this.itens_menu.add(novo_item);
         return novo_item;
     }
@@ -274,17 +275,20 @@ public class SistemaDeBusca {
     }
 
     public void salvarMenuCSV() {
-        try (PrintWriter pw = new PrintWriter("menu.csv")) {
-            for (Item_menu i : itens_menu) {
-                pw.println(i.getID_menu() + ";" +
-                        i.getNome() + ";" +
-                        i.getIngredientes() + ";" +
-                        i.getPreco() + ";" +
-                        i.getEstoque());
-                        i.getQtdVenda();
-            }
-        } catch (Exception e) { System.out.println("Erro ao salvar menu.csv"); }
+    try (PrintWriter pw = new PrintWriter("menu.csv")) {
+        for (Item_menu i : itens_menu) {
+            pw.println(i.getID_menu() + ";" +
+                    i.getNome() + ";" +
+                    i.getIngredientes() + ";" +
+                    i.getPreco() + ";" +
+                    i.getEstoque() + ";" +   // Adicionado o separador
+                    i.getQtdVenda());
+        }
+    } catch (Exception e) { 
+        System.out.println("Erro ao salvar menu.csv"); 
+        e.printStackTrace(); // Boa prática: imprime o erro real se houver
     }
+}
 
     public void salvarPagamentosCSV() {
         try (PrintWriter pw = new PrintWriter("pagamentos.csv")) {

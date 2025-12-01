@@ -10,14 +10,13 @@ public class Item_menu implements Vendivel {
     private int estoque;
 
     //construtor da classe
-    public Item_menu(String nome, String ingredientes, float preco, int estoque) {
+    public Item_menu(String nome, String ingredientes, float preco, int estoque, int qtdVenda) {
         this.nome = nome;
-        this.qtdVenda = 0;
+        this.qtdVenda = qtdVenda;
         this.preco = preco;
         this.id = nextid;
         nextid++;
         this.ingredientes = ingredientes;
-        this.qtdVenda = 0;
         this.estoque = estoque;
         
     }

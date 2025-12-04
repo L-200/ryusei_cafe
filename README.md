@@ -8,7 +8,7 @@ Sistema de um manga café desenvolvido em java para a disciplina de Programaçã
 
 ## Modos de execução:
 
-### Pela GUI (ainda em desenvolvimento):
+### Versão GUI:
 1) Compilar o código:
     ```bash
     javac RyuseiCafeGUI.java
@@ -19,7 +19,7 @@ Sistema de um manga café desenvolvido em java para a disciplina de Programaçã
     java RyuseiCafeGUI
     ```
 
-### Pela linha de comando(já implementado corretamente):
+### Versão linha de comando:
 
 1) Compilar o código:
     ```bash

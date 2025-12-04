@@ -1,13 +1,12 @@
 package funcoes_auxiliares;
-import pessoa.Funcionario;
-import pessoa.Usuario;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import pessoa.Funcionario;
+import pessoa.Usuario;
 
 public class SistemaDeBusca {
 
@@ -215,6 +214,12 @@ public class SistemaDeBusca {
         .filter(manga -> manga.getNome().equals(nome_desejado))
         .findFirst();
     }
+
+    public Optional<Manga> buscaMangaPorID (String id_desejado) {
+        return mangas.stream()
+        .filter(mangas -> mangas.getId().equals(id_desejado))
+        .findFirst();
+    }
     
     // Função de busca para Item_menu por nome, adicionada para o menu interativo
     public Optional<Item_menu> buscaItemMenuPorNome (String nome_desejado) {
@@ -307,6 +312,25 @@ public class SistemaDeBusca {
                         p.getStatus());
             }
         } catch (Exception e) { System.out.println("Erro ao salvar pagamentos.csv"); }
+    }
+
+    // Para a GUI
+
+    public List<Usuario> getListaUsuarios() {
+        return this.usuarios;
+    }
+
+    // 2. Necessário para o botão "Deletar"
+    public boolean removerUsuario(String cpf) {
+        // Remove o usuário se o CPF coincidir. Retorna true se removeu.
+        return usuarios.removeIf(u -> u.getCpf().equals(cpf));
+    }
+    public List<Manga> getListaMangas() {
+        return this.mangas;
+    }
+
+    public List<Item_menu> getListaItemMenu() {
+        return this.itens_menu;
     }
 
 }

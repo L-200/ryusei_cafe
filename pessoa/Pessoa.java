@@ -8,7 +8,6 @@ public class Pessoa {
     private String email;
 
     // Construtor da Superclasse
-    // Recebe os 4 valores e os atribui aos atributos
     public Pessoa(String cpf, String nome, String telefone, String email) {
         this.cpf = cpf;
         this.nome = nome;
@@ -16,7 +15,7 @@ public class Pessoa {
         this.email = email;
     }
 
-    // Permitem que outras classes LEIAM os dados privados
+    // --- GETTERS (Já existiam) ---
     public String getCpf() {
         return this.cpf;
     }
@@ -32,4 +31,18 @@ public class Pessoa {
     public String getEmail() {
         return this.email;
     }
+
+    
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
 }

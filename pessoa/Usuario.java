@@ -31,4 +31,21 @@ public class Usuario extends Pessoa {
         System.out.println("Assinatura: " + this.assinatura);
     }
 
+    // Para a GUI
+
+    public void setNome(String nome) {
+        super.setNome(nome); // Requer que Pessoa tenha setNome ou atributos protected
+    }
+
+    public void setEmail(String email) {
+        super.setEmail(email);
+    }
+
+    public void setTelefone(String telefone) {
+        super.setTelefone(telefone);
+    }
+
+    public void setAssinatura(char assinatura) {
+        this.assinatura = assinatura;
+    }
 }

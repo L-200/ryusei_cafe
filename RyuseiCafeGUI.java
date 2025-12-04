@@ -1,12 +1,12 @@
-import javax.swing.*;
+import funcoes_auxiliares.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import funcoes_auxiliares.*;
-import pessoa.*;
-import javax.swing.table.DefaultTableModel;
-import java.util.Optional;
 import java.time.LocalDate;
+import java.util.Optional;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import pessoa.*;
+
 
 // Esta será a nova classe main para a interface gráfica, que herda de JFrame
 public class RyuseiCafeGUI extends JFrame {
@@ -14,6 +14,24 @@ public class RyuseiCafeGUI extends JFrame {
     private SistemaDeBusca sistema;
     private JPanel mainPanel;
     private CardLayout cardLayout;
+
+    // Variáveis para a Tela de Estoque
+    private JTable tabelaEstoque;
+    private DefaultTableModel modeloEstoque;
+    private JComboBox<String> cmbTipoItem;
+    private JTextField txtNomeEstoque, txtEstoqueAtual, txtNovoEstoque;
+    private JButton btnAtualizarEstoque;
+    // Variáveis para Criação de Item e atualizacao de estoque
+    private JTextField txtNomeCriacao, txtEstoqueInicialCriacao;
+    private JTextField txtPreco, txtIngredientesOuAutores, txtOutrosDetalhes;
+    private JButton btnCriarNovoItem;
+
+
+    // Variáveis para a Tela de Pessoas
+    private JTextField txtNome, txtCpf, txtEmail, txtTelefone;
+    private JComboBox<String> cmbAssinatura;
+    private JTable tabelaUsuarios;
+    private DefaultTableModel modeloTabelaUsuarios;
 
     // Constantes para os nomes dos "cards" no CardLayout
     private static final String VENDAS_CARD = "Vendas";
@@ -39,31 +57,31 @@ public class RyuseiCafeGUI extends JFrame {
     public RyuseiCafeGUI() {
         super("☕ Ryusei Cafe - Sistema de Gerenciamento");
         
-        // 1. Inicializa Lógica de Negócios
+        // Inicializa Lógica de Negócios
         this.sistema = new SistemaDeBusca();
         carregarDados();
         carrinhoAtual = new Carrinho_de_compras();
 
-        // 2. Configuração Básica do Frame
+        // Configuração Básica do Frame
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 700);
         setLayout(new BorderLayout());
         
-        // 3. Inicializa Painel Principal com CardLayout
+        // Inicializa Painel Principal com CardLayout
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-        // 4. Cria e Adiciona os Componentes
+        // Cria e Adiciona os Componentes
         add(createNavBar(), BorderLayout.WEST); // Barra de navegação à esquerda
         add(mainPanel, BorderLayout.CENTER);    // Conteúdo principal no centro
 
-        // 5. Adiciona os painéis funcionais (telas)
+        // Adiciona os painéis funcionais (telas)
         mainPanel.add(createVendasPanel(), VENDAS_CARD);
         mainPanel.add(createEstoquePanel(), ESTOQUE_CARD);
         mainPanel.add(createPessoasPanel(), PESSOAS_CARD);
         mainPanel.add(createPagamentosPanel(), PAGAMENTOS_CARD);
         
-        // 6. Configurações Finais
+        //Configurações Finais
         cardLayout.show(mainPanel, VENDAS_CARD); // Inicia na tela de Vendas
         setLocationRelativeTo(null);
         setVisible(true);
@@ -144,7 +162,7 @@ public class RyuseiCafeGUI extends JFrame {
         return button;
     }
     
-    // --- Componentes da GUI: Vendas (Implementação Completa) ---
+    // Vendas
     private JPanel createVendasPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -180,7 +198,7 @@ public class RyuseiCafeGUI extends JFrame {
     private JPanel createBuscaPanel() {
         JPanel buscaPanel = new JPanel(new BorderLayout(5, 15));
         
-        // 1. Painel de Cliente
+        // Painel de Cliente
         JPanel clienteContainer = new JPanel(new GridLayout(3, 1));
         
         JPanel cpfInputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -198,7 +216,7 @@ public class RyuseiCafeGUI extends JFrame {
         clienteContainer.add(cpfInputPanel);
         clienteContainer.add(usuarioInfoLabel);
         
-        // 2. Painel de Busca de Item
+        // Painel de Busca de Item
         JPanel itemPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         itemSearchField = new JTextField(15);
         addItemButton = new JButton("Adicionar Item");
@@ -289,6 +307,7 @@ public class RyuseiCafeGUI extends JFrame {
         } else {
             JOptionPane.showMessageDialog(this, "Item '" + itemName + "' não encontrado.", "Erro de Busca", JOptionPane.ERROR_MESSAGE);
         }
+
     }
     
     private void updateCarrinhoView() {
@@ -355,79 +374,502 @@ public class RyuseiCafeGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Pagamento cancelado. O carrinho permanece aberto.", "Cancelado", JOptionPane.WARNING_MESSAGE);
         }
     }
+    
+    // --- MÉTODOS QUE ESTAVAM FALTANDO ---
 
-    // Componentes da GUI: Outros Painéis (Simplificados) 
+private void carregarItemNoFormularioEstoque() {
+    int row = tabelaEstoque.getSelectedRow();
+    if (row == -1) return;
+
+    // Pega nome (col 1) e estoque (col 3)
+    String nome = (String) modeloEstoque.getValueAt(row, 1);
+    String estoque = String.valueOf(modeloEstoque.getValueAt(row, 3));
     
-    private JPanel createEstoquePanel() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        JLabel title = new JLabel("Módulo de Estoque (Simplificado)", SwingConstants.CENTER);
-        title.setFont(new Font("SansSerif", Font.BOLD, 24));
-        panel.add(title, BorderLayout.NORTH);
-        
-        JTextArea textArea = new JTextArea("Esta seção gerenciaria Mangás e Itens do Menu.\n\nAções acionariam: sistema.mostraMangas(), sistema.buscaMangaPorNome(), manga.add_estoque().", 15, 40);
-        textArea.setEditable(false);
-        panel.add(new JScrollPane(textArea), BorderLayout.CENTER);
-        
-        JButton refreshBtn = new JButton("Listar Mangás no Console (Teste)");
-        refreshBtn.addActionListener(e -> {
-            JOptionPane.showMessageDialog(panel, "Listando dados no console. Verifique a saída da IDE.", "Info", JOptionPane.INFORMATION_MESSAGE);
-            sistema.mostraMangas();
-        });
-        
-        panel.add(refreshBtn, BorderLayout.SOUTH);
-        return panel;
+    txtNomeEstoque.setText(nome);
+    txtEstoqueAtual.setText(estoque);
+    txtNovoEstoque.setText("0");
+    btnAtualizarEstoque.setEnabled(true);
+}
+
+private void adicionarEstoque(ActionEvent e) {
+    int row = tabelaEstoque.getSelectedRow();
+    if (row == -1) return;
+
+    String tipo = (String) modeloEstoque.getValueAt(row, 0);
+    String idStr = String.valueOf(modeloEstoque.getValueAt(row, 4)); // ID na coluna 4
+    
+    int quantidade;
+    try {
+        quantidade = Integer.parseInt(txtNovoEstoque.getText().trim());
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(this, "Número inválido.");
+        return;
     }
+
+    if (quantidade == 0) return;
+
+    // Lógica de busca e atualização
+    Vendivel item = null;
+    if (tipo.equals("Mangá")) {
+        // Tenta buscar por ID
+        Optional<Manga> m = sistema.buscaMangaPorID(idStr);
+        if (m.isPresent()) item = m.get();
+    } else {
+        // Trata o ID do menu (ex: remove prefixos se houver ou converte direto)
+        try {
+            String limpaId = idStr.replace("ID: ", "").trim();
+            Optional<Item_menu> i = sistema.buscaItemPorID(Integer.parseInt(limpaId));
+            if (i.isPresent()) item = i.get();
+        } catch (Exception ex) { /* Erro de parse de ID */ }
+    }
+
+    if (item != null) {
+        item.add_estoque(quantidade);
+        JOptionPane.showMessageDialog(this, "Estoque atualizado!");
+        atualizarTabelaEstoque(); // Recarrega a tabela
+        btnAtualizarEstoque.setEnabled(false);
+        txtNovoEstoque.setText("0");
+    } else {
+        JOptionPane.showMessageDialog(this, "Erro: Item não encontrado no sistema.");
+    }
+}
+
+private JPanel createEstoquePanel() {
+    // Cria o painel principal
+    JPanel panel = new JPanel(new BorderLayout(10, 10)); 
+    panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+    // Título
+    JLabel title = new JLabel("Módulo de Gerenciamento de Estoque", SwingConstants.CENTER);
+    title.setFont(new Font("SansSerif", Font.BOLD, 24));
+    panel.add(title, BorderLayout.NORTH);
+
+    // --- LADO DIREITO: Tabela de Visualização ---
+    String[] colunas = {"Tipo", "Nome", "Preço (R$)", "Estoque", "ID / Local", "Detalhes Extras"};
+    modeloEstoque = new DefaultTableModel(colunas, 0) {
+        @Override
+        public boolean isCellEditable(int row, int column) { return false; }
+    };
+    tabelaEstoque = new JTable(modeloEstoque);
     
+    // Listener de Seleção para carregar dados no formulário de atualização
+    tabelaEstoque.getSelectionModel().addListSelectionListener(e -> {
+        if (!e.getValueIsAdjusting() && tabelaEstoque.getSelectedRow() != -1) {
+            carregarItemNoFormularioEstoque();
+        }
+    });
+
+    // --- LADO ESQUERDO: Controles (Abas Separadas) ---
+    JTabbedPane controlTabs = new JTabbedPane();
+    
+    // Aba 1: Atualizar Estoque (Existente)
+    controlTabs.addTab("Atualizar Estoque", createUpdatePanel());
+    
+    // Aba 2: Cadastro Específico de Mangá (Todos os atributos)
+    controlTabs.addTab("Cadastrar Mangá", createMangaFormPanel());
+    
+    // Aba 3: Cadastro Específico de Menu (Todos os atributos)
+    controlTabs.addTab("Cadastrar Menu", createMenuFormPanel());
+
+    // Combina tudo no JSplitPane
+    JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+    splitPane.setDividerLocation(400); // Aumentei um pouco para caber os formulários maiores
+    splitPane.setLeftComponent(controlTabs);
+    splitPane.setRightComponent(new JScrollPane(tabelaEstoque));
+
+    panel.add(splitPane, BorderLayout.CENTER); 
+
+    // Inicializa o conteúdo da tabela
+    atualizarTabelaEstoque();
+
+    return panel;
+}
+
+// ---------------------------------------------------------
+// PAINEL DE CADASTRO DE MANGÁ (Completo com todos atributos)
+// ---------------------------------------------------------
+private JComponent createMangaFormPanel() {
+    JPanel panel = new JPanel(new GridBagLayout());
+    GridBagConstraints gbc = createGbc(); // Método auxiliar para layout
+
+    // Título da Seção
+    JLabel lblTitulo = new JLabel("Novo Mangá");
+    lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 14));
+    gbc.gridwidth = 2; 
+    panel.add(lblTitulo, gbc);
+    gbc.gridwidth = 1; gbc.gridy++;
+
+    // Campos
+    JTextField txtNome = addLabelAndField(panel, "Nome da Obra:", gbc);
+    JTextField txtSerie = addLabelAndField(panel, "Série:", gbc);
+    JTextField txtVolume = addLabelAndField(panel, "Volume (nº):", gbc);
+    JTextField txtPreco = addLabelAndField(panel, "Preço (R$):", gbc);
+    JTextField txtEstoque = addLabelAndField(panel, "Estoque Inicial:", gbc);
+    JTextField txtLocal = addLabelAndField(panel, "Localização (Estante):", gbc);
+    JTextField txtAutores = addLabelAndField(panel, "Autores (separe por vírgula):", gbc);
+    JTextField txtGeneros = addLabelAndField(panel, "Gêneros (separe por vírgula):", gbc);
+
+    // Botão Salvar
+    JButton btnSalvar = new JButton("Cadastrar Mangá");
+    btnSalvar.setBackground(new Color(100, 149, 237)); // Azul Cornflower
+    btnSalvar.setForeground(Color.WHITE);
+    
+    gbc.gridy++; gbc.gridwidth = 2; gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.CENTER;
+    panel.add(btnSalvar, gbc);
+    
+    // Lógica do Botão
+    btnSalvar.addActionListener(e -> {
+        try {
+            String nome = txtNome.getText().trim();
+            String serie = txtSerie.getText().trim();
+            int volume = Integer.parseInt(txtVolume.getText().trim());
+            float preco = Float.parseFloat(txtPreco.getText().replace(",", ".").trim());
+            int estoque = Integer.parseInt(txtEstoque.getText().trim());
+            String local = txtLocal.getText().trim();
+            
+            // Processamento de Arrays
+            String[] autores = txtAutores.getText().split(",");
+            for(int i=0; i<autores.length; i++) autores[i] = autores[i].trim();
+            
+            String[] generos = txtGeneros.getText().split(",");
+            for(int i=0; i<generos.length; i++) generos[i] = generos[i].trim();
+
+            if (nome.isEmpty() || serie.isEmpty() || local.isEmpty()) {
+                JOptionPane.showMessageDialog(panel, "Preencha todos os campos de texto.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Chamada ao sistema
+            sistema.adicionaManga(nome, autores, generos, serie, volume, local, estoque, preco);
+            
+            JOptionPane.showMessageDialog(panel, "Mangá cadastrado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            atualizarTabelaEstoque();
+            
+            // Limpar campos
+            txtNome.setText(""); txtSerie.setText(""); txtVolume.setText("");
+            txtPreco.setText(""); txtEstoque.setText(""); txtLocal.setText("");
+            txtAutores.setText(""); txtGeneros.setText("");
+
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(panel, "Verifique se Preço, Volume e Estoque são números válidos.", "Erro de Formatação", JOptionPane.ERROR_MESSAGE);
+        }
+    });
+
+    // Espaço final para empurrar tudo para cima
+    gbc.gridy++; gbc.weighty = 1.0;
+    panel.add(Box.createVerticalGlue(), gbc);
+
+    return new JScrollPane(panel);
+}
+
+// ---------------------------------------------------------
+// PAINEL DE CADASTRO DE MENU (Completo com todos atributos)
+// ---------------------------------------------------------
+private JComponent createMenuFormPanel() {
+    JPanel panel = new JPanel(new GridBagLayout());
+    GridBagConstraints gbc = createGbc();
+
+    // Título
+    JLabel lblTitulo = new JLabel("Novo Item de Menu");
+    lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 14));
+    gbc.gridwidth = 2;
+    panel.add(lblTitulo, gbc);
+    gbc.gridwidth = 1; gbc.gridy++;
+
+    // Campos
+    JTextField txtNome = addLabelAndField(panel, "Nome do Prato/Bebida:", gbc);
+    JTextField txtPreco = addLabelAndField(panel, "Preço (R$):", gbc);
+    JTextField txtEstoque = addLabelAndField(panel, "Estoque:", gbc);
+    JTextField txtIngredientes = addLabelAndField(panel, "Ingredientes:", gbc);
+
+    // Botão Salvar
+    JButton btnSalvar = new JButton("Cadastrar Item Menu");
+    btnSalvar.setBackground(new Color(60, 179, 113)); // Verde
+    btnSalvar.setForeground(Color.WHITE);
+
+    gbc.gridy++; gbc.gridwidth = 2; gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.CENTER;
+    panel.add(btnSalvar, gbc);
+
+    // Lógica do Botão
+    btnSalvar.addActionListener(e -> {
+        try {
+            String nome = txtNome.getText().trim();
+            float preco = Float.parseFloat(txtPreco.getText().replace(",", ".").trim());
+            int estoque = Integer.parseInt(txtEstoque.getText().trim());
+            String ingredientes = txtIngredientes.getText().trim();
+
+            if (nome.isEmpty() || ingredientes.isEmpty()) {
+                JOptionPane.showMessageDialog(panel, "Preencha Nome e Ingredientes.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Chamada ao sistema (qtdVenda inicia em 0)
+            sistema.adicionaItem(nome, ingredientes, preco, estoque, 0);
+
+            JOptionPane.showMessageDialog(panel, "Item de Menu adicionado!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            atualizarTabelaEstoque();
+
+            // Limpar campos
+            txtNome.setText(""); txtPreco.setText(""); 
+            txtEstoque.setText(""); txtIngredientes.setText("");
+
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(panel, "Preço e Estoque devem ser números.", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    });
+
+    gbc.gridy++; gbc.weighty = 1.0;
+    panel.add(Box.createVerticalGlue(), gbc);
+
+    return panel;
+}
+
+// ---------------------------------------------------------
+// MÉTODOS AUXILIARES DE GUI E ATUALIZAÇÃO
+// ---------------------------------------------------------
+
+// Helper para adicionar label + textfield rapidamente
+private JTextField addLabelAndField(JPanel panel, String labelText, GridBagConstraints gbc) {
+    gbc.gridx = 0; 
+    gbc.anchor = GridBagConstraints.WEST;
+    panel.add(new JLabel(labelText), gbc);
+    
+    gbc.gridx = 1;
+    JTextField field = new JTextField(20);
+    panel.add(field, gbc);
+    
+    gbc.gridy++; // Prepara para a próxima linha
+    gbc.gridx = 0; // Reseta X
+    return field;
+}
+
+// Helper para configurações padrão do GridBag
+private GridBagConstraints createGbc() {
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.insets = new Insets(5, 5, 5, 5);
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.anchor = GridBagConstraints.WEST;
+    gbc.gridx = 0; gbc.gridy = 0;
+    return gbc;
+}
+
+private void atualizarTabelaEstoque() {
+    modeloEstoque.setRowCount(0);
+    
+    // Mangás: Coluna 4 DEVE ser o ID para a atualização funcionar
+    for (Manga m : sistema.getListaMangas()) {
+        String detalhes = "Loc: " + m.getLocalizacao() + " | Vol: " + m.getVolume();
+        modeloEstoque.addRow(new Object[]{
+            "Mangá", 
+            m.getNome(), 
+            String.format("%.2f", m.getPreco()), 
+            m.getEstoque(), 
+            m.getId(), // <--- MUDANÇA AQUI: Passando ID na coluna 4
+            detalhes
+        });
+    }
+
+    // Menu
+    for (Item_menu i : sistema.getListaItemMenu()) {
+        modeloEstoque.addRow(new Object[]{
+            "Menu", 
+            i.getNome(), 
+            String.format("%.2f", i.getPreco()), 
+            i.getEstoque(), 
+            String.valueOf(i.getID_menu()), // ID na coluna 4
+            i.getIngredientes()
+        });
+    }
+}
+
+// Painel de Atualização (Mantido similar, apenas ajustado para o contexto)
+private JPanel createUpdatePanel() {
+    JPanel formPanel = new JPanel(new GridBagLayout());
+    GridBagConstraints gbc = createGbc();
+
+    // --- NOVIDADE: Mensagem de Instrução ---
+    JLabel lblAviso = new JLabel("<html><center>Clique em um item na tabela à direita<br>para carregá-lo aqui.</center></html>");
+    lblAviso.setForeground(new Color(0, 102, 204)); // Azul para chamar atenção (ou use Color.RED)
+    lblAviso.setFont(new Font("SansSerif", Font.BOLD, 11));
+    lblAviso.setHorizontalAlignment(SwingConstants.CENTER);
+    
+    // Configura para ocupar as duas colunas do topo
+    gbc.gridwidth = 2; 
+    gbc.anchor = GridBagConstraints.CENTER;
+    formPanel.add(lblAviso, gbc);
+
+    // Reseta configurações para os campos de texto abaixo
+    gbc.gridy++; 
+    gbc.gridwidth = 1; 
+    gbc.anchor = GridBagConstraints.WEST;
+    
+    // --- Campos Normais (Como antes) ---
+    formPanel.add(new JLabel("Nome Item Selecionado:"), gbc);
+    gbc.gridy++;
+    txtNomeEstoque = new JTextField(20);
+    txtNomeEstoque.setEditable(false); // Continua travado, mas agora o usuário sabe o porquê
+    txtNomeEstoque.setBackground(new Color(230, 230, 230)); // Cinza claro para indicar visualmente que é "leitura"
+    formPanel.add(txtNomeEstoque, gbc);
+
+    gbc.gridy++;
+    formPanel.add(new JLabel("Estoque Atual:"), gbc);
+    gbc.gridy++;
+    txtEstoqueAtual = new JTextField(5);
+    txtEstoqueAtual.setEditable(false);
+    txtEstoqueAtual.setBackground(new Color(230, 230, 230));
+    formPanel.add(txtEstoqueAtual, gbc);
+
+    gbc.gridy++;
+    formPanel.add(new JLabel("Quantidade:"), gbc);
+    
+    gbc.gridy++;
+    txtNovoEstoque = new JTextField("0", 5);
+    formPanel.add(txtNovoEstoque, gbc);
+    
+    // Dica em texto pequeno
+    gbc.gridy++;
+    JLabel lblDica = new JLabel("(Ex: 10 adiciona, -5 remove)");
+    lblDica.setFont(new Font("SansSerif", Font.PLAIN, 10));
+    lblDica.setForeground(Color.GRAY);
+    formPanel.add(lblDica, gbc);
+
+    gbc.gridy++;
+    btnAtualizarEstoque = new JButton("Atualizar Estoque");
+    btnAtualizarEstoque.addActionListener(this::adicionarEstoque);
+    btnAtualizarEstoque.setEnabled(false);
+    
+    // Centraliza o botão
+    JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    btnPanel.add(btnAtualizarEstoque);
+    gbc.gridwidth = 2; // Botão ocupa largura total
+    formPanel.add(btnPanel, gbc);
+
+    gbc.gridy++; gbc.weighty = 1.0;
+    formPanel.add(Box.createVerticalGlue(), gbc);
+
+    return formPanel;
+}
+
+    // Pessoas
     private JPanel createPessoasPanel() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        JLabel title = new JLabel("Módulo de Pessoas (Simplificado)", SwingConstants.CENTER);
-        title.setFont(new Font("SansSerif", Font.BOLD, 24));
-        panel.add(title, BorderLayout.NORTH);
-        
-        JTextArea textArea = new JTextArea("Esta seção gerenciaria Usuários e Funcionários.\n\nAções acionariam: sistema.adicionaUsuario(), sistema.mostraUsuarios(), sistema.buscarUsuarioPorCpf().", 15, 40);
-        textArea.setEditable(false);
-        panel.add(new JScrollPane(textArea), BorderLayout.CENTER);
-        
-        JButton refreshBtn = new JButton("Listar Usuários no Console (Teste)");
-        refreshBtn.addActionListener(e -> {
-            JOptionPane.showMessageDialog(panel, "Listando usuários no console. Verifique a saída da IDE.", "Info", JOptionPane.INFORMATION_MESSAGE);
-            sistema.mostraUsuarios();
-        });
-        
-        panel.add(refreshBtn, BorderLayout.SOUTH);
-        return panel;
-    }
-
-    private JPanel createPagamentosPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Título
+        JLabel title = new JLabel("Gerenciamento de Clientes", SwingConstants.CENTER);
+        title.setFont(new Font("SansSerif", Font.BOLD, 24));
+        panel.add(title, BorderLayout.NORTH);
+
+        // SplitPane: Esquerda (Formulário) | Direita (Tabela)
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setDividerLocation(350);
+        
+        // --- Lado Esquerdo: Formulário ---
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setBorder(BorderFactory.createTitledBorder("Dados do Usuário"));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0; gbc.gridy = 0;
+
+        // Campos
+        formPanel.add(new JLabel("Nome:"), gbc);
+        gbc.gridy++;
+        txtNome = new JTextField(20);
+        formPanel.add(txtNome, gbc);
+
+        gbc.gridy++;
+        formPanel.add(new JLabel("CPF:"), gbc);
+        gbc.gridy++;
+        txtCpf = new JTextField(15);
+        formPanel.add(txtCpf, gbc);
+
+        gbc.gridy++;
+        formPanel.add(new JLabel("Email:"), gbc);
+        gbc.gridy++;
+        txtEmail = new JTextField(20);
+        formPanel.add(txtEmail, gbc);
+        
+        gbc.gridy++;
+        formPanel.add(new JLabel("Telefone:"), gbc);
+        gbc.gridy++;
+        txtTelefone = new JTextField(15);
+        formPanel.add(txtTelefone, gbc);
+
+        gbc.gridy++;
+        formPanel.add(new JLabel("Assinatura:"), gbc);
+        gbc.gridy++;
+        String[] assinaturas = {"A (Premium)", "B (Padrão)", "C (Básico)", "N (Nenhuma)"};
+        cmbAssinatura = new JComboBox<>(assinaturas);
+        formPanel.add(cmbAssinatura, gbc);
+
+        // Botões
+        JPanel btnPanel = new JPanel(new FlowLayout());
+        JButton btnSalvar = new JButton("Salvar");
+        JButton btnLimpar = new JButton("Limpar");
+        JButton btnDeletar = new JButton("Deletar");
+        
+        btnSalvar.setBackground(new Color(60, 179, 113)); // Verde
+        btnSalvar.setForeground(Color.WHITE);
+        btnDeletar.setBackground(new Color(220, 53, 69)); // Vermelho
+        btnDeletar.setForeground(Color.WHITE);
+
+        btnPanel.add(btnSalvar);
+        btnPanel.add(btnLimpar);
+        btnPanel.add(btnDeletar);
+
+        gbc.gridy++;
+        formPanel.add(btnPanel, gbc);
+
+        // --- Lado Direito: Tabela ---
+        String[] colunas = {"CPF", "Nome", "Email", "Telefone", "Ass."};
+        modeloTabelaUsuarios = new DefaultTableModel(colunas, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) { return false; }
+        };
+        tabelaUsuarios = new JTable(modeloTabelaUsuarios);
+        
+        // Listener de Seleção da Tabela
+        tabelaUsuarios.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && tabelaUsuarios.getSelectedRow() != -1) {
+                carregarUsuarioNoFormulario();
+            }
+        });
+
+        splitPane.setLeftComponent(formPanel);
+        splitPane.setRightComponent(new JScrollPane(tabelaUsuarios));
+        panel.add(splitPane, BorderLayout.CENTER);
+
+        // Ações dos Botões
+        btnSalvar.addActionListener(e -> salvarUsuario());
+        btnLimpar.addActionListener(e -> limparFormularioPessoas());
+        btnDeletar.addActionListener(e -> deletarUsuario());
+        
+        // Inicializa a tabela
+        atualizarTabelaUsuarios();
+
+        return panel;
+    }
+
+    // --- Tela de Pagamentos ---
+    private JPanel createPagamentosPanel() {
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
         JLabel title = new JLabel("Histórico de Pagamentos", SwingConstants.CENTER);
         title.setFont(new Font("SansSerif", Font.BOLD, 24));
         panel.add(title, BorderLayout.NORTH);
 
-        // Tabela de Pagamentos
         String[] colunas = {"CPF Cliente", "Valor Total", "Tipo", "Método", "Data", "Status"};
-        
-        // Inicializa o modelo da tabela (0 linhas inicialmente)
         pagamentosModel = new DefaultTableModel(colunas, 0) {
             @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // Deixa a tabela apenas para leitura
-            }
+            public boolean isCellEditable(int row, int column) { return false; }
         };
         
         JTable tabelaPagamentos = new JTable(pagamentosModel);
         tabelaPagamentos.setFillsViewportHeight(true);
-        
-        // Adiciona a tabela dentro de uma barra de rolagem (ScrollPane)
-        JScrollPane scrollPane = new JScrollPane(tabelaPagamentos);
-        panel.add(scrollPane, BorderLayout.CENTER);
+        panel.add(new JScrollPane(tabelaPagamentos), BorderLayout.CENTER);
 
-        // 3. Botão de Atualizar (Rodapé)
         JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton btnAtualizar = new JButton("Atualizar Lista");
         btnAtualizar.addActionListener(e -> atualizarTabelaPagamentos());
@@ -435,40 +877,142 @@ public class RyuseiCafeGUI extends JFrame {
         footerPanel.add(btnAtualizar);
         panel.add(footerPanel, BorderLayout.SOUTH);
 
-        // Carrega os dados iniciais
         atualizarTabelaPagamentos();
 
         return panel;
     }
 
-    private void atualizarTabelaPagamentos() {
-        // Limpa a tabela atual
-        pagamentosModel.setRowCount(0);
+    // --- MÉTODOS AUXILIARES ---
 
-        // Busca a lista do sistema
+    private void atualizarTabelaPagamentos() {
+        pagamentosModel.setRowCount(0);
         java.util.List<Pagamento> lista = sistema.getListaPagamentos(); 
 
-        if (lista == null || lista.isEmpty()) {
-            // Se não houver pagamentos, não faz nada ou mostra mensagem no console
+        if (lista != null) {
+            for (Pagamento p : lista) {
+                pagamentosModel.addRow(new Object[]{
+                    p.getUsuario(),
+                    String.format("R$ %.2f", p.getValor()),
+                    p.getTipo(),
+                    p.getMetodo(),
+                    p.getData(),
+                    p.getStatus()
+                });
+            }
+        }
+    }
+
+    // --- Lógica CRUD de Pessoas ---
+
+    private void atualizarTabelaUsuarios() {
+        modeloTabelaUsuarios.setRowCount(0);
+        java.util.List<Usuario> usuarios = sistema.getListaUsuarios();
+        
+        if (usuarios != null) {
+            for (Usuario u : usuarios) {
+                modeloTabelaUsuarios.addRow(new Object[]{
+                    u.getCpf(), u.getNome(), u.getEmail(), u.getTelefone(), u.getAssinatura()
+                });
+            }
+        }
+    }
+
+    private void salvarUsuario() {
+        String nome = txtNome.getText().trim();
+        String cpf = txtCpf.getText().trim();
+        String email = txtEmail.getText().trim();
+        String tel = txtTelefone.getText().trim();
+        
+        char assinatura = 'N';
+        if (cmbAssinatura.getSelectedItem() != null) {
+            assinatura = cmbAssinatura.getSelectedItem().toString().charAt(0);
+        }
+
+        if (cpf.isEmpty() || nome.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nome e CPF são obrigatórios.", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // Itera sobre a lista e adiciona as linhas
-        for (Pagamento p : lista) {
-            pagamentosModel.addRow(new Object[]{
-                p.getUsuario(),       // Ajuste para o nome do seu getter de CPF
-                String.format("R$ %.2f", p.getValor()),
-                p.getTipo(),             // Compra ou Serviço
-                p.getMetodo(),           // Pix, Cartão, etc
-                p.getData(),
-                p.getStatus()            // Pendente ou Pago
-            });
+        Optional<Usuario> userOpt = sistema.buscarUsuarioPorCpf(cpf);
+
+        if (userOpt.isPresent() && !txtCpf.isEditable()) {
+            // Editar
+            Usuario u = userOpt.get();
+            u.setNome(nome);
+            u.setEmail(email);
+            u.setTelefone(tel);
+            u.mudaAssinatura(assinatura); 
+            JOptionPane.showMessageDialog(this, "Usuário atualizado!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+        } else if (userOpt.isPresent() && txtCpf.isEditable()) {
+            JOptionPane.showMessageDialog(this, "CPF já cadastrado!", "Erro", JOptionPane.WARNING_MESSAGE);
+            return;
+        } else {
+            // Criar
+            sistema.adicionaUsuario(cpf, nome, email, tel, assinatura);
+            JOptionPane.showMessageDialog(this, "Usuário cadastrado!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
         }
-}
 
+        limparFormularioPessoas();
+        atualizarTabelaUsuarios();
+    }
 
-    // Main Method
+    private void deletarUsuario() {
+        int row = tabelaUsuarios.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Selecione um usuário.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String cpf = (String) modeloTabelaUsuarios.getValueAt(row, 0);
+        int confirm = JOptionPane.showConfirmDialog(this, "Remover usuário CPF " + cpf + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            boolean removido = sistema.removerUsuario(cpf);
+            if (removido) {
+                JOptionPane.showMessageDialog(this, "Usuário removido.");
+                limparFormularioPessoas();
+                atualizarTabelaUsuarios();
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao remover (verifique SistemaDeBusca).");
+            }
+        }
+    }
+
+    private void carregarUsuarioNoFormulario() {
+        int row = tabelaUsuarios.getSelectedRow();
+        if (row == -1) return;
+
+        txtCpf.setText(modeloTabelaUsuarios.getValueAt(row, 0).toString());
+        txtNome.setText(modeloTabelaUsuarios.getValueAt(row, 1).toString());
+        txtEmail.setText(modeloTabelaUsuarios.getValueAt(row, 2).toString());
+        txtTelefone.setText(modeloTabelaUsuarios.getValueAt(row, 3).toString());
+        
+        String assStr = modeloTabelaUsuarios.getValueAt(row, 4).toString();
+        if (!assStr.isEmpty()) {
+            char ass = assStr.charAt(0);
+            for (int i=0; i < cmbAssinatura.getItemCount(); i++) {
+                if (cmbAssinatura.getItemAt(i).charAt(0) == ass) {
+                    cmbAssinatura.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
+        txtCpf.setEditable(false); 
+    }
+
+    private void limparFormularioPessoas() {
+        txtNome.setText("");
+        txtCpf.setText("");
+        txtCpf.setEditable(true);
+        txtEmail.setText("");
+        txtTelefone.setText("");
+        if (cmbAssinatura.getItemCount() > 0) cmbAssinatura.setSelectedIndex(0);
+        tabelaUsuarios.clearSelection();
+    }
+
+    // Método MAIN (Deve estar DENTRO da classe, mas fora de outros métodos)
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new RyuseiCafeGUI());
     }
-}
+
+} // FIM DA CLASSE RyuseiCafeGUI

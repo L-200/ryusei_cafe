@@ -327,69 +327,82 @@ public class RyuseiCafeGUI extends JFrame {
     }
     
     private void finalizarCompra(ActionEvent e) {
-        if (carrinhoAtual.itensNoCarrinho().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "O carrinho está vazio.", "Atenção", JOptionPane.WARNING_MESSAGE);
-            atualizarTabelaEstoque();
-            return;
-        }
+    if (carrinhoAtual.itensNoCarrinho().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "O carrinho está vazio.", "Atenção", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
 
-        float total = carrinhoAtual.calcula_total(); 
-        
-        // Coleta dados de pagamento via pop-up
-        String tipo = JOptionPane.showInputDialog(this, "Tipo (Compra/Serviço):", "Tipo de Transação", JOptionPane.QUESTION_MESSAGE);
-        String metodo = JOptionPane.showInputDialog(this, "Método de Pagamento (Cartão/Pix/Dinheiro):", "Método", JOptionPane.QUESTION_MESSAGE);
+    float total = carrinhoAtual.calcula_total(); 
 
-        if (tipo == null || metodo == null) {
-            JOptionPane.showMessageDialog(this, "Informações de pagamento incompletas. Compra cancelada.", "Cancelado", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+    Object[] opcoesTipo = {"Compra", "Serviço"};
+    String tipo = (String) JOptionPane.showInputDialog(
+            this, 
+            "Selecione o Tipo:", 
+            "Tipo de Transação", 
+            JOptionPane.QUESTION_MESSAGE, 
+            null, 
+            opcoesTipo, 
+            opcoesTipo[0]);
+
+    Object[] opcoesPagamento = {"Cartão de Crédito", "Cartão de Débito", "Pix", "Dinheiro"};
+    String metodo = (String) JOptionPane.showInputDialog(
+            this, 
+            "Selecione o Método de Pagamento:", 
+            "Pagamento", 
+            JOptionPane.QUESTION_MESSAGE, 
+            null, 
+            opcoesPagamento, 
+            opcoesPagamento[0]);
+
+    // Se o usuário clicar em "Cancelar" ou fechar a janela, as variáveis serão null
+    if (tipo == null || metodo == null) {
+        JOptionPane.showMessageDialog(this, "Operação cancelada.", "Cancelado", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+    
+    String data = LocalDate.now().toString(); 
+    
+    // Cria o Pagamento
+    Pagamento novoPagamento = new Pagamento(usuarioAtual.getCpf(), total, tipo, metodo, data, "pendente");
+    
+    int confirm = JOptionPane.showConfirmDialog(this, 
+        String.format("Confirmar pagamento de R$ %.2f via %s?", total, metodo), 
+        "Confirmação de Pagamento", JOptionPane.YES_NO_OPTION);
         
-        String data = LocalDate.now().toString(); 
+    if (confirm == JOptionPane.YES_OPTION) {
+        novoPagamento.Pago(); 
+        sistema.adicionaPagamento(novoPagamento);
         
-        // Cria o Pagamento (status inicial 'pendente' será alterado se for confirmado)
-        Pagamento novoPagamento = new Pagamento(usuarioAtual.getCpf(), total, tipo, metodo, data, "pendente");
-        
-        int confirm = JOptionPane.showConfirmDialog(this, 
-            String.format("Confirmar pagamento de R$ %.2f?", total), 
-            "Confirmação de Pagamento", JOptionPane.YES_NO_OPTION);
+        // Atualiza diretamente o item original no sistema para garantir que a tabela veja a mudança
+        for (Vendivel itemDoCarrinho : carrinhoAtual.itensNoCarrinho()) {
+            Optional<? extends Vendivel> itemOriginal = sistema.buscaMangaPorNome(itemDoCarrinho.getNome());
             
-        if (confirm == JOptionPane.YES_OPTION) {
-            novoPagamento.Pago(); 
-            sistema.adicionaPagamento(novoPagamento);
-            for (Vendivel itemDoCarrinho : carrinhoAtual.itensNoCarrinho()) {
-                // Tenta encontrar o item ORIGINAL na lista de Mangás
-                Optional<? extends Vendivel> itemOriginal = sistema.buscaMangaPorNome(itemDoCarrinho.getNome());
-                
-                // Se não achou, tenta na lista de Menu
-                if (!itemOriginal.isPresent()) {
-                    itemOriginal = sistema.buscaItemMenuPorNome(itemDoCarrinho.getNome());
-                }
-                
-                // Se encontrou o original no sistema, remove 1 do estoque
-                if (itemOriginal.isPresent()) {
-                    // add_estoque com valor negativo remove itens
-                    itemOriginal.get().add_estoque(-1); 
-                }
+            if (!itemOriginal.isPresent()) {
+                itemOriginal = sistema.buscaItemMenuPorNome(itemDoCarrinho.getNome());
             }
             
-            // O estoque é atualizado APENAS AQUI, após a confirmação
-            carrinhoAtual.AtualizaEstoquePosVenda();
-            
-            JOptionPane.showMessageDialog(this, "✅ Pagamento concluído e registrado! Estoque atualizado.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-            
-            // Reiniciar o fluxo de venda
-            carrinhoAtual = new Carrinho_de_compras(); 
-            usuarioAtual = null; 
-            cpfField.setText("");
-            usuarioInfoLabel.setText("Cliente: Não identificado");
-            addItemButton.setEnabled(false);
-            finalizarButton.setEnabled(false);
-            updateCarrinhoView();
-        } else {
-            // Cancelamento: Não fazemos nada com o estoque, pois ele não foi alterado ainda
-            JOptionPane.showMessageDialog(this, "Pagamento cancelado. O carrinho permanece aberto.", "Cancelado", JOptionPane.WARNING_MESSAGE);
+            if (itemOriginal.isPresent()) {
+                itemOriginal.get().add_estoque(-1); // Remove 1 do estoque original
+            }
         }
+        
+        // Atualiza a tabela visual
+        atualizarTabelaEstoque();
+        
+        JOptionPane.showMessageDialog(this, "✅ Pagamento concluído! Estoque atualizado.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+        
+        // Reiniciar o fluxo de venda
+        carrinhoAtual = new Carrinho_de_compras(); 
+        usuarioAtual = null; 
+        cpfField.setText("");
+        usuarioInfoLabel.setText("Cliente: Não identificado");
+        addItemButton.setEnabled(false);
+        finalizarButton.setEnabled(false);
+        updateCarrinhoView();
+    } else {
+        JOptionPane.showMessageDialog(this, "Pagamento cancelado. O carrinho permanece aberto.", "Cancelado", JOptionPane.WARNING_MESSAGE);
     }
+}
     
 
 private void carregarItemNoFormularioEstoque() {

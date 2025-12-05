@@ -333,4 +333,12 @@ public class SistemaDeBusca {
         return this.itens_menu;
     }
 
+    public List<Funcionario> getListaFuncionarios() {
+        return this.funcionarios;
+    }
+
+    public boolean removerFuncionario(String cpf) {
+        return funcionarios.removeIf(f -> f.getCpf().equals(cpf));
+    }
+
 }

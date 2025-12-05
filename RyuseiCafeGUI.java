@@ -32,6 +32,10 @@ public class RyuseiCafeGUI extends JFrame {
     private JComboBox<String> cmbAssinatura;
     private JTable tabelaUsuarios;
     private DefaultTableModel modeloTabelaUsuarios;
+    // Variáveis para a Tela de Funcionários (dentro de pessoas)
+    private JTextField txtNomeFunc, txtCpfFunc, txtEmailFunc, txtTelefoneFunc, txtSalarioFunc, txtCargoFunc;
+    private JTable tabelaFuncionarios;
+    private DefaultTableModel modeloTabelaFuncionarios;
 
     // Constantes para os nomes dos "cards" no CardLayout
     private static final String VENDAS_CARD = "Vendas";
@@ -780,12 +784,27 @@ private JPanel createUpdatePanel() {
 
     // Pessoas
     private JPanel createPessoasPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        
+        JTabbedPane tabbedPane = new JTabbedPane();
+        
+        // Aba 1: Gerenciar Clientes (A lógica antiga movida para cá)
+        tabbedPane.addTab("Clientes", createClientesPanel());
+        
+        // Aba 2: Gerenciar Funcionários (Nova lógica)
+        tabbedPane.addTab("Funcionários", createFuncionariosPanel());
+        
+        panel.add(tabbedPane, BorderLayout.CENTER);
+        return panel;
+    }
+
+    private JPanel createClientesPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Título
         JLabel title = new JLabel("Gerenciamento de Clientes", SwingConstants.CENTER);
-        title.setFont(new Font("SansSerif", Font.BOLD, 24));
+        title.setFont(new Font("SansSerif", Font.BOLD, 18));
         panel.add(title, BorderLayout.NORTH);
 
         // SplitPane: Esquerda (Formulário) | Direita (Tabela)
@@ -794,42 +813,22 @@ private JPanel createUpdatePanel() {
         
         // --- Lado Esquerdo: Formulário ---
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(BorderFactory.createTitledBorder("Dados do Usuário"));
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridx = 0; gbc.gridy = 0;
+        formPanel.setBorder(BorderFactory.createTitledBorder("Dados do Cliente"));
+        GridBagConstraints gbc = createGbc(); // Usa o seu helper existente
 
         // Campos
-        formPanel.add(new JLabel("Nome:"), gbc);
-        gbc.gridy++;
-        txtNome = new JTextField(20);
-        formPanel.add(txtNome, gbc);
+        txtNome = addLabelAndField(formPanel, "Nome:", gbc);
+        txtCpf = addLabelAndField(formPanel, "CPF:", gbc);
+        txtEmail = addLabelAndField(formPanel, "Email:", gbc);
+        txtTelefone = addLabelAndField(formPanel, "Telefone:", gbc);
 
-        gbc.gridy++;
-        formPanel.add(new JLabel("CPF:"), gbc);
-        gbc.gridy++;
-        txtCpf = new JTextField(15);
-        formPanel.add(txtCpf, gbc);
-
-        gbc.gridy++;
-        formPanel.add(new JLabel("Email:"), gbc);
-        gbc.gridy++;
-        txtEmail = new JTextField(20);
-        formPanel.add(txtEmail, gbc);
-        
-        gbc.gridy++;
-        formPanel.add(new JLabel("Telefone:"), gbc);
-        gbc.gridy++;
-        txtTelefone = new JTextField(15);
-        formPanel.add(txtTelefone, gbc);
-
-        gbc.gridy++;
+        gbc.gridx = 0; gbc.anchor = GridBagConstraints.WEST;
         formPanel.add(new JLabel("Assinatura:"), gbc);
-        gbc.gridy++;
+        gbc.gridx = 1;
         String[] assinaturas = {"A (Premium)", "B (Padrão)", "C (Básico)", "N (Nenhuma)"};
         cmbAssinatura = new JComboBox<>(assinaturas);
         formPanel.add(cmbAssinatura, gbc);
+        gbc.gridy++;
 
         // Botões
         JPanel btnPanel = new JPanel(new FlowLayout());
@@ -837,16 +836,16 @@ private JPanel createUpdatePanel() {
         JButton btnLimpar = new JButton("Limpar");
         JButton btnDeletar = new JButton("Deletar");
         
-        btnSalvar.setBackground(new Color(60, 179, 113)); // Verde
+        btnSalvar.setBackground(new Color(60, 179, 113));
         btnSalvar.setForeground(Color.WHITE);
-        btnDeletar.setBackground(new Color(220, 53, 69)); // Vermelho
+        btnDeletar.setBackground(new Color(220, 53, 69));
         btnDeletar.setForeground(Color.WHITE);
 
         btnPanel.add(btnSalvar);
         btnPanel.add(btnLimpar);
         btnPanel.add(btnDeletar);
 
-        gbc.gridy++;
+        gbc.gridx = 0; gbc.gridy++; gbc.gridwidth = 2;
         formPanel.add(btnPanel, gbc);
 
         // --- Lado Direito: Tabela ---
@@ -857,14 +856,13 @@ private JPanel createUpdatePanel() {
         };
         tabelaUsuarios = new JTable(modeloTabelaUsuarios);
         
-        // Listener de Seleção da Tabela
         tabelaUsuarios.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting() && tabelaUsuarios.getSelectedRow() != -1) {
                 carregarUsuarioNoFormulario();
             }
         });
 
-        splitPane.setLeftComponent(formPanel);
+        splitPane.setLeftComponent(new JScrollPane(formPanel)); // Adicionado Scroll para segurança
         splitPane.setRightComponent(new JScrollPane(tabelaUsuarios));
         panel.add(splitPane, BorderLayout.CENTER);
 
@@ -873,11 +871,186 @@ private JPanel createUpdatePanel() {
         btnLimpar.addActionListener(e -> limparFormularioPessoas());
         btnDeletar.addActionListener(e -> deletarUsuario());
         
-        // Inicializa a tabela
         atualizarTabelaUsuarios();
-
         return panel;
     }
+
+    private JPanel createFuncionariosPanel() {
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JLabel title = new JLabel("Gerenciamento de Funcionários", SwingConstants.CENTER);
+        title.setFont(new Font("SansSerif", Font.BOLD, 18));
+        panel.add(title, BorderLayout.NORTH);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setDividerLocation(350);
+
+        // Formulário
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setBorder(BorderFactory.createTitledBorder("Dados do Funcionário"));
+        GridBagConstraints gbc = createGbc();
+
+        // Campos (Equivalentes aos de Usuario, mas com Cargo e Salário em vez de Assinatura)
+        txtNomeFunc = addLabelAndField(formPanel, "Nome:", gbc);
+        txtCpfFunc = addLabelAndField(formPanel, "CPF:", gbc);
+        txtEmailFunc = addLabelAndField(formPanel, "Email:", gbc);
+        txtTelefoneFunc = addLabelAndField(formPanel, "Telefone:", gbc);
+        txtSalarioFunc = addLabelAndField(formPanel, "Salário (R$):", gbc);
+        txtCargoFunc = addLabelAndField(formPanel, "Cargo:", gbc);
+
+        // Botões (Mesma estrutura de Clientes)
+        JPanel btnPanel = new JPanel(new FlowLayout());
+        JButton btnSalvar = new JButton("Salvar");
+        JButton btnLimpar = new JButton("Limpar");
+        JButton btnDeletar = new JButton("Deletar");
+
+        btnSalvar.setBackground(new Color(70, 130, 180)); // Azul para diferenciar
+        btnSalvar.setForeground(Color.WHITE);
+        btnDeletar.setBackground(new Color(220, 53, 69));
+        btnDeletar.setForeground(Color.WHITE);
+
+        btnPanel.add(btnSalvar);
+        btnPanel.add(btnLimpar);
+        btnPanel.add(btnDeletar);
+
+        gbc.gridx = 0; gbc.gridy++; gbc.gridwidth = 2;
+        formPanel.add(btnPanel, gbc);
+
+        // Tabela
+        String[] colunas = {"CPF", "Nome", "Cargo", "Salário", "Email"};
+        modeloTabelaFuncionarios = new DefaultTableModel(colunas, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) { return false; }
+        };
+        tabelaFuncionarios = new JTable(modeloTabelaFuncionarios);
+
+        tabelaFuncionarios.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && tabelaFuncionarios.getSelectedRow() != -1) {
+                carregarFuncionarioNoFormulario(); // Função equivalente a carregarUsuarioNoFormulario
+            }
+        });
+
+        splitPane.setLeftComponent(new JScrollPane(formPanel));
+        splitPane.setRightComponent(new JScrollPane(tabelaFuncionarios));
+        panel.add(splitPane, BorderLayout.CENTER);
+
+        // Ações (Funções equivalentes às de Clientes)
+        btnSalvar.addActionListener(e -> salvarFuncionario());
+        btnLimpar.addActionListener(e -> limparFormularioFuncionario());
+        btnDeletar.addActionListener(e -> deletarFuncionario());
+
+        atualizarTabelaFuncionarios(); 
+        return panel;
+    }
+
+
+    // --- Lógica CRUD de Funcionários ---
+
+    // 1. Equivalente a atualizarTabelaUsuarios
+    private void atualizarTabelaFuncionarios() {
+        modeloTabelaFuncionarios.setRowCount(0);
+        // Assume que existe getListaFuncionarios() no sistema (assim como existe getListaUsuarios)
+        java.util.List<Funcionario> funcionarios = sistema.getListaFuncionarios(); 
+        
+        if (funcionarios != null) {
+            for (Funcionario f : funcionarios) {
+                modeloTabelaFuncionarios.addRow(new Object[]{
+                    f.getCpf(), 
+                    f.getNome(), 
+                    f.getFuncao(), 
+                    String.format("%.2f", f.getSalario()),
+                    f.getEmail()
+                });
+            }
+        }
+    }
+
+    // 2. Equivalente a salvarUsuario
+    private void salvarFuncionario() {
+        String nome = txtNomeFunc.getText().trim();
+        String cpf = txtCpfFunc.getText().trim();
+        String email = txtEmailFunc.getText().trim();
+        String tel = txtTelefoneFunc.getText().trim();
+        String cargo = txtCargoFunc.getText().trim();
+        String salarioStr = txtSalarioFunc.getText().replace(",", ".").trim();
+
+        if (cpf.isEmpty() || nome.isEmpty() || salarioStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "CPF, Nome e Salário são obrigatórios.", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            double salario = Double.parseDouble(salarioStr);
+            
+            // Assume que existe adicionaFuncionario no sistema (assim como adicionaUsuario)
+            sistema.adicionaFuncionario(cpf, nome, tel, email, salario, cargo);
+            JOptionPane.showMessageDialog(this, "Funcionário salvo com sucesso!");
+            
+            limparFormularioFuncionario();
+            atualizarTabelaFuncionarios();
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Salário inválido.", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // 3. Equivalente a deletarUsuario
+    private void deletarFuncionario() {
+        int row = tabelaFuncionarios.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Selecione um funcionário.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String cpf = (String) modeloTabelaFuncionarios.getValueAt(row, 0);
+        int confirm = JOptionPane.showConfirmDialog(this, "Remover funcionário CPF " + cpf + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            // Assume que existe removerFuncionario no sistema (assim como removerUsuario)
+            // Se não existir no backend, precisará criar lá para manter a equivalência.
+            boolean removido = sistema.removerFuncionario(cpf); 
+            
+            if (removido) {
+                JOptionPane.showMessageDialog(this, "Funcionário removido.");
+                limparFormularioFuncionario();
+                atualizarTabelaFuncionarios();
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao remover.");
+            }
+        }
+    }
+
+    // 4. Equivalente a carregarUsuarioNoFormulario
+    private void carregarFuncionarioNoFormulario() {
+        int row = tabelaFuncionarios.getSelectedRow();
+        if (row == -1) return;
+
+        txtCpfFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 0).toString());
+        txtNomeFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 1).toString());
+        txtCargoFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 2).toString());
+        
+        // Limpeza da string de moeda para número
+        String salStr = modeloTabelaFuncionarios.getValueAt(row, 3).toString().replace("R$", "").replace(",", ".").trim();
+        txtSalarioFunc.setText(salStr);
+        
+        txtEmailFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 4).toString());
+        
+        txtCpfFunc.setEditable(false); 
+    }
+
+    // 5. Equivalente a limparFormularioPessoas
+    private void limparFormularioFuncionario() {
+        txtNomeFunc.setText("");
+        txtCpfFunc.setText("");
+        txtCpfFunc.setEditable(true);
+        txtEmailFunc.setText("");
+        txtTelefoneFunc.setText("");
+        txtSalarioFunc.setText("");
+        txtCargoFunc.setText("");
+        tabelaFuncionarios.clearSelection();
+    }
+
 
     // --- Tela de Pagamentos ---
     private JPanel createPagamentosPanel() {

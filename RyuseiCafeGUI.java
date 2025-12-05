@@ -918,7 +918,8 @@ private JPanel createUpdatePanel() {
         formPanel.add(btnPanel, gbc);
 
         // Tabela
-        String[] colunas = {"CPF", "Nome", "Cargo", "Salário", "Email"};
+        String[] colunas = {"CPF", "Nome", "Cargo", "Salário", "Email", "Telefone"}; 
+        
         modeloTabelaFuncionarios = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
@@ -950,7 +951,6 @@ private JPanel createUpdatePanel() {
     // 1. Equivalente a atualizarTabelaUsuarios
     private void atualizarTabelaFuncionarios() {
         modeloTabelaFuncionarios.setRowCount(0);
-        // Assume que existe getListaFuncionarios() no sistema (assim como existe getListaUsuarios)
         java.util.List<Funcionario> funcionarios = sistema.getListaFuncionarios(); 
         
         if (funcionarios != null) {
@@ -960,12 +960,12 @@ private JPanel createUpdatePanel() {
                     f.getNome(), 
                     f.getFuncao(), 
                     String.format("%.2f", f.getSalario()),
-                    f.getEmail()
+                    f.getEmail(),
+                    f.getTelefone() // <--- ADICIONADO AQUI
                 });
             }
         }
     }
-
     // 2. Equivalente a salvarUsuario
     private void salvarFuncionario() {
         String nome = txtNomeFunc.getText().trim();
@@ -1022,22 +1022,31 @@ private JPanel createUpdatePanel() {
     }
 
     // 4. Equivalente a carregarUsuarioNoFormulario
-    private void carregarFuncionarioNoFormulario() {
-        int row = tabelaFuncionarios.getSelectedRow();
-        if (row == -1) return;
+   private void carregarFuncionarioNoFormulario() {
+    int row = tabelaFuncionarios.getSelectedRow();
+    if (row == -1) return;
 
-        txtCpfFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 0).toString());
-        txtNomeFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 1).toString());
-        txtCargoFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 2).toString());
-        
-        // Limpeza da string de moeda para número
-        String salStr = modeloTabelaFuncionarios.getValueAt(row, 3).toString().replace("R$", "").replace(",", ".").trim();
-        txtSalarioFunc.setText(salStr);
-        
-        txtEmailFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 4).toString());
-        
-        txtCpfFunc.setEditable(false); 
+    // 0: CPF, 1: Nome, 2: Cargo, 3: Salário, 4: Email, 5: Telefone
+
+    txtCpfFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 0).toString());
+    txtNomeFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 1).toString());
+    txtCargoFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 2).toString());
+    
+    // Tratamento do Salário para tirar o R$ e poder editar
+    String salStr = modeloTabelaFuncionarios.getValueAt(row, 3).toString()
+                      .replace("R$", "").replace(",", ".").trim();
+    txtSalarioFunc.setText(salStr);
+    
+    txtEmailFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 4).toString());
+    
+    if (modeloTabelaFuncionarios.getColumnCount() > 5 && modeloTabelaFuncionarios.getValueAt(row, 5) != null) {
+        txtTelefoneFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 5).toString());
+    } else {
+        txtTelefoneFunc.setText(""); // Limpa se não tiver telefone
     }
+    
+    txtCpfFunc.setEditable(false); 
+}
 
     // 5. Equivalente a limparFormularioPessoas
     private void limparFormularioFuncionario() {

@@ -329,6 +329,7 @@ public class RyuseiCafeGUI extends JFrame {
     private void finalizarCompra(ActionEvent e) {
         if (carrinhoAtual.itensNoCarrinho().isEmpty()) {
             JOptionPane.showMessageDialog(this, "O carrinho está vazio.", "Atenção", JOptionPane.WARNING_MESSAGE);
+            atualizarTabelaEstoque();
             return;
         }
 
@@ -355,6 +356,21 @@ public class RyuseiCafeGUI extends JFrame {
         if (confirm == JOptionPane.YES_OPTION) {
             novoPagamento.Pago(); 
             sistema.adicionaPagamento(novoPagamento);
+            for (Vendivel itemDoCarrinho : carrinhoAtual.itensNoCarrinho()) {
+                // Tenta encontrar o item ORIGINAL na lista de Mangás
+                Optional<? extends Vendivel> itemOriginal = sistema.buscaMangaPorNome(itemDoCarrinho.getNome());
+                
+                // Se não achou, tenta na lista de Menu
+                if (!itemOriginal.isPresent()) {
+                    itemOriginal = sistema.buscaItemMenuPorNome(itemDoCarrinho.getNome());
+                }
+                
+                // Se encontrou o original no sistema, remove 1 do estoque
+                if (itemOriginal.isPresent()) {
+                    // add_estoque com valor negativo remove itens
+                    itemOriginal.get().add_estoque(-1); 
+                }
+            }
             
             // O estoque é atualizado APENAS AQUI, após a confirmação
             carrinhoAtual.AtualizaEstoquePosVenda();
@@ -375,7 +391,6 @@ public class RyuseiCafeGUI extends JFrame {
         }
     }
     
-    // --- MÉTODOS QUE ESTAVAM FALTANDO ---
 
 private void carregarItemNoFormularioEstoque() {
     int row = tabelaEstoque.getSelectedRow();
@@ -445,7 +460,7 @@ private JPanel createEstoquePanel() {
     panel.add(title, BorderLayout.NORTH);
 
     // --- LADO DIREITO: Tabela de Visualização ---
-    String[] colunas = {"Tipo", "Nome", "Preço (R$)", "Estoque", "ID / Local", "Detalhes Extras"};
+    String[] colunas = {"Tipo", "Nome", "Preço (R$)", "Estoque", "ID", "Detalhes Extras"};
     modeloEstoque = new DefaultTableModel(colunas, 0) {
         @Override
         public boolean isCellEditable(int row, int column) { return false; }

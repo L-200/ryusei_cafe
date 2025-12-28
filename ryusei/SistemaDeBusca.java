@@ -121,7 +121,7 @@ public class SistemaDeBusca {
      
     // Método original usado para carregar o CSV
     public Pagamento adicionaPagamento(String usr, float val, String type, String met, String da, String stt) {
-        Pagamento novo_pagamento = new Pagamento(usr, val, type, met, da, stt);
+        Pagamento novo_pagamento = new Pagamento(usr, val, met, da, stt);
         this.pagamentos.add(novo_pagamento);
         return novo_pagamento;
     }
@@ -306,7 +306,6 @@ public class SistemaDeBusca {
                 pw.println(p.getID_pagamento() + ";" +
                         p.getUsuario() + ";" +
                         p.getValor() + ";" +
-                        p.getTipo() + ";" +
                         p.getMetodo() + ";" +
                         p.getData() + ";" +
                         p.getStatus());

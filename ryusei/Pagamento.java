@@ -6,18 +6,16 @@ public class Pagamento {
     private String id_pagamento;
     private String usuario; //ID ou nome
     private float valor;
-    private String tipo;
     private String metodo;
     private String data; //25/08/2025, etc
     private String status; //pendente, pago...
 
     //construtor da classe
-    public Pagamento(String usr, float val, String type, String met, String da, String stt){
+    public Pagamento(String usr, float val, String met, String da, String stt){
         this.id_pagamento = nextid + "";
         nextid++;
         this.usuario = usr;
         this.valor = val;
-        this.tipo = type;
         this.metodo = met;
         this.data = da;
         this.status = stt;
@@ -30,7 +28,6 @@ public class Pagamento {
         System.out.println("ID do processo: " + this.id_pagamento);
         System.out.println("Usuário: " + this.usuario);
         System.out.println("Valor: R$" + this.valor);
-        System.out.println("Tipo: " + this.tipo);
         System.out.println("Método: " + this.metodo);
         System.out.println("Data: " + this.data);
         System.out.println("Status: " + this.status);
@@ -50,10 +47,6 @@ public class Pagamento {
 
     public String getUsuario () {
         return this.usuario;
-    }
-
-    public String getTipo () {
-        return this.tipo;
     }
 
     public String getMetodo () {

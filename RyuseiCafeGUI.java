@@ -338,15 +338,6 @@ public class RyuseiCafeGUI extends JFrame {
 
     float total = carrinhoAtual.calcula_total(); 
 
-    Object[] opcoesTipo = {"Compra", "Serviço"};
-    String tipo = (String) JOptionPane.showInputDialog(
-            this, 
-            "Selecione o Tipo:", 
-            "Tipo de Transação", 
-            JOptionPane.QUESTION_MESSAGE, 
-            null, 
-            opcoesTipo, 
-            opcoesTipo[0]);
 
     Object[] opcoesPagamento = {"Cartão de Crédito", "Cartão de Débito", "Pix", "Dinheiro"};
     String metodo = (String) JOptionPane.showInputDialog(
@@ -359,7 +350,7 @@ public class RyuseiCafeGUI extends JFrame {
             opcoesPagamento[0]);
 
     // Se o usuário clicar em "Cancelar" ou fechar a janela, as variáveis serão null
-    if (tipo == null || metodo == null) {
+    if ( metodo == null) {
         JOptionPane.showMessageDialog(this, "Operação cancelada.", "Cancelado", JOptionPane.WARNING_MESSAGE);
         return;
     }
@@ -367,7 +358,7 @@ public class RyuseiCafeGUI extends JFrame {
     String data = LocalDate.now().toString(); 
     
     // Cria o Pagamento
-    Pagamento novoPagamento = new Pagamento(usuarioAtual.getCpf(), total, tipo, metodo, data, "pendente");
+    Pagamento novoPagamento = new Pagamento(usuarioAtual.getCpf(), total, metodo, data, "pendente");
     
     int confirm = JOptionPane.showConfirmDialog(this, 
         String.format("Confirmar pagamento de R$ %.2f via %s?", total, metodo), 
@@ -1070,7 +1061,7 @@ private JPanel createUpdatePanel() {
         title.setFont(new Font("SansSerif", Font.BOLD, 24));
         panel.add(title, BorderLayout.NORTH);
 
-        String[] colunas = {"CPF Cliente", "Valor Total", "Tipo", "Método", "Data", "Status"};
+        String[] colunas = {"CPF Cliente", "Valor Total", "Método", "Data", "Status"};
         pagamentosModel = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
@@ -1103,7 +1094,6 @@ private JPanel createUpdatePanel() {
                 pagamentosModel.addRow(new Object[]{
                     p.getUsuario(),
                     String.format("R$ %.2f", p.getValor()),
-                    p.getTipo(),
                     p.getMetodo(),
                     p.getData(),
                     p.getStatus()

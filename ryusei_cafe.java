@@ -405,7 +405,7 @@ Bem-vindo ao sistema do ryusei cafe!
         String data = java.time.LocalDate.now().toString(); 
         
         // Cria o pagamento inicialmente como "pendente"
-        Pagamento novo_pagamento = new Pagamento(usuario.getCpf(), total, tipo, metodo, data, "pendente");
+        Pagamento novo_pagamento = new Pagamento(usuario.getCpf(), total, metodo, data, "pendente");
 
         System.out.print("Confirmar pagamento (S/N)? ");
         String confirmacao = sc.nextLine().toUpperCase();

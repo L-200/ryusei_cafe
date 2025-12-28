@@ -1,4 +1,4 @@
-package funcoes_auxiliares;
+package ryusei;
 
 public class Pagamento {
 

@@ -1,4 +1,4 @@
-package funcoes_auxiliares;
+package ryusei;
 
 public class Item_menu implements Vendivel {
     private String nome;

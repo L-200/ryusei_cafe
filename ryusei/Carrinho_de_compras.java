@@ -1,4 +1,4 @@
-package funcoes_auxiliares;
+package ryusei;
 
 import java.util.ArrayList;
 import java.util.List;

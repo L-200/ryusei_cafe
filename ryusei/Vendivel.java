@@ -1,4 +1,4 @@
-package funcoes_auxiliares;
+package ryusei;
 
 //interface para qualquer item que possa ser vendido
 public interface Vendivel {

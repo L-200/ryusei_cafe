@@ -1,4 +1,4 @@
-package funcoes_auxiliares;
+package ryusei;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.PrintWriter;

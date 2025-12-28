@@ -58,7 +58,7 @@ javac RyuseiCafeGUI.java
 java RyuseiCafeGUI
 ```
 
-#### Opção 3: Versão Linha de Comando (CLI)
+#### Opção 2: Versão Linha de Comando (CLI)
 Ideal para verificar a lógica sem dependência de janelas.
 
 ```bash

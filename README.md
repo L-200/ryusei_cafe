@@ -21,6 +21,7 @@ O sistema opera em dois modos:
 - [x] **Gestão de Pagamentos:** Simulação de pagamentos, incluindo o modo (cartão, dinheiro, pix) e se o pagamento já foi quitado.
 - [x] **Busca Inteligente:** Localização rápida de itens no acervo.
 - [x] **Permanência de Dados:** Os dados do sistema são salvos após o sistema ser fechado e podem ser reutilizados em usos futuros.
+- [ ] **Implementação de um Banco de Dados formal:** em desenvolvimento.
 
 ---
 

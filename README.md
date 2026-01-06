@@ -53,11 +53,7 @@ Clone este repositório ou baixe os arquivos, após isso instale o driver JDBC m
 Antes de rodar qualquer uma das duas versões disponíveis é preciso compila-las.
 
 ```bash
-# Se estiver no linux use
-javac -d out -cp ".:lib/postgresql-42.7.2.jar" $(find . -name "*.java")
-
-# Se estiver no windows use
-javac -d out -cp ".;lib/postgresql-42.7.2.jar" $(find . -name "*.java")
+mvn clean compile
 ```
 Após isso, escolha qual das duas seguintes opções você deseja usar.
 
@@ -65,15 +61,16 @@ Após isso, escolha qual das duas seguintes opções você deseja usar.
 Ideal para a experiência completa do usuário.
 
 ```bash
-java -cp "out:lib/postgresql-42.7.2.jar" RyuseiCafeGUI
+mvn exec:java -Dexec.mainClass=RyuseiCafeGUI
 ```
 
 #### Opção 2: Versão Linha de Comando (CLI)
 Ideal para verificar a lógica sem dependência de janelas.
 
 ```bash
-java -cp "out:lib/postgresql-42.7.2.jar" ryusei_cafe
+mvn exec:java -Dexec.mainClass=ryusei_cafe
 ```
+
 ---
 ## 📝 Licença
 Este projeto é de uso educacional. Sinta-se à vontade para forká-lo e aprender com ele.

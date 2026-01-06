@@ -2,7 +2,10 @@
 *.class
 
 # Ignorar arquivos de documentação gerados pelo javadoc
-#/docs/
+/docs/
+
+# Ignorar o target do Maven
+/target/
 
 # Ignorar os .csv de dados
 *.csv

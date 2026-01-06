@@ -42,31 +42,37 @@ Este projeto foca fortemente na aplicação acadêmica de conceitos de POO:
 ### Pré-requisitos
 * **Java JDK** instalado (Recomendado versão 11 ou superior).
 * Terminal ou IDE de sua preferência (VS Code, IntelliJ, Eclipse).
+* **Postgres** instalado em sua máquina com um usuário ryusei( de senha ryusei e com acesso a uma Database ryusei_cafe ).
 
 ### 📦 Instalação e Execução
 
-Clone este repositório ou baixe os arquivos. Em seguida, abra o terminal na pasta raiz do projeto.
+Clone este repositório ou baixe os arquivos, após isso instale o driver JDBC mais [recente](https://jdbc.postgresql.org/download/) dentro da pasta libs. Em seguida, abra o terminal na pasta raiz do projeto.
+
+#### Compilação para ambas versões do programa
+
+Antes de rodar qualquer uma das duas versões disponíveis é preciso compila-las.
+
+```bash
+# Se estiver no linux use
+javac -d out -cp ".:lib/postgresql-42.7.2.jar" $(find . -name "*.java")
+
+# Se estiver no windows use
+javac -d out -cp ".;lib/postgresql-42.7.2.jar" $(find . -name "*.java")
+```
+Após isso, escolha qual das duas seguintes opções você deseja usar.
 
 #### Opção 1: Versão com Interface Gráfica (GUI)
 Ideal para a experiência completa do usuário.
 
 ```bash
-# 1. Compile o arquivo principal da GUI
-javac RyuseiCafeGUI.java
-
-# 2. Execute a aplicação
-java RyuseiCafeGUI
+java -cp "out:lib/postgresql-42.7.2.jar" RyuseiCafeGUI
 ```
 
 #### Opção 2: Versão Linha de Comando (CLI)
 Ideal para verificar a lógica sem dependência de janelas.
 
 ```bash
-# 1. Compile o arquivo do modo texto
-javac ryusei_cafe.java
-
-# 2. Execute a aplicação
-java ryusei_cafe
+java -cp "out:lib/postgresql-42.7.2.jar" ryusei_cafe
 ```
 ---
 ## 📝 Licença

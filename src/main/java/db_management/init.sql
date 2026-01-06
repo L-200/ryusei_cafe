@@ -19,18 +19,20 @@ CREATE TABLE Usuario (
 
 -- para o package ryusei
 
-CREATE TABLE Item_menu (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE itens_menu (
+    id_menu SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    descricao TEXT,
-    preco DECIMAL (10, 2) NOT NULL
-)
+    ingredientes TEXT,
+    preco DECIMAL(10, 2) NOT NULL,
+    estoque INT DEFAULT 0,
+    qtd_venda INT DEFAULT 0
+);
 
 CREATE TABLE Manga (
     id SERIAL PRIMARY KEY,
     titulo VARCHAR(200) NOT NULL,
-    autor VARCHAR(100),
-    genero VARCHAR(50),
+    autores VARCHAR(200),
+    generos VARCHAR(200),
     serie VARCHAR(100),
     volume INT,
     localizacao VARCHAR(50),
@@ -45,5 +47,4 @@ CREATE TABLE Pagamento (
     metodo VARCHAR(50) NOT NULL,
     valor DECIMAL (10, 2) NOT NULL,
     data_pagamento TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-
 )

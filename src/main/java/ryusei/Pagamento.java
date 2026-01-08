@@ -2,8 +2,7 @@ package ryusei;
 
 public class Pagamento {
 
-    private static int nextid = 1;
-    private String id_pagamento;
+    private int id;
     private String usuario; //ID ou nome
     private float valor;
     private String metodo;
@@ -11,9 +10,8 @@ public class Pagamento {
     private String status; //pendente, pago...
 
     //construtor da classe
-    public Pagamento(String usr, float val, String met, String da, String stt){
-        this.id_pagamento = nextid + "";
-        nextid++;
+    public Pagamento(int id, String usr, float val, String met, String da, String stt){
+        this.id = id;
         this.usuario = usr;
         this.valor = val;
         this.metodo = met;
@@ -25,7 +23,7 @@ public class Pagamento {
     }
 
     public void mostraPagamento() {
-        System.out.println("ID do processo: " + this.id_pagamento);
+        System.out.println("ID do processo: " + this.id);
         System.out.println("Usuário: " + this.usuario);
         System.out.println("Valor: R$" + this.valor);
         System.out.println("Método: " + this.metodo);
@@ -33,8 +31,8 @@ public class Pagamento {
         System.out.println("Status: " + this.status);
     }
 
-    public String getID_pagamento () {
-        return this.id_pagamento;
+    public int getID_pagamento () {
+        return this.id;
     }
 
     public String getStatus () {
@@ -61,8 +59,8 @@ public class Pagamento {
         this.status = novo_status;
     }
     
-    public void setID_pagamento (String novo_id) {
-        this.id_pagamento = novo_id;
+    public void setID_pagamento (int novo_id) {
+        this.id = novo_id;
     }
     
 }

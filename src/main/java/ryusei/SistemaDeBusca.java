@@ -102,8 +102,8 @@ public class SistemaDeBusca {
         return novo_funcionario;
     }
 
-    public Manga adicionaManga(String nome, String[] autores, String[] generos, String serie, int volume, String localizacao, int estoqu, float preco) {
-        Manga novo_manga = new Manga(nome, autores, generos, serie, volume, localizacao, estoqu, preco);
+    public Manga adicionaManga(String nome, String autores, String generos, String serie, String localizacao, int estoqu, float preco) {
+        Manga novo_manga = new Manga(0, nome, autores, generos, serie, localizacao, 0, estoqu, preco);
         this.mangas.add(novo_manga);
         return novo_manga;
     }
@@ -120,8 +120,8 @@ public class SistemaDeBusca {
     }
      
     // Método original usado para carregar o CSV
-    public Pagamento adicionaPagamento(String usr, float val, String type, String met, String da, String stt) {
-        Pagamento novo_pagamento = new Pagamento(usr, val, met, da, stt);
+    public Pagamento adicionaPagamento(int id, String usr, float val, String type, String met, String da, String stt) {
+        Pagamento novo_pagamento = new Pagamento(id, usr, val, met, da, stt);
         this.pagamentos.add(novo_pagamento);
         return novo_pagamento;
     }
@@ -215,9 +215,9 @@ public class SistemaDeBusca {
         .findFirst();
     }
 
-    public Optional<Manga> buscaMangaPorID (String id_desejado) {
+    public Optional<Manga> buscaMangaPorID (int id_desejado) {
         return mangas.stream()
-        .filter(mangas -> mangas.getId().equals(id_desejado))
+        .filter(mangas -> mangas.getId() == id_desejado)
         .findFirst();
     }
     
@@ -228,9 +228,9 @@ public class SistemaDeBusca {
         .findFirst();
     }
 
-    public Optional<Pagamento> buscaPagamentoPorID (String ID_do_item_desejado) {
+    public Optional<Pagamento> buscaPagamentoPorID (int ID_do_item_desejado) {
         return pagamentos.stream()
-        .filter(pagamento -> pagamento.getID_pagamento().equals(ID_do_item_desejado))
+        .filter(pagamento -> pagamento.getID_pagamento() == ID_do_item_desejado)
         .findFirst();
     }
 
@@ -276,7 +276,6 @@ public class SistemaDeBusca {
                         autores + ";" +
                         generos + ";" +
                         m.getSerie() + ";" +
-                        m.getVolume() + ";" +
                         m.getLocalizacao() + ";" +
                         m.getEstoque() + ";" +
                         m.getPreco());

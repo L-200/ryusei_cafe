@@ -2,8 +2,7 @@ package ryusei;
 
 public class Manga implements Vendivel {
 
-    private static int nextid = 1;
-    private String id;
+    private int id;
     private String nome;
     private String autores; //Pode haver multiplos
     private String generos; //geralmente tem multiplos
@@ -15,15 +14,14 @@ public class Manga implements Vendivel {
     //private int qtdLeitura_manga; *como não vamos emprestar mangas, sugiro retirar isso
 
     //construtor do manga
-    public Manga(String Nome, String auto, String gen, String ser, String local, int estoque, float preco){
-        this.id = nextid + "";
-        nextid++;
+    public Manga(int ID, String Nome, String auto, String gen, String ser, String local, int qtdVenda, int estoque, float preco){
+        this.id = ID;
         this.nome = Nome;
         this.autores = auto;
         this.generos = gen;
         this.serie = ser;
         this.localizacao = local;
-        this.qtdVenda = 0;
+        this.qtdVenda = qtdVenda;
         this.estoque = estoque;
         this.preco = preco;
         //this.qtdLeitura = qLei;
@@ -55,7 +53,7 @@ public class Manga implements Vendivel {
         this.estoque += qntd_novo_estoque;
     }
 
-    public String getId() {
+    public int getId() {
         return this.id;
     }
 
@@ -101,6 +99,10 @@ public class Manga implements Vendivel {
 
     public void localizacaoAtualiza(String local){
         this.localizacao = local;
+    }
+
+    public void setID(int ID) {
+        this.id = ID;
     }
     
     public void mostraManga() {

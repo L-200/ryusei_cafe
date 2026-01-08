@@ -34,7 +34,6 @@ CREATE TABLE Manga (
     autores VARCHAR(200),
     generos VARCHAR(200),
     serie VARCHAR(100),
-    volume INT,
     localizacao VARCHAR(50),
     qtd_vendas INT, 
     estoque INT,

@@ -103,7 +103,7 @@ public class RyuseiCafeGUI extends JFrame {
         // Adicionando dados de exemplo se os CSVs estiverem vazios
         if (sistema.buscarUsuarioPorCpf("111").isEmpty()) {
             sistema.adicionaUsuario("111", "João Silva", "joao@email.com", "9999-0000", 'A');
-            sistema.adicionaManga("One Piece Vol 1", new String[]{"Oda"}, new String[]{"Shonen"}, "One Piece", 1, "A1", 10, 29.90f);
+            sistema.adicionaManga("Fullmetal Alchemist Vol I", "Hiromu", "Ação, aventura, ficção", "Fullmetal Alchemist", "1A", 20, 19.99f);
             sistema.adicionaItem("Cappuccino", "Leite, café, cacau", 8.50f, 50, 0);
         }
         System.out.println("Dados carregados. Usuário de teste: 111.");
@@ -545,17 +545,11 @@ private JComponent createMangaFormPanel() {
         try {
             String nome = txtNome.getText().trim();
             String serie = txtSerie.getText().trim();
-            int volume = Integer.parseInt(txtVolume.getText().trim());
             float preco = Float.parseFloat(txtPreco.getText().replace(",", ".").trim());
             int estoque = Integer.parseInt(txtEstoque.getText().trim());
             String local = txtLocal.getText().trim();
-            
-            // Processamento de Arrays
-            String[] autores = txtAutores.getText().split(",");
-            for(int i=0; i<autores.length; i++) autores[i] = autores[i].trim();
-            
-            String[] generos = txtGeneros.getText().split(",");
-            for(int i=0; i<generos.length; i++) generos[i] = generos[i].trim();
+            String autores = txtAutores.getText().trim();
+            String generos = txtGeneros.getText().trim();
 
             if (nome.isEmpty() || serie.isEmpty() || local.isEmpty()) {
                 JOptionPane.showMessageDialog(panel, "Preencha todos os campos de texto.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -563,7 +557,7 @@ private JComponent createMangaFormPanel() {
             }
 
             // Chamada ao sistema
-            sistema.adicionaManga(nome, autores, generos, serie, volume, local, estoque, preco);
+            sistema.adicionaManga(nome, autores, generos, serie, local, estoque, preco);
             
             JOptionPane.showMessageDialog(panel, "Mangá cadastrado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             atualizarTabelaEstoque();
@@ -681,7 +675,7 @@ private void atualizarTabelaEstoque() {
     
     // Mangás: Coluna 4 DEVE ser o ID para a atualização funcionar
     for (Manga m : sistema.getListaMangas()) {
-        String detalhes = "Loc: " + m.getLocalizacao() + " | Vol: " + m.getVolume();
+        String detalhes = "Loc: " + m.getLocalizacao();
         modeloEstoque.addRow(new Object[]{
             "Mangá", 
             m.getNome(), 

@@ -84,12 +84,44 @@ public class MangaDAO {
     }
 
     // READ ESPECIFICO
-    public Optional<Manga> buscaMangaPorID(int idDesejado) {
+    public Optional<Manga> buscaMangaPorNome(String nomeDesejado) {
+    String sql = "SELECT * FROM Manga WHERE titulo = ?";
+
+    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+        stmt.setString(1, nomeDesejado); // Passa o ID inteiro para o banco
+
+        try (ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                
+                Manga manga = new Manga(
+                    rs.getInt("id"),
+                    rs.getString("titulo"), 
+                    rs.getString("autores"), 
+                    rs.getString("generos"), 
+                    rs.getString("serie"),
+                    rs.getString("localizacao"), 
+                    rs.getInt("qtd_vendas"),
+                    rs.getInt("estoque"), 
+                    rs.getFloat("preco")
+                );
+
+                return Optional.of(manga);
+            }
+        }
+    } catch (Exception e) {
+        throw new RuntimeException("Erro ao buscar mangá por nome", e);
+    }
+
+    return Optional.empty();
+}
+
+ public Optional<Manga> buscaMangaPorID(int id_desejado) {
     String sql = "SELECT * FROM Manga WHERE id = ?";
 
     try (PreparedStatement stmt = conn.prepareStatement(sql)) {
         
-        stmt.setInt(1, idDesejado); // Passa o ID inteiro para o banco
+        stmt.setInt(1, id_desejado); // Passa o ID inteiro para o banco
 
         try (ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {

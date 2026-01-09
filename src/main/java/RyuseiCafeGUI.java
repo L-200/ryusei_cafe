@@ -358,7 +358,7 @@ public class RyuseiCafeGUI extends JFrame {
     String data = LocalDate.now().toString(); 
     
     // Cria o Pagamento
-    Pagamento novoPagamento = new Pagamento(usuarioAtual.getCpf(), total, metodo, data, "pendente");
+    Pagamento novoPagamento = new Pagamento(0, usuarioAtual.getCpf(), total, metodo, data);
     
     int confirm = JOptionPane.showConfirmDialog(this, 
         String.format("Confirmar pagamento de R$ %.2f via %s?", total, metodo), 

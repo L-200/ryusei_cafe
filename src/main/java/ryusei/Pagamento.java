@@ -10,13 +10,12 @@ public class Pagamento {
     private String status; //pendente, pago...
 
     //construtor da classe
-    public Pagamento(int id, String usr, float val, String met, String da, String stt){
+    public Pagamento(int id, String usr, float val, String met, String da){
         this.id = id;
         this.usuario = usr;
         this.valor = val;
         this.metodo = met;
         this.data = da;
-        this.status = stt;
     }
     public void Pago() { //chamado quando a pessoa realizar o pagamento para mudar o status
         this.status = "pago";

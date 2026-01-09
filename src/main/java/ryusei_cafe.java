@@ -396,8 +396,6 @@ Bem-vindo ao sistema do ryusei cafe!
         System.out.println("Valor Total: R$" + String.format("%.2f", total));
         
         // Simular Pagamento
-        System.out.print("Tipo (Compra/Serviço): ");
-        String tipo = sc.nextLine();
         System.out.print("Método de Pagamento (Cartão/Pix/Dinheiro): ");
         String metodo = sc.nextLine();
         
@@ -405,7 +403,7 @@ Bem-vindo ao sistema do ryusei cafe!
         String data = java.time.LocalDate.now().toString(); 
         
         // Cria o pagamento inicialmente como "pendente"
-        Pagamento novo_pagamento = new Pagamento(usuario.getCpf(), total, metodo, data, "pendente");
+        Pagamento novo_pagamento = new Pagamento(0, usuario.getCpf(), total, metodo, data);
 
         System.out.print("Confirmar pagamento (S/N)? ");
         String confirmacao = sc.nextLine().toUpperCase();

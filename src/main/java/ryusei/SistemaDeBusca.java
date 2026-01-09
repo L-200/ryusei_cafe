@@ -109,7 +109,7 @@ public class SistemaDeBusca {
     }
 
     public Item_menu adicionaItem(String nome, String ingredientes, float preco, int estoque, int qtdVenda) {
-        Item_menu novo_item = new Item_menu(nome, ingredientes, preco, estoque, qtdVenda);
+        Item_menu novo_item = new Item_menu(0, nome, ingredientes, preco, estoque, qtdVenda);
         this.itens_menu.add(novo_item);
         return novo_item;
     }
@@ -120,8 +120,8 @@ public class SistemaDeBusca {
     }
      
     // Método original usado para carregar o CSV
-    public Pagamento adicionaPagamento(int id, String usr, float val, String type, String met, String da, String stt) {
-        Pagamento novo_pagamento = new Pagamento(id, usr, val, met, da, stt);
+    public Pagamento adicionaPagamento(int id, String usr, float val, String type, String met, String da) {
+        Pagamento novo_pagamento = new Pagamento(id, usr, val, met, da);
         this.pagamentos.add(novo_pagamento);
         return novo_pagamento;
     }

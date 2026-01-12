@@ -78,7 +78,7 @@ public class MangaDAO {
                     listaMangas.add(novoManga);
                 }
         } catch (Exception e) {
-        throw new RuntimeException("Erro ao listar mangás do banco", e);
+        throw new RuntimeException("Erro ao listar mangás do banco: " + e.getMessage(), e);
         }
         return listaMangas;
     }
@@ -110,7 +110,7 @@ public class MangaDAO {
             }
         }
     } catch (Exception e) {
-        throw new RuntimeException("Erro ao buscar mangá por nome", e);
+        throw new RuntimeException("Erro ao buscar mangá por nome: " + e.getMessage(), e);
     }
 
     return Optional.empty();
@@ -142,7 +142,7 @@ public class MangaDAO {
             }
         }
     } catch (Exception e) {
-        throw new RuntimeException("Erro ao buscar mangá por ID", e);
+        throw new RuntimeException("Erro ao buscar mangá por ID:" + e.getMessage(), e);
     }
 
     return Optional.empty();

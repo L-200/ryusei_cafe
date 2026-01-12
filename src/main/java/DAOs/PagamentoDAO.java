@@ -66,7 +66,7 @@ public class PagamentoDAO {
                         listaPagamentos.add(novoPagamento); 
                 }
             } catch (Exception e) {
-                throw new RuntimeException ("Erro ao listar pagamentos do banco", e);
+                throw new RuntimeException ("Erro ao listar pagamentos do banco: " + e.getMessage(), e);
             }
             return listaPagamentos;
     }
@@ -98,7 +98,7 @@ public class PagamentoDAO {
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao buscar Pagamento por ID", e);
+            throw new RuntimeException("Erro ao buscar Pagamento por ID: " + e.getMessage(), e);
         }
 
         return Optional.empty();

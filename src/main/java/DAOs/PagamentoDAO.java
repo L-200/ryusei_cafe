@@ -79,7 +79,7 @@ public class PagamentoDAO {
 
             stmt.setInt(1, id_desejado);
 
-            try (ResultSet rs = stmt.executeQuery(sql)) {
+            try (ResultSet rs = stmt.executeQuery()) {
 
                 if (rs.next()) {
 

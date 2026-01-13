@@ -33,7 +33,7 @@ public class ItemMenuDAO {
 
             stmt.setInt(5, item.getQtdVenda());
 
-            stmt.execute();
+            stmt.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException("Erro ao salvar Item do Menu: " + e.getMessage(), e);
         }

@@ -46,7 +46,7 @@ public class MangaDAO {
         // 8. Preço
         stmt.setFloat(9, manga.getPreco()); 
 
-        stmt.execute();
+        stmt.executeUpdate();
 
         } catch (Exception e) {
             throw new RuntimeException("Erro ao salvar mangá: " + e.getMessage(), e);

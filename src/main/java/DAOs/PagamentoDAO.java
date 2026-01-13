@@ -36,7 +36,7 @@ public class PagamentoDAO {
 
             stmt.setDate(4, sqlDate);
 
-            stmt.execute();
+            stmt.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException("Erro ao salvar pagamento: " + e.getMessage(), e);
         }

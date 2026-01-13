@@ -6,31 +6,31 @@ CREATE TABLE Pessoas (
     telefone VARCHAR(20)
 )
 
-CREATE TABLE Funcionario (
+CREATE TABLE Funcionarios (
     cpf VARCHAR(11) PRIMARY KEY REFERENCES Pessoas(cpf) ON DELETE CASCADE,
     salario DECIMAL (10, 2),
     funcao VARCHAR(30)
 )
 
-CREATE TABLE Usuario (
+CREATE TABLE Usuarios (
     cpf VARCHAR(11) PRIMARY KEY REFERENCES Pessoas(cpf) ON DELETE CASCADE,
     assinatura CHAR(1)
 )
 
 -- para o package ryusei
 
-CREATE TABLE itens_menu (
+CREATE TABLE Itens_menu (
     id_menu SERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
+    nome VARCHAR(100) NOT NULL UNIQUE,
     ingredientes TEXT,
     preco DECIMAL(10, 2) NOT NULL,
     estoque INT DEFAULT 0,
     qtd_venda INT DEFAULT 0
 );
 
-CREATE TABLE Manga (
+CREATE TABLE Mangas (
     id SERIAL PRIMARY KEY,
-    titulo VARCHAR(200) NOT NULL,
+    titulo VARCHAR(200) NOT NULL UNIQUE,
     autores VARCHAR(200),
     generos VARCHAR(200),
     serie VARCHAR(100),
@@ -40,7 +40,7 @@ CREATE TABLE Manga (
     preco DECIMAL (10, 2) NOT NULL
 )
 
-CREATE TABLE Pagamento (
+CREATE TABLE Pagamentos (
     id SERIAL PRIMARY KEY,
     cpf_cliente VARCHAR(11) REFERENCES Pessoas(cpf),
     metodo VARCHAR(50) NOT NULL,

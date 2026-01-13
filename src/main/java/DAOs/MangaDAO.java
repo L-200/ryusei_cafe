@@ -18,7 +18,7 @@ public class MangaDAO {
     }
 
     public void salvar(Manga manga) {
-    String sql = "INSERT INTO Manga (titulo, autores, generos, serie, volume, localizacao, qtd_vendas, estoque, preco) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO Mangas (titulo, autores, generos, serie, volume, localizacao, qtd_vendas, estoque, preco) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     try (PreparedStatement stmt = conn.prepareStatement(sql)) { // preparação da consulta sql para o postgres
         
@@ -58,7 +58,7 @@ public class MangaDAO {
     public List<Manga> listarTodos() {
 
         List<Manga> listaMangas = new ArrayList<>();
-        String sql = "SELECT * FROM MANGA";
+        String sql = "SELECT * FROM Mangas";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql); 
             ResultSet rs = stmt.executeQuery()) {
@@ -85,7 +85,7 @@ public class MangaDAO {
 
     // READ ESPECIFICO
     public Optional<Manga> buscaMangaPorNome(String nomeDesejado) {
-    String sql = "SELECT * FROM Manga WHERE titulo = ?";
+    String sql = "SELECT * FROM Mangas WHERE titulo = ?";
 
     try (PreparedStatement stmt = conn.prepareStatement(sql)) {
         
@@ -117,7 +117,7 @@ public class MangaDAO {
 }
 
  public Optional<Manga> buscaMangaPorID(int id_desejado) {
-    String sql = "SELECT * FROM Manga WHERE id = ?";
+    String sql = "SELECT * FROM Mangas WHERE id = ?";
 
     try (PreparedStatement stmt = conn.prepareStatement(sql)) {
         

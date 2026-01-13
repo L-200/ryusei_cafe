@@ -21,7 +21,7 @@ public class PagamentoDAO {
 
     public void salvarPagamento (Pagamento pagamento) {
 
-        String sql = "INSERT INTO Pagamento (cpf_cliente, metodo, valor, data_pagamento) VALUES ( ?, ?, ?, ?)";
+        String sql = "INSERT INTO Pagamentos (cpf_cliente, metodo, valor, data_pagamento) VALUES ( ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 

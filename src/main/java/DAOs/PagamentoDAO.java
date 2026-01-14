@@ -48,7 +48,7 @@ public class PagamentoDAO {
         String sql = "SELECT * FROM Pagamentos";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery(sql)) {
+            ResultSet rs = stmt.executeQuery()) {
 
                 while (rs.next()) {
 
@@ -104,4 +104,39 @@ public class PagamentoDAO {
         return Optional.empty();
     }
 
+    public List <Pagamento> listaPagamentosFeitosPorCPF (String cpf_desejado) {
+
+        List <Pagamento> pagamentosDesejados = new ArrayList<>();
+
+        String sql = """
+                SELECT *
+                FROM Pagamentos 
+                WHERE Pagamentos.cpf_cliente = ?
+                """;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, cpf_desejado);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
+                    
+                    Date sqlDate = rs.getDate("data_pagamento");
+
+                    String data = sqlDate.toLocalDate().toString();
+
+                    Pagamento novoPagamento = new Pagamento(
+                        rs.getInt("id"), 
+                        rs.getString("cpf_cliente"),
+                        rs.getFloat("valor"), 
+                        rs.getString("metodo"),
+                        data);
+                        pagamentosDesejados.add(novoPagamento);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao listar todos os pagamentos do cliente: " + e.getMessage(), e);
+        }
+
+        return pagamentosDesejados;
+    }
 }

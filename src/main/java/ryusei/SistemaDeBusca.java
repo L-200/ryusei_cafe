@@ -1,156 +1,169 @@
-package ryusei;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.PrintWriter;
-import java.util.ArrayList;
+package ryusei; 
+
+import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
+
+import DAOs.FuncionarioDAO;
+import DAOs.MangaDAO;
+import DAOs.ItemMenuDAO;     
+import DAOs.PagamentoDAO;
+import DAOs.UsuarioDAO;
+
+import db_management.ConnectionFactory;
+
+import ryusei.Item_menu;
+import ryusei.Manga;
+import ryusei.Pagamento;
 import pessoa.Funcionario;
 import pessoa.Usuario;
 
 public class SistemaDeBusca {
 
-    private List<Manga> mangas;
-    private List<Usuario> usuarios;
-    private List<Funcionario> funcionarios;
-    private List<Pagamento> pagamentos;
-    private List<Item_menu> itens_menu;
+    private Connection connection;
+    
+    private MangaDAO mangaDAO;
+    private UsuarioDAO usuarioDAO;
+    private FuncionarioDAO funcionarioDAO;
+    private PagamentoDAO pagamentoDAO;
+    private ItemMenuDAO menuDAO;
 
     public SistemaDeBusca() {
-        this.mangas = new ArrayList<>();
-        this.usuarios = new ArrayList<>();
-        this.pagamentos = new ArrayList<>();
-        this.itens_menu = new ArrayList<>();
-        this.funcionarios = new ArrayList<>();
+        // 1. Cria a conexão com o banco
+        this.connection = new ConnectionFactory().recuperarConexao();
+
+        // 2. Inicializa os DAOs passando a conexão
+        this.mangaDAO = new MangaDAO(this.connection);
+        this.usuarioDAO = new UsuarioDAO(this.connection);
+        this.funcionarioDAO = new FuncionarioDAO(this.connection);
+        this.pagamentoDAO = new PagamentoDAO(this.connection);
+        this.menuDAO = new ItemMenuDAO(this.connection);
+        
     }
 
-    public void carregarUsuariosCSV() {
-    try (BufferedReader br = new BufferedReader(new FileReader("usuarios.csv"))) {
-        String linha;
-        while ((linha = br.readLine()) != null) {
-            String[] p = linha.split(";");
-            adicionaUsuario(p[0], p[1], p[2], p[3], p[4].charAt(0));
-        }
-    } catch (Exception e) {}
-}
-
-    public void carregarFuncionariosCSV() {
-        try (BufferedReader br = new BufferedReader(new FileReader("funcionarios.csv"))) {
-            String linha;
-            while ((linha = br.readLine()) != null) {
-                String[] p = linha.split(";");
-                adicionaFuncionario(p[0], p[1], p[2], p[3],
-                                    Double.parseDouble(p[4]), p[5]);
-            }
-        } catch (Exception e) {}
-    }
-
-    public void carregarMangasCSV() {
-        try (BufferedReader br = new BufferedReader(new FileReader("mangas.csv"))) {
-            String linha;
-            while ((linha = br.readLine()) != null) {
-                String[] p = linha.split(";");
-                String[] autores = p[1].split(",");
-                String[] generos = p[2].split(",");
-
-                adicionaManga(p[0], autores, generos, p[3],
-                            Integer.parseInt(p[4]),
-                            p[5],
-                            Integer.parseInt(p[6]),
-                            Float.parseFloat(p[7]));
-            }
-        } catch (Exception e) {}
-    }
-
-    public void carregarMenuCSV() {
-        try (BufferedReader br = new BufferedReader(new FileReader("menu.csv"))) {
-            String linha;
-            while ((linha = br.readLine()) != null) {
-                String[] p = linha.split(";");
-                Item_menu item = adicionaItem(p[1], p[2],
-                                            Float.parseFloat(p[3]),
-                                            Integer.parseInt(p[4]),
-                                            Integer.parseInt(p[5]));
-                item.setID_menu(Integer.parseInt(p[0]));
-            }
-        } catch (Exception e) {}
-    }
-
-    public void carregarPagamentosCSV() {
-        try (BufferedReader br = new BufferedReader(new FileReader("pagamentos.csv"))) {
-            String linha;
-            while ((linha = br.readLine()) != null) {
-                String[] p = linha.split(";");
-                Pagamento pag = adicionaPagamento(p[1],
-                                                Float.parseFloat(p[2]),
-                                                p[3], p[4], p[5], p[6]);
-                pag.setID_pagamento(p[0]);
-            }
-        } catch (Exception e) {}
-    }
-
-    public Usuario adicionaUsuario(String cpf, String nome, String email, String telefone, char Assinatura) {
-
-        Usuario novo_usuario = new Usuario(cpf, nome, email, telefone, Assinatura);
-        this.usuarios.add(novo_usuario);
-        return novo_usuario;
+    // MÉTODOS DE ESCRITA 
+    public Usuario adicionaUsuario(String cpf, String nome, String email, String telefone, char assinatura) {
+        Usuario novo = new Usuario(cpf, nome, email, telefone, assinatura);
+        this.usuarioDAO.salvarUsuario(novo); // O DAO joga no Postgres
+        return novo;
     }
 
     public Funcionario adicionaFuncionario(String cpf, String nome, String telefone, String email, double salario, String funcao) {
-        Funcionario novo_funcionario = new Funcionario(cpf, nome, telefone, email, salario, funcao);
-        this.funcionarios.add(novo_funcionario);
-        return novo_funcionario;
+        Funcionario novo = new Funcionario(cpf, nome, telefone, email, salario, funcao);
+        this.funcionarioDAO.salvarFuncionario(novo);
+        return novo;
     }
 
-    public Manga adicionaManga(String nome, String autores, String generos, String serie, String localizacao, int estoqu, float preco) {
-        Manga novo_manga = new Manga(0, nome, autores, generos, serie, localizacao, 0, estoqu, preco);
-        this.mangas.add(novo_manga);
-        return novo_manga;
+    // Adaptado para usar a nova classe Manga (que espera o ID do banco depois)
+    public Manga adicionaManga(String nome, String autores, String generos, String serie, String localizacao, int qtd_venda, int estoque, float preco) {
+        // ID 0 ou -1 pois o banco vai gerar o serial
+        Manga novo = new Manga(0, nome, autores, generos, serie, localizacao, qtd_venda, estoque, preco);
+        this.mangaDAO.salvar(novo); 
+        return novo;
     }
 
     public Item_menu adicionaItem(String nome, String ingredientes, float preco, int estoque, int qtdVenda) {
-        Item_menu novo_item = new Item_menu(0, nome, ingredientes, preco, estoque, qtdVenda);
-        this.itens_menu.add(novo_item);
-        return novo_item;
-    }
-    
-    // Sobrecarga para adicionar um objeto Pagamento já criado (usado no fluxo de compra)
-    public void adicionaPagamento(Pagamento p) {
-        this.pagamentos.add(p);
-    }
-     
-    // Método original usado para carregar o CSV
-    public Pagamento adicionaPagamento(int id, String usr, float val, String type, String met, String da) {
-        Pagamento novo_pagamento = new Pagamento(id, usr, val, met, da);
-        this.pagamentos.add(novo_pagamento);
-        return novo_pagamento;
-    }
-    
-    public void mostraUsuarios() {
-        if (usuarios.isEmpty()) {
-            System.out.println("Nenhum usuário cadastrado.");
-            return;
-        }
-        System.out.println("\n--- LISTA DE USUÁRIOS ---");
-        for (Usuario u : usuarios) {
-            u.mostraUsuario();
-            System.out.println("-------------------------");
-        }
+        Item_menu novo = new Item_menu(0, nome, ingredientes, preco, estoque, qtdVenda);
+        this.menuDAO.salvarItemMenu(novo);
+        return novo;
     }
 
-    public void mostraFuncionarios() {
-        if (funcionarios.isEmpty()) {
-            System.out.println("Nenhum funcionário cadastrado.");
+    public void adicionaPagamento(Pagamento p) {
+        this.pagamentoDAO.salvarPagamento(p);
+    }
+
+    // MÉTODOS DE LEITURA (READ)
+
+    // --- Listagens Gerais (Para tabelas da GUI) ---
+
+    public List<Usuario> getListaUsuarios() {
+        return this.usuarioDAO.listaUsuarios();
+    }
+
+    public List<Funcionario> getListaFuncionarios() {
+        return this.funcionarioDAO.listaTodos();
+    }
+
+    public List<Manga> getListaMangas() {
+        return this.mangaDAO.listarTodos();
+    }
+
+    public List<Item_menu> getListaItemMenu() {
+        return this.menuDAO.listarTodos();
+    }
+    
+    public List<Pagamento> getListaPagamentos() {
+        return this.pagamentoDAO.listarTodos();
+    }
+
+
+    // --- Buscas Específicas ---
+
+    public Optional<Usuario> buscarUsuarioPorCpf(String cpf) {
+        return this.usuarioDAO.buscaUsuarioPorCPF(cpf);
+    }
+    
+    public Boolean cliente_existe(String cpf) {
+        return this.usuarioDAO.buscaUsuarioPorCPF(cpf).isPresent();
+    }
+
+    public Optional<Funcionario> buscarFuncionarioPorCpf(String cpf) {
+        return this.funcionarioDAO.buscaFuncionarioCPF(cpf); 
+       
+    }
+
+    public Optional<Manga> buscaMangaPorNome(String nome) {
+        return this.mangaDAO.buscaMangaPorNome(nome);
+    }
+
+    public Optional<Manga> buscaMangaPorID(int id) {
+        return this.mangaDAO.buscaMangaPorID(id);
+    }
+
+    public Optional<Item_menu> buscaItemMenuPorNome(String nome) {
+        return this.menuDAO.buscaItemPorNome(nome);
+    }
+
+    public Optional<Item_menu> buscaItemPorID (int id) {
+        return this.menuDAO.buscaItemPorID(id);
+    }
+
+
+    // --- Busca dos pagamentos feitos por uma pessoa para a GUI
+
+    public List<Pagamento> getListaPagamentosPorCPF(String cpf) {
+        return this.buscarPagamentosPorCliente(cpf);
+    }
+
+
+    // Método novo específico que criamos antes
+    public List<Pagamento> buscarPagamentosPorCliente(String cpf) {
+        return this.pagamentoDAO.listaPagamentosFeitosPorCPF(cpf);
+    }
+
+    // MÉTODO DE REMOÇÃO (DELETE)
+
+    public boolean removerFuncionario(String cpf) {
+        this.funcionarioDAO.demitir(cpf);
+        return true;
+    }
+
+    // MÉTODOS VISUAIS (CONSOLE)
+
+    public void mostraMenu() {
+        List<Item_menu> itens = this.menuDAO.listarTodos();
+        if (itens.isEmpty()) {
+            System.out.println("Nenhum item no menu.");
             return;
         }
-        System.out.println("\n--- LISTA DE FUNCIONÁRIOS ---");
-        for (Funcionario f : funcionarios) {
-            f.mostraFuncionario();
-            System.out.println("-----------------------------");
+        System.out.println("\n--- MENU ---");
+        for (Item_menu item : itens) {
+            System.out.println("ID: " + item.getID_menu() + " | Nome: " + item.getNome() + " | Preço: R$" + item.getPrecoVenda());
         }
     }
 
     public void mostraMangas() {
+        List<Manga> mangas = this.mangaDAO.listarTodos();
         if (mangas.isEmpty()) {
             System.out.println("Nenhum mangá cadastrado.");
             return;
@@ -161,182 +174,67 @@ public class SistemaDeBusca {
             System.out.println("-------------------------");
         }
     }
-
-    public void mostraMenu() {
-        if (itens_menu.isEmpty()) {
-            System.out.println("Nenhum item no menu do café.");
+    
+    public void mostraUsuarios() {
+        List <Usuario> usuarios = this.usuarioDAO.listaUsuarios();
+        if (usuarios.isEmpty()) {
+            System.out.println("Nenhum usuário registrado.");
             return;
-        }
-        System.out.println("\n--- MENU DO CAFÉ ---");
-        for (Item_menu i : itens_menu) {
-            i.mostraItem();
-            System.out.println("--------------------");
+        } 
+        System.out.println("\n--- LISTA DE USUÁRIOS ---");
+        for (Usuario u : usuarios) {
+            u.mostraUsuario();
+            System.out.println("-------------------------");
         }
     }
-    
+
     public void mostraPagamentos() {
+        List <Pagamento> pagamentos = this.pagamentoDAO.listarTodos();
         if (pagamentos.isEmpty()) {
             System.out.println("Nenhum pagamento registrado.");
             return;
         }
         System.out.println("\n--- LISTA DE PAGAMENTOS ---");
-        for (Pagamento p : pagamentos) {
+        for (Pagamento p: pagamentos) {
             p.mostraPagamento();
-            System.out.println("---------------------------");
+            System.out.println("-------------------------");
+        }   
+    }
+
+    public void mostraFuncionarios() {
+        List <Funcionario> funcionarios = this.funcionarioDAO.listaTodos();
+        if (funcionarios.isEmpty()) {
+            System.out.println("Nenhum funcionário registrado");
+            return;
+        }
+        System.out.println("\n--- LISTA DE FUNCIONÁRIOS ---");
+        for (Funcionario f: funcionarios) {
+            f.mostraFuncionario();
+            System.out.println("-------------------------");
         }
     }
 
-    // para a GUI
-    public List<Pagamento> getListaPagamentos() {
-    return this.pagamentos; // Ou o nome da sua variável de lista
-}
-
-    // buscas
-
-    public Optional<Usuario> buscarUsuarioPorCpf(String cpf_desejado) {
-        return usuarios.stream()
-        .filter(usuario -> usuario.getCpf().equals(cpf_desejado))
-        .findFirst();
-    }
-
-    public Optional<Funcionario> buscarFuncionarioPorCpf(String cpf_desejado) {
-        return funcionarios.stream()
-        .filter(funcionario -> funcionario.getCpf().equals(cpf_desejado))
-        .findFirst();
-    }
-
-    public Boolean cliente_existe (String cpf) {
-        return buscarUsuarioPorCpf(cpf).isPresent();
-    }
-
-    public Optional<Manga> buscaMangaPorNome (String nome_desejado) {
-        return mangas.stream()
-        .filter(manga -> manga.getNome().equals(nome_desejado))
-        .findFirst();
-    }
-
-    public Optional<Manga> buscaMangaPorID (int id_desejado) {
-        return mangas.stream()
-        .filter(mangas -> mangas.getId() == id_desejado)
-        .findFirst();
-    }
-    
-    // Função de busca para Item_menu por nome, adicionada para o menu interativo
-    public Optional<Item_menu> buscaItemMenuPorNome (String nome_desejado) {
-        return itens_menu.stream()
-        .filter(item_menu -> item_menu.getNome().equalsIgnoreCase(nome_desejado))
-        .findFirst();
-    }
-
-    public Optional<Pagamento> buscaPagamentoPorID (int ID_do_item_desejado) {
-        return pagamentos.stream()
-        .filter(pagamento -> pagamento.getID_pagamento() == ID_do_item_desejado)
-        .findFirst();
-    }
-
-    public Optional<Item_menu> buscaItemPorID (int id_desejado) {
-        return itens_menu.stream()
-        .filter(item_menu -> item_menu.getID_menu() == id_desejado)
-        .findFirst();
-    }
-    
-    public void salvarUsuariosCSV() {
-    try (PrintWriter pw = new PrintWriter("usuarios.csv")) {
-        for (Usuario u : usuarios) {
-            pw.println(u.getCpf() + ";" +
-                       u.getNome() + ";" +
-                       u.getEmail() + ";" +
-                       u.getTelefone() + ";" +
-                       u.getAssinatura());
+    public void mostraPagamentosFeitosPorPessoa(String cpf) {
+        List <Pagamento> pagamentos = this.pagamentoDAO.listaPagamentosFeitosPorCPF(cpf);
+        if (pagamentos.isEmpty()) {
+            System.out.println("Nenhum pagamento registrado nesse cpf");
+            return;
         }
-    } catch (Exception e) { System.out.println("Erro ao salvar usuarios.csv"); }
-}
-
-    public void salvarFuncionariosCSV() {
-        try (PrintWriter pw = new PrintWriter("funcionarios.csv")) {
-            for (Funcionario f : funcionarios) {
-                pw.println(f.getCpf() + ";" +
-                        f.getNome() + ";" +
-                        f.getTelefone() + ";" +
-                        f.getEmail() + ";" +
-                        f.getSalario() + ";" +
-                        f.getFuncao());
-            }
-        } catch (Exception e) { System.out.println("Erro ao salvar funcionarios.csv"); }
-    }
-
-    public void salvarMangasCSV() {
-        try (PrintWriter pw = new PrintWriter("mangas.csv")) {
-            for (Manga m : mangas) {
-
-                String autores = String.join(",", m.getAutores());
-                String generos = String.join(",", m.getGeneros());
-
-                pw.println(m.getNome() + ";" +
-                        autores + ";" +
-                        generos + ";" +
-                        m.getSerie() + ";" +
-                        m.getLocalizacao() + ";" +
-                        m.getEstoque() + ";" +
-                        m.getPreco());
-            }
-        } catch (Exception e) { System.out.println("Erro ao salvar mangas.csv"); }
-    }
-
-    public void salvarMenuCSV() {
-    try (PrintWriter pw = new PrintWriter("menu.csv")) {
-        for (Item_menu i : itens_menu) {
-            pw.println(i.getID_menu() + ";" +
-                    i.getNome() + ";" +
-                    i.getIngredientes() + ";" +
-                    i.getPreco() + ";" +
-                    i.getEstoque() + ";" +   // Adicionado o separador
-                    i.getQtdVenda());
+        System.out.println("\n--- LISTA DE PAGAMENTOS FEITOS PELO CPF " + cpf + "---");
+        for (Pagamento p: pagamentos) {
+            p.mostraPagamento();
+            System.out.println("-------------------------");
         }
-    } catch (Exception e) { 
-        System.out.println("Erro ao salvar menu.csv"); 
-        e.printStackTrace(); // Boa prática: imprime o erro real se houver
     }
-}
 
-    public void salvarPagamentosCSV() {
-        try (PrintWriter pw = new PrintWriter("pagamentos.csv")) {
-            for (Pagamento p : pagamentos) {
-                pw.println(p.getID_pagamento() + ";" +
-                        p.getUsuario() + ";" +
-                        p.getValor() + ";" +
-                        p.getMetodo() + ";" +
-                        p.getData() + ";" +
-                        p.getStatus());
+    public void encerrarSistema() {
+        try {
+            if (this.connection != null && !this.connection.isClosed()) {
+                this.connection.close();
+                System.out.println("Conexão com o banco encerrada.");
             }
-        } catch (Exception e) { System.out.println("Erro ao salvar pagamentos.csv"); }
+        } catch (Exception e) {
+            System.out.println("Erro ao fechar conexão: " + e.getMessage());
+        }
     }
-
-    // Para a GUI
-
-    public List<Usuario> getListaUsuarios() {
-        return this.usuarios;
-    }
-
-    // 2. Necessário para o botão "Deletar"
-    public boolean removerUsuario(String cpf) {
-        // Remove o usuário se o CPF coincidir. Retorna true se removeu.
-        return usuarios.removeIf(u -> u.getCpf().equals(cpf));
-    }
-    public List<Manga> getListaMangas() {
-        return this.mangas;
-    }
-
-    public List<Item_menu> getListaItemMenu() {
-        return this.itens_menu;
-    }
-
-    public List<Funcionario> getListaFuncionarios() {
-        return this.funcionarios;
-    }
-
-    public boolean removerFuncionario(String cpf) {
-        return funcionarios.removeIf(f -> f.getCpf().equals(cpf));
-    }
-
 }

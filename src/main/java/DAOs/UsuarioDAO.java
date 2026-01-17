@@ -115,4 +115,65 @@ public class UsuarioDAO {
         }
         return Optional.empty();
     }
+
+    public void atualizar(Usuario u) {
+    // Vamos atualizar as duas tabelas: pessoas (dados gerais) e usuarios (assinatura)
+    String sqlPessoa = "UPDATE pessoas SET nome = ?, email = ?, telefone = ? WHERE cpf = ?";
+    String sqlUsuario = "UPDATE usuarios SET assinatura = ? WHERE cpf = ?";
+
+    try {
+        conn.setAutoCommit(false); // Inicia transação
+
+        // Atualiza dados gerais
+        try (PreparedStatement stmtP = conn.prepareStatement(sqlPessoa)) {
+            stmtP.setString(1, u.getNome());
+            stmtP.setString(2, u.getEmail());
+            stmtP.setString(3, u.getTelefone());
+            stmtP.setString(4, u.getCpf()); // O CPF vai no WHERE
+            stmtP.executeUpdate();
+        }
+
+        // Atualiza dados específicos
+        try (PreparedStatement stmtU = conn.prepareStatement(sqlUsuario)) {
+            stmtU.setString(1, String.valueOf(u.getAssinatura()));
+            stmtU.setString(2, u.getCpf());
+            stmtU.executeUpdate();
+        }
+
+        conn.commit(); // Confirma tudo
+    } catch (Exception e) {
+        try { conn.rollback(); } catch (Exception ex) {}
+        throw new RuntimeException("Erro ao atualizar usuário", e);
+        } finally {
+            try { conn.setAutoCommit(true); } catch (Exception ex) {}
+        }
+    }
+
+    public void deletarUsuario(String cpf) {
+        String sqlUsuario = "DELETE FROM Usuarios WHERE cpf = ?";
+        String sqlPessoa = "DELETE FROM Pessoas WHERE cpf = ?";
+
+        try {
+            conn.setAutoCommit(false); // Inicia transação
+
+            // Deleta da tabela Usuarios
+            try (PreparedStatement stmtU = conn.prepareStatement(sqlUsuario)) {
+                stmtU.setString(1, cpf);
+                stmtU.executeUpdate();
+            }
+
+            // Deleta da tabela Pessoas
+            try (PreparedStatement stmtP = conn.prepareStatement(sqlPessoa)) {
+                stmtP.setString(1, cpf);
+                stmtP.executeUpdate();
+            }
+
+            conn.commit(); // Confirma tudo
+        } catch (Exception e) {
+            try { conn.rollback(); } catch (Exception ex) {}
+            throw new RuntimeException("Erro ao deletar usuário", e);
+        } finally {
+            try { conn.setAutoCommit(true); } catch (Exception ex) {}
+        }
+    }
 }

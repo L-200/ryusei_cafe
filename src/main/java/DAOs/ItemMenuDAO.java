@@ -115,4 +115,38 @@ public class ItemMenuDAO {
 
         return Optional.empty();
     }
+
+    // UPDATES
+
+    public void atualizarEstoque(Item_menu item) {
+
+        String sql = "UPDATE Itens_menu SET estoque = ? WHERE id_menu = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, item.getEstoque());
+
+            stmt.setInt(2, item.getID_menu());
+
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao atualizar estoque do Item do Menu: " + e.getMessage(), e);
+        }
+    }
+
+    public void atualizarQtdVendas(Item_menu item) {
+
+        String sql = "UPDATE Itens_menu SET qtd_vendas = ? WHERE id_menu = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, item.getQtdVenda());
+
+            stmt.setInt(2, item.getID_menu());
+
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao atualizar quantidade de vendas do Item do Menu: " + e.getMessage(), e);
+        }
+    }
 }

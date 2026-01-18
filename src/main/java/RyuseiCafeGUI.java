@@ -60,10 +60,15 @@ public class RyuseiCafeGUI extends JFrame {
 
     public RyuseiCafeGUI() {
         super("☕ Ryusei Cafe - Sistema de Gerenciamento");
-        
-        // Inicializa Lógica de Negócios
-        this.sistema = new SistemaDeBusca();
-        carregarDados();
+    
+        // Inicializa Lógica de Negócios (Conecta ao Banco automaticamente)
+        try {
+            this.sistema = new SistemaDeBusca();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro crítico ao conectar no banco: " + e.getMessage());
+            System.exit(1); // Fecha se não tiver banco
+        }
+
         carrinhoAtual = new Carrinho_de_compras();
 
         // Configuração Básica do Frame
@@ -75,52 +80,24 @@ public class RyuseiCafeGUI extends JFrame {
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-        // Cria e Adiciona os Componentes
-        add(createNavBar(), BorderLayout.WEST); // Barra de navegação à esquerda
-        add(mainPanel, BorderLayout.CENTER);    // Conteúdo principal no centro
+        add(createNavBar(), BorderLayout.WEST); 
+        add(mainPanel, BorderLayout.CENTER);    
 
-        // Adiciona os painéis funcionais (telas)
         mainPanel.add(createVendasPanel(), VENDAS_CARD);
         mainPanel.add(createEstoquePanel(), ESTOQUE_CARD);
         mainPanel.add(createPessoasPanel(), PESSOAS_CARD);
         mainPanel.add(createPagamentosPanel(), PAGAMENTOS_CARD);
         
-        //Configurações Finais
-        cardLayout.show(mainPanel, VENDAS_CARD); // Inicia na tela de Vendas
+        cardLayout.show(mainPanel, VENDAS_CARD); 
         setLocationRelativeTo(null);
         setVisible(true);
     }
-    
-    // --- Lógica de Dados e I/O ---
-    private void carregarDados() {
-        System.out.println("Carregando dados dos CSVs...");
-        sistema.carregarUsuariosCSV();
-        sistema.carregarFuncionariosCSV();
-        sistema.carregarMangasCSV();
-        sistema.carregarMenuCSV();
-        sistema.carregarPagamentosCSV();
-        
-        // Adicionando dados de exemplo se os CSVs estiverem vazios
-        if (sistema.buscarUsuarioPorCpf("111").isEmpty()) {
-            sistema.adicionaUsuario("111", "João Silva", "joao@email.com", "9999-0000", 'A');
-            sistema.adicionaManga("Fullmetal Alchemist Vol I", "Hiromu", "Ação, aventura, ficção", "Fullmetal Alchemist", "1A", 20, 19.99f);
-            sistema.adicionaItem("Cappuccino", "Leite, café, cacau", 8.50f, 50, 0);
-        }
-        System.out.println("Dados carregados. Usuário de teste: 111.");
-    }
 
     private void salvarESair() {
-        int confirm = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja salvar os dados e sair?", "Confirmação", JOptionPane.YES_NO_OPTION);
+        int confirm = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja sair?", "Confirmação", JOptionPane.YES_NO_OPTION);
         
         if (confirm == JOptionPane.YES_OPTION) {
-            // Chama os métodos de salvamento do SistemaDeBusca
-            sistema.salvarUsuariosCSV();
-            sistema.salvarFuncionariosCSV();
-            sistema.salvarMangasCSV();
-            sistema.salvarMenuCSV();
-            sistema.salvarPagamentosCSV();
-            
-            JOptionPane.showMessageDialog(this, "Dados salvos com sucesso. Saindo do sistema.", "Salvamento", JOptionPane.INFORMATION_MESSAGE);
+            sistema.encerrarSistema(); // Certifique-se de ter criado esse método no SistemaDeBusca
             System.exit(0);
         }
     }
@@ -128,26 +105,44 @@ public class RyuseiCafeGUI extends JFrame {
     // --- Componentes da GUI: Barra de Navegação ---
     private JPanel createNavBar() {
         JPanel navBar = new JPanel();
+        
+        // Layout Vertical (BoxLayout)
         navBar.setLayout(new BoxLayout(navBar, BoxLayout.Y_AXIS));
+        
+        // Estilização (Bordas e Cor de Fundo)
         navBar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        navBar.setBackground(new Color(50, 50, 50)); 
+        navBar.setBackground(new Color(50, 50, 50)); // Cinza escuro
 
+        // Criação dos Botões de Navegação
+        // Usamos as constantes definidas no topo da classe (VENDAS_CARD, etc.)
         JButton vendasBtn = createNavButton("Vendas", VENDAS_CARD);
         JButton estoqueBtn = createNavButton("Estoque", ESTOQUE_CARD);
         JButton pessoasBtn = createNavButton("Pessoas", PESSOAS_CARD);
         JButton pagamentosBtn = createNavButton("Pagamentos", PAGAMENTOS_CARD);
-        JButton sairBtn = createNavButton("Salvar & Sair", null);
+        
+        // Criação do Botão de Sair 
+        // (Texto alterado de "Salvar & Sair" para "Sair")
+        JButton sairBtn = createNavButton("Sair", null);
 
+        // Adicionando os componentes na barra com espaçamento
         navBar.add(vendasBtn);
-        navBar.add(Box.createRigidArea(new Dimension(0, 10)));
+        navBar.add(Box.createRigidArea(new Dimension(0, 10))); // Espaço fixo de 10px
+        
         navBar.add(estoqueBtn);
         navBar.add(Box.createRigidArea(new Dimension(0, 10)));
+        
         navBar.add(pessoasBtn);
         navBar.add(Box.createRigidArea(new Dimension(0, 10)));
+        
         navBar.add(pagamentosBtn);
+        
+        // O Glue (Cola) empurra tudo que vem depois dele para o final (rodapé)
         navBar.add(Box.createVerticalGlue());
+        
         navBar.add(sairBtn);
 
+        // Ação do Botão Sair
+        // Ele chama o método que agora fecha a conexão com o banco
         sairBtn.addActionListener(e -> salvarESair());
         
         return navBar;
@@ -259,15 +254,14 @@ public class RyuseiCafeGUI extends JFrame {
         
         if (userOpt.isPresent()) {
             usuarioAtual = userOpt.get();
-            usuarioInfoLabel.setText("Cliente: " + usuarioAtual.getNome() + " (Assinatura: " + usuarioAtual.getAssinatura() + ")");
+            usuarioInfoLabel.setText("Cliente: " + usuarioAtual.getNome() + " (Ass: " + usuarioAtual.getAssinatura() + ")");
             addItemButton.setEnabled(true);
             finalizarButton.setEnabled(true);
         } else {
             usuarioAtual = null;
             usuarioInfoLabel.setText("Cliente: Usuário não encontrado");
             addItemButton.setEnabled(false);
-            finalizarButton.setEnabled(false);
-            JOptionPane.showMessageDialog(this, "Usuário com CPF " + cpf + " não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Usuário não encontrado no banco.", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -331,73 +325,82 @@ public class RyuseiCafeGUI extends JFrame {
     }
     
     private void finalizarCompra(ActionEvent e) {
-    if (carrinhoAtual.itensNoCarrinho().isEmpty()) {
-        JOptionPane.showMessageDialog(this, "O carrinho está vazio.", "Atenção", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
+        // Validação básica: Carrinho vazio?
+        if (carrinhoAtual.itensNoCarrinho().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "O carrinho está vazio.", "Atenção", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-    float total = carrinhoAtual.calcula_total(); 
+        // Cálculo do Total
+        float total = carrinhoAtual.calcula_total(); 
 
+        // Seleção do Método de Pagamento
+        Object[] opcoesPagamento = {"Cartão de Crédito", "Cartão de Débito", "Pix", "Dinheiro"};
+        String metodo = (String) JOptionPane.showInputDialog(
+                this, 
+                "Selecione o Método de Pagamento:", 
+                "Pagamento", 
+                JOptionPane.QUESTION_MESSAGE, 
+                null, 
+                opcoesPagamento, 
+                opcoesPagamento[0]);
 
-    Object[] opcoesPagamento = {"Cartão de Crédito", "Cartão de Débito", "Pix", "Dinheiro"};
-    String metodo = (String) JOptionPane.showInputDialog(
-            this, 
-            "Selecione o Método de Pagamento:", 
-            "Pagamento", 
-            JOptionPane.QUESTION_MESSAGE, 
-            null, 
-            opcoesPagamento, 
-            opcoesPagamento[0]);
-
-    // Se o usuário clicar em "Cancelar" ou fechar a janela, as variáveis serão null
-    if ( metodo == null) {
-        JOptionPane.showMessageDialog(this, "Operação cancelada.", "Cancelado", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-    
-    String data = LocalDate.now().toString(); 
-    
-    // Cria o Pagamento
-    Pagamento novoPagamento = new Pagamento(0, usuarioAtual.getCpf(), total, metodo, data);
-    
-    int confirm = JOptionPane.showConfirmDialog(this, 
-        String.format("Confirmar pagamento de R$ %.2f via %s?", total, metodo), 
-        "Confirmação de Pagamento", JOptionPane.YES_NO_OPTION);
-        
-    if (confirm == JOptionPane.YES_OPTION) {
-        novoPagamento.Pago(); 
-        sistema.adicionaPagamento(novoPagamento);
-        
-        // Atualiza diretamente o item original no sistema para garantir que a tabela veja a mudança
-        for (Vendivel itemDoCarrinho : carrinhoAtual.itensNoCarrinho()) {
-            Optional<? extends Vendivel> itemOriginal = sistema.buscaMangaPorNome(itemDoCarrinho.getNome());
-            
-            if (!itemOriginal.isPresent()) {
-                itemOriginal = sistema.buscaItemMenuPorNome(itemDoCarrinho.getNome());
-            }
-            
-            if (itemOriginal.isPresent()) {
-                itemOriginal.get().add_estoque(-1); // Remove 1 do estoque original
-            }
+        // Se usuário cancelar a janela de seleção
+        if (metodo == null) {
+            JOptionPane.showMessageDialog(this, "Operação cancelada.", "Cancelado", JOptionPane.WARNING_MESSAGE);
+            return;
         }
         
-        // Atualiza a tabela visual
-        atualizarTabelaEstoque();
+        // Confirmação Final
+        int confirm = JOptionPane.showConfirmDialog(this, 
+            String.format("Confirmar pagamento de R$ %.2f via %s para o cliente %s?", total, metodo, usuarioAtual.getNome()), 
+            "Confirmação de Pagamento", JOptionPane.YES_NO_OPTION);
+            
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                // --- PASSO A: Registrar o Pagamento no Banco ---
+                String data = LocalDate.now().toString(); 
+                Pagamento novoPagamento = new Pagamento(0, usuarioAtual.getCpf(), total, metodo, data);
+                
+                sistema.adicionaPagamento(novoPagamento); // INSERT na tabela pagamentos
+
+                // --- PASSO B: Atualizar Estoque no Banco ---
+                carrinhoAtual.AtualizaEstoquePosVenda(sistema);
+                
+                // --- PASSO C: Feedback e Limpeza ---
+                JOptionPane.showMessageDialog(this, "✅ Venda realizada com sucesso!\nEstoque atualizado e pagamento registrado.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                
+                // Atualiza a tabela de estoque (para refletir a baixa imediatamente)
+                atualizarTabelaEstoque();
+                
+                // Reinicia o processo de venda para o próximo cliente
+                resetarTelaVendas();
+
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Erro crítico ao finalizar venda: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace(); // Útil para debugar
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Pagamento cancelado. O carrinho permanece aberto.", "Cancelado", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void resetarTelaVendas() {
+        carrinhoAtual = new Carrinho_de_compras(); // Cria carrinho novo
+        usuarioAtual = null;                       // Desloga o cliente atual
         
-        JOptionPane.showMessageDialog(this, "✅ Pagamento concluído! Estoque atualizado.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-        
-        // Reiniciar o fluxo de venda
-        carrinhoAtual = new Carrinho_de_compras(); 
-        usuarioAtual = null; 
+        // Limpa os campos visuais
         cpfField.setText("");
         usuarioInfoLabel.setText("Cliente: Não identificado");
+        itemSearchField.setText("");
+        
+        // Trava os botões novamente até buscar novo CPF
         addItemButton.setEnabled(false);
         finalizarButton.setEnabled(false);
+        
+        // Limpa a tabela visual do carrinho
         updateCarrinhoView();
-    } else {
-        JOptionPane.showMessageDialog(this, "Pagamento cancelado. O carrinho permanece aberto.", "Cancelado", JOptionPane.WARNING_MESSAGE);
     }
-}
     
 
 private void carregarItemNoFormularioEstoque() {
@@ -415,45 +418,71 @@ private void carregarItemNoFormularioEstoque() {
 }
 
 private void adicionarEstoque(ActionEvent e) {
+    // Verifica se tem linha selecionada
     int row = tabelaEstoque.getSelectedRow();
     if (row == -1) return;
 
+    // Recupera dados da tabela (Tipo e ID)
     String tipo = (String) modeloEstoque.getValueAt(row, 0);
-    String idStr = String.valueOf(modeloEstoque.getValueAt(row, 4)); // ID na coluna 4
     
+    // O ID está na coluna 4. Convertendo objeto para String e depois para Int por segurança
+    Object idObj = modeloEstoque.getValueAt(row, 4);
+    int id = Integer.parseInt(idObj.toString());
+
+    // Recupera a quantidade digitada
     int quantidade;
     try {
         quantidade = Integer.parseInt(txtNovoEstoque.getText().trim());
     } catch (NumberFormatException ex) {
-        JOptionPane.showMessageDialog(this, "Número inválido.");
+        JOptionPane.showMessageDialog(this, "Por favor, digite um número válido.", "Erro", JOptionPane.ERROR_MESSAGE);
         return;
     }
 
-    if (quantidade == 0) return;
+    if (quantidade == 0) return; // Se for 0, não faz nada
 
-    // Lógica de busca e atualização
-    Vendivel item = null;
-    if (tipo.equals("Mangá")) {
-        // Tenta buscar por ID
-        Optional<Manga> m = sistema.buscaMangaPorID(idStr);
-        if (m.isPresent()) item = m.get();
-    } else {
-        // Trata o ID do menu (ex: remove prefixos se houver ou converte direto)
-        try {
-            String limpaId = idStr.replace("ID: ", "").trim();
-            Optional<Item_menu> i = sistema.buscaItemPorID(Integer.parseInt(limpaId));
-            if (i.isPresent()) item = i.get();
-        } catch (Exception ex) { /* Erro de parse de ID */ }
-    }
+    // Lógica de Atualização (Banco de Dados)
+    try {
+        if (tipo.equals("Mangá")) {
+            // A. Busca o objeto atualizado do banco
+            Optional<Manga> optManga = sistema.buscaMangaPorID(id);
+            
+            if (optManga.isPresent()) {
+                Manga m = optManga.get();
+                m.add_estoque(quantidade); // Atualiza o objeto Java
+                
+                // B. Salva a alteração no Postgres!
+                sistema.atualizarEstoqueManga(m); 
+                
+                JOptionPane.showMessageDialog(this, "Estoque de Mangá atualizado com sucesso!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro: Mangá não encontrado no banco (ID: " + id + ").");
+            }
 
-    if (item != null) {
-        item.add_estoque(quantidade);
-        JOptionPane.showMessageDialog(this, "Estoque atualizado!");
-        atualizarTabelaEstoque(); // Recarrega a tabela
-        btnAtualizarEstoque.setEnabled(false);
+        } else if (tipo.equals("Menu")) {
+            // A. Busca o objeto atualizado do banco
+            Optional<Item_menu> optItem = sistema.buscaItemPorID(id);
+            
+            if (optItem.isPresent()) {
+                Item_menu item = optItem.get();
+                item.add_estoque(quantidade); // Atualiza o objeto Java
+                
+                // B. Salva a alteração no Postgres!
+                sistema.atualizarEstoqueItemMenu(item);
+                
+                JOptionPane.showMessageDialog(this, "Estoque do Menu atualizado com sucesso!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro: Item de menu não encontrado no banco (ID: " + id + ").");
+            }
+        }
+
+        // Atualiza a interface visual
+        atualizarTabelaEstoque(); // Puxa os dados novos do banco para a tabela
         txtNovoEstoque.setText("0");
-    } else {
-        JOptionPane.showMessageDialog(this, "Erro: Item não encontrado no sistema.");
+        btnAtualizarEstoque.setEnabled(false);
+
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(this, "Erro ao salvar no banco de dados: " + ex.getMessage(), "Erro Crítico", JOptionPane.ERROR_MESSAGE);
+        ex.printStackTrace();
     }
 }
 
@@ -525,7 +554,6 @@ private JComponent createMangaFormPanel() {
     // Campos
     JTextField txtNome = addLabelAndField(panel, "Nome da Obra:", gbc);
     JTextField txtSerie = addLabelAndField(panel, "Série:", gbc);
-    JTextField txtVolume = addLabelAndField(panel, "Volume (nº):", gbc);
     JTextField txtPreco = addLabelAndField(panel, "Preço (R$):", gbc);
     JTextField txtEstoque = addLabelAndField(panel, "Estoque Inicial:", gbc);
     JTextField txtLocal = addLabelAndField(panel, "Localização (Estante):", gbc);
@@ -557,18 +585,18 @@ private JComponent createMangaFormPanel() {
             }
 
             // Chamada ao sistema
-            sistema.adicionaManga(nome, autores, generos, serie, local, estoque, preco);
+            sistema.adicionaManga(nome, autores, generos, serie, local, estoque, estoque, preco);
             
             JOptionPane.showMessageDialog(panel, "Mangá cadastrado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             atualizarTabelaEstoque();
             
             // Limpar campos
-            txtNome.setText(""); txtSerie.setText(""); txtVolume.setText("");
+            txtNome.setText(""); txtSerie.setText("");
             txtPreco.setText(""); txtEstoque.setText(""); txtLocal.setText("");
             txtAutores.setText(""); txtGeneros.setText("");
 
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(panel, "Verifique se Preço, Volume e Estoque são números válidos.", "Erro de Formatação", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(panel, "Verifique se Preço e Estoque são números válidos.", "Erro de Formatação", JOptionPane.ERROR_MESSAGE);
         }
     });
 
@@ -673,33 +701,24 @@ private GridBagConstraints createGbc() {
 private void atualizarTabelaEstoque() {
     modeloEstoque.setRowCount(0);
     
-    // Mangás: Coluna 4 DEVE ser o ID para a atualização funcionar
+    // sistema.getListaMangas() agora faz um SELECT * FROM mangas
     for (Manga m : sistema.getListaMangas()) {
-        String detalhes = "Loc: " + m.getLocalizacao();
         modeloEstoque.addRow(new Object[]{
-            "Mangá", 
-            m.getNome(), 
-            String.format("%.2f", m.getPreco()), 
-            m.getEstoque(), 
-            m.getId(), // <--- MUDANÇA AQUI: Passando ID na coluna 4
-            detalhes
+            "Mangá", m.getNome(), String.format("%.2f", m.getPreco()), 
+            m.getEstoque(), m.getId(), m.getLocalizacao()
         });
     }
 
-    // Menu
+    // sistema.getListaItemMenu() agora faz um SELECT * FROM menu
     for (Item_menu i : sistema.getListaItemMenu()) {
         modeloEstoque.addRow(new Object[]{
-            "Menu", 
-            i.getNome(), 
-            String.format("%.2f", i.getPreco()), 
-            i.getEstoque(), 
-            String.valueOf(i.getID_menu()), // ID na coluna 4
-            i.getIngredientes()
+            "Menu", i.getNome(), String.format("%.2f", i.getPreco()), 
+            i.getEstoque(), i.getID_menu(), i.getIngredientes()
         });
     }
 }
 
-// Painel de Atualização (Mantido similar, apenas ajustado para o contexto)
+// Painel de Atualização
 private JPanel createUpdatePanel() {
     JPanel formPanel = new JPanel(new GridBagLayout());
     GridBagConstraints gbc = createGbc();
@@ -933,7 +952,7 @@ private JPanel createUpdatePanel() {
 
     // --- Lógica CRUD de Funcionários ---
 
-    // 1. Equivalente a atualizarTabelaUsuarios
+    // Equivalente a atualizarTabelaUsuarios
     private void atualizarTabelaFuncionarios() {
         modeloTabelaFuncionarios.setRowCount(0);
         java.util.List<Funcionario> funcionarios = sistema.getListaFuncionarios(); 
@@ -946,7 +965,7 @@ private JPanel createUpdatePanel() {
                     f.getFuncao(), 
                     String.format("%.2f", f.getSalario()),
                     f.getEmail(),
-                    f.getTelefone() // <--- ADICIONADO AQUI
+                    f.getTelefone()
                 });
             }
         }
@@ -967,20 +986,45 @@ private JPanel createUpdatePanel() {
 
         try {
             double salario = Double.parseDouble(salarioStr);
-            
-            // Assume que existe adicionaFuncionario no sistema (assim como adicionaUsuario)
-            sistema.adicionaFuncionario(cpf, nome, tel, email, salario, cargo);
-            JOptionPane.showMessageDialog(this, "Funcionário salvo com sucesso!");
+
+            // Verifica se o funcionário já existe no banco
+            Optional<Funcionario> funcOpt = sistema.buscarFuncionarioPorCpf(cpf);
+
+            if (funcOpt.isPresent() && !txtCpfFunc.isEditable()) {
+                // --- MODO EDIÇÃO (UPDATE) ---
+                // Recuperamos o objeto, atualizamos na memória
+                Funcionario f = funcOpt.get();
+                f.setNome(nome);
+                f.setEmail(email);
+                f.setTelefone(tel);
+                f.setFuncao(cargo);
+                f.setSalario(salario);
+                
+                // Manda para o banco atualizar!
+                sistema.atualizarFuncionario(f);
+                JOptionPane.showMessageDialog(this, "Funcionário atualizado com sucesso!");
+
+            } else if (funcOpt.isPresent() && txtCpfFunc.isEditable()) {
+                // --- ERRO: TENTANDO CRIAR DUPLICADO ---
+                JOptionPane.showMessageDialog(this, "Erro: Já existe um funcionário com este CPF.", "Erro", JOptionPane.WARNING_MESSAGE);
+                return;
+
+            } else {
+                // --- MODO CRIAÇÃO (INSERT) ---
+                sistema.adicionaFuncionario(cpf, nome, tel, email, salario, cargo);
+                JOptionPane.showMessageDialog(this, "Novo funcionário cadastrado!");
+            }
             
             limparFormularioFuncionario();
             atualizarTabelaFuncionarios();
 
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Salário inválido.", "Erro", JOptionPane.ERROR_MESSAGE);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Salário inválido. Use números.", "Erro", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Erro ao salvar: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    // 3. Equivalente a deletarUsuario
     private void deletarFuncionario() {
         int row = tabelaFuncionarios.getSelectedRow();
         if (row == -1) {
@@ -992,21 +1036,16 @@ private JPanel createUpdatePanel() {
         int confirm = JOptionPane.showConfirmDialog(this, "Remover funcionário CPF " + cpf + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
         
         if (confirm == JOptionPane.YES_OPTION) {
-            // Assume que existe removerFuncionario no sistema (assim como removerUsuario)
-            // Se não existir no backend, precisará criar lá para manter a equivalência.
+            // Chama o DELETE no banco
             boolean removido = sistema.removerFuncionario(cpf); 
-            
+        
             if (removido) {
-                JOptionPane.showMessageDialog(this, "Funcionário removido.");
-                limparFormularioFuncionario();
-                atualizarTabelaFuncionarios();
-            } else {
-                JOptionPane.showMessageDialog(this, "Erro ao remover.");
+                atualizarTabelaFuncionarios(); // Recarrega do banco
             }
         }
     }
 
-    // 4. Equivalente a carregarUsuarioNoFormulario
+    // Equivalente a carregarUsuarioNoFormulario
    private void carregarFuncionarioNoFormulario() {
     int row = tabelaFuncionarios.getSelectedRow();
     if (row == -1) return;
@@ -1016,7 +1055,6 @@ private JPanel createUpdatePanel() {
     txtCpfFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 0).toString());
     txtNomeFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 1).toString());
     txtCargoFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 2).toString());
-    
     // Tratamento do Salário para tirar o R$ e poder editar
     String salStr = modeloTabelaFuncionarios.getValueAt(row, 3).toString()
                       .replace("R$", "").replace(",", ".").trim();
@@ -1054,8 +1092,7 @@ private JPanel createUpdatePanel() {
         JLabel title = new JLabel("Histórico de Pagamentos", SwingConstants.CENTER);
         title.setFont(new Font("SansSerif", Font.BOLD, 24));
         panel.add(title, BorderLayout.NORTH);
-
-        String[] colunas = {"CPF Cliente", "Valor Total", "Método", "Data", "Status"};
+        String[] colunas = {"CPF Cliente", "Valor Total", "Método", "Data"};
         pagamentosModel = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
@@ -1086,11 +1123,8 @@ private JPanel createUpdatePanel() {
         if (lista != null) {
             for (Pagamento p : lista) {
                 pagamentosModel.addRow(new Object[]{
-                    p.getUsuario(),
-                    String.format("R$ %.2f", p.getValor()),
-                    p.getMetodo(),
-                    p.getData(),
-                    p.getStatus()
+                    p.getUsuario(), String.format("R$ %.2f", p.getValor()), 
+                    p.getMetodo(), p.getData()
                 });
             }
         }
@@ -1112,42 +1146,66 @@ private JPanel createUpdatePanel() {
     }
 
     private void salvarUsuario() {
-        String nome = txtNome.getText().trim();
-        String cpf = txtCpf.getText().trim();
-        String email = txtEmail.getText().trim();
-        String tel = txtTelefone.getText().trim();
-        
-        char assinatura = 'N';
-        if (cmbAssinatura.getSelectedItem() != null) {
-            assinatura = cmbAssinatura.getSelectedItem().toString().charAt(0);
-        }
+    // Coleta os dados dos campos de texto
+    String nome = txtNome.getText().trim();
+    String cpf = txtCpf.getText().trim();
+    String email = txtEmail.getText().trim();
+    String tel = txtTelefone.getText().trim();
+    
+    // Coleta a assinatura do ComboBox (Pega só a primeira letra: 'A', 'B'...)
+    char assinatura = 'N'; // Valor padrão (Nenhuma)
+    if (cmbAssinatura.getSelectedItem() != null) {
+        assinatura = cmbAssinatura.getSelectedItem().toString().charAt(0);
+    }
 
-        if (cpf.isEmpty() || nome.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Nome e CPF são obrigatórios.", "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+    // Validação básica
+    if (cpf.isEmpty() || nome.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Nome e CPF são obrigatórios.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
 
-        Optional<Usuario> userOpt = sistema.buscarUsuarioPorCpf(cpf);
+    // Verifica se o usuário já existe no banco
+    Optional<Usuario> userOpt = sistema.buscarUsuarioPorCpf(cpf);
 
+    // Lógica de Decisão (Editar vs Criar)
+    try {
         if (userOpt.isPresent() && !txtCpf.isEditable()) {
-            // Editar
+            // --- CENÁRIO A: EDITAR (UPDATE) ---
+            // O usuário existe E o campo CPF está travado (significa que clicamos na tabela para editar)
+            
             Usuario u = userOpt.get();
+            // Atualiza os dados do objeto na memória
             u.setNome(nome);
             u.setEmail(email);
             u.setTelefone(tel);
             u.mudaAssinatura(assinatura); 
-            JOptionPane.showMessageDialog(this, "Usuário atualizado!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            
+            // Manda o sistema atualizar no Banco de Dados
+            sistema.atualizarUsuario(u); 
+            
+            JOptionPane.showMessageDialog(this, "Dados do usuário atualizados com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+
         } else if (userOpt.isPresent() && txtCpf.isEditable()) {
-            JOptionPane.showMessageDialog(this, "CPF já cadastrado!", "Erro", JOptionPane.WARNING_MESSAGE);
-            return;
+            // --- CENÁRIO B: ERRO DE DUPLICATA ---
+            // O usuário existe, mas o campo estava livre (tentativa de criar novo com CPF repetido)
+            JOptionPane.showMessageDialog(this, "Erro: Este CPF já está cadastrado no sistema!", "Duplicidade", JOptionPane.WARNING_MESSAGE);
+            return; // Para aqui para não limpar o formulário
+            
         } else {
-            // Criar
+            // --- CENÁRIO C: CRIAR NOVO (INSERT) ---
+            // O usuário não existe no banco
+            
             sistema.adicionaUsuario(cpf, nome, email, tel, assinatura);
-            JOptionPane.showMessageDialog(this, "Usuário cadastrado!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Novo usuário cadastrado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
         }
 
-        limparFormularioPessoas();
-        atualizarTabelaUsuarios();
+        // Limpeza e Atualização Visual
+        limparFormularioPessoas(); // Reseta os campos e destrava o CPF
+        atualizarTabelaUsuarios(); // Recarrega a lista do banco para mostrar as mudanças
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Erro ao salvar usuário: " + e.getMessage(), "Erro Crítico", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void deletarUsuario() {

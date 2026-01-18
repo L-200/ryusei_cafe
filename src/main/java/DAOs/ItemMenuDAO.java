@@ -19,7 +19,7 @@ public class ItemMenuDAO {
 
     public void salvarItemMenu (Item_menu item) {
 
-        String sql = "INSERT INTO Itens_menu (nome, ingredientes, preco, estoque, qtd_vendas) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Itens_menu (nome, ingredientes, preco, estoque, qtd_venda) VALUES (?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -54,7 +54,7 @@ public class ItemMenuDAO {
                             rs.getString("ingredientes"), 
                             rs.getFloat("preco"), 
                             rs.getInt("estoque"), 
-                            rs.getInt("qtd_vendas"));
+                            rs.getInt("qtd_venda"));
                         
                         listaDeItens.add(novo_item);
                     }
@@ -78,7 +78,7 @@ public class ItemMenuDAO {
                     rs.getString("ingredientes"), 
                     rs.getFloat("preco"), 
                     rs.getInt("estoque"), 
-                    rs.getInt("qtd_vendas"));
+                    rs.getInt("qtd_venda"));
 
                     return Optional.of(item_encontrado);
                 }
@@ -104,7 +104,7 @@ public class ItemMenuDAO {
                     rs.getString("ingredientes"), 
                     rs.getFloat("preco"), 
                     rs.getInt("estoque"), 
-                    rs.getInt("qtd_vendas"));
+                    rs.getInt("qtd_venda"));
 
                     return Optional.of(item_encontrado);
                 }
@@ -136,7 +136,7 @@ public class ItemMenuDAO {
 
     public void atualizarQtdVendas(Item_menu item) {
 
-        String sql = "UPDATE Itens_menu SET qtd_vendas = ? WHERE id_menu = ?";
+        String sql = "UPDATE Itens_menu SET qtd_venda = ? WHERE id_menu = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 

@@ -18,14 +18,8 @@ public class RyuseiCafeGUI extends JFrame {
     // Variáveis para a Tela de Estoque
     private JTable tabelaEstoque;
     private DefaultTableModel modeloEstoque;
-    private JComboBox<String> cmbTipoItem;
     private JTextField txtNomeEstoque, txtEstoqueAtual, txtNovoEstoque;
     private JButton btnAtualizarEstoque;
-    // Variáveis para Criação de Item e atualizacao de estoque
-    private JTextField txtNomeCriacao, txtEstoqueInicialCriacao;
-    private JTextField txtPreco, txtIngredientesOuAutores, txtOutrosDetalhes;
-    private JButton btnCriarNovoItem;
-
 
     // Variáveis para a Tela de Pessoas
     private JTextField txtNome, txtCpf, txtEmail, txtTelefone;
@@ -36,6 +30,17 @@ public class RyuseiCafeGUI extends JFrame {
     private JTextField txtNomeFunc, txtCpfFunc, txtEmailFunc, txtTelefoneFunc, txtSalarioFunc, txtCargoFunc;
     private JTable tabelaFuncionarios;
     private DefaultTableModel modeloTabelaFuncionarios;
+
+    // Variáveis para a edição dos Itens do Menu e dos Mangás
+    private Integer idMangaEmEdicao = null; // Null = Criar Novo, Número = Editar
+    private Integer idMenuEmEdicao = null;
+    private JButton btnLimparManga; // Para cancelar a edição
+    private JButton btnLimparMenu;
+    private JTextField txtNomeManga, txtSerie, txtPrecoManga, txtEstoqueManga, txtLocal, txtAutores, txtGeneros;
+    private JButton btnSalvarManga;
+    private JTextField txtNomeMenu, txtPrecoMenu, txtIngredientes, txtEstoqueMenu;
+    private JButton btnSalvarMenu;
+    
 
     // Constantes para os nomes dos "cards" no CardLayout
     private static final String VENDAS_CARD = "Vendas";
@@ -362,7 +367,7 @@ public class RyuseiCafeGUI extends JFrame {
                 String data = LocalDate.now().toString(); 
                 Pagamento novoPagamento = new Pagamento(0, usuarioAtual.getCpf(), total, metodo, data);
                 
-                sistema.adicionaPagamento(novoPagamento); // INSERT na tabela pagamentos
+                sistema.adicionaPagamento(novoPagamento);
 
                 // --- PASSO B: Atualizar Estoque no Banco ---
                 carrinhoAtual.AtualizaEstoquePosVenda(sistema);
@@ -508,6 +513,7 @@ private JPanel createEstoquePanel() {
     tabelaEstoque.getSelectionModel().addListSelectionListener(e -> {
         if (!e.getValueIsAdjusting() && tabelaEstoque.getSelectedRow() != -1) {
             carregarItemNoFormularioEstoque();
+            carregarItemParaEdicao();
         }
     });
 
@@ -537,136 +543,295 @@ private JPanel createEstoquePanel() {
     return panel;
 }
 
-// ---------------------------------------------------------
-// PAINEL DE CADASTRO DE MANGÁ (Completo com todos atributos)
-// ---------------------------------------------------------
-private JComponent createMangaFormPanel() {
-    JPanel panel = new JPanel(new GridBagLayout());
-    GridBagConstraints gbc = createGbc(); // Método auxiliar para layout
+    private void carregarItemParaEdicao() {
+        int row = tabelaEstoque.getSelectedRow();
+        if (row == -1) return;
 
-    // Título da Seção
-    JLabel lblTitulo = new JLabel("Novo Mangá");
-    lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 14));
-    gbc.gridwidth = 2; 
-    panel.add(lblTitulo, gbc);
-    gbc.gridwidth = 1; gbc.gridy++;
+        String tipo = (String) modeloEstoque.getValueAt(row, 0);
+        // O ID está na coluna 4
+        int id = Integer.parseInt(modeloEstoque.getValueAt(row, 4).toString());
 
-    // Campos
-    JTextField txtNome = addLabelAndField(panel, "Nome da Obra:", gbc);
-    JTextField txtSerie = addLabelAndField(panel, "Série:", gbc);
-    JTextField txtPreco = addLabelAndField(panel, "Preço (R$):", gbc);
-    JTextField txtEstoque = addLabelAndField(panel, "Estoque Inicial:", gbc);
-    JTextField txtLocal = addLabelAndField(panel, "Localização (Estante):", gbc);
-    JTextField txtAutores = addLabelAndField(panel, "Autores (separe por vírgula):", gbc);
-    JTextField txtGeneros = addLabelAndField(panel, "Gêneros (separe por vírgula):", gbc);
-
-    // Botão Salvar
-    JButton btnSalvar = new JButton("Cadastrar Mangá");
-    btnSalvar.setBackground(new Color(100, 149, 237)); // Azul Cornflower
-    btnSalvar.setForeground(Color.WHITE);
-    
-    gbc.gridy++; gbc.gridwidth = 2; gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.CENTER;
-    panel.add(btnSalvar, gbc);
-    
-    // Lógica do Botão
-    btnSalvar.addActionListener(e -> {
-        try {
-            String nome = txtNome.getText().trim();
-            String serie = txtSerie.getText().trim();
-            float preco = Float.parseFloat(txtPreco.getText().replace(",", ".").trim());
-            int estoque = Integer.parseInt(txtEstoque.getText().trim());
-            String local = txtLocal.getText().trim();
-            String autores = txtAutores.getText().trim();
-            String generos = txtGeneros.getText().trim();
-
-            if (nome.isEmpty() || serie.isEmpty() || local.isEmpty()) {
-                JOptionPane.showMessageDialog(panel, "Preencha todos os campos de texto.", "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
+        if (tipo.equals("Mangá")) {
+            Optional<Manga> opt = sistema.buscaMangaPorID(id);
+            if (opt.isPresent()) {
+                Manga m = opt.get();
+                
+                // Preenche os campos visuais
+                txtNomeManga.setText(m.getNome());
+                txtSerie.setText(m.getSerie());
+                txtPrecoManga.setText(String.format("%.2f", m.getPreco()));
+                txtLocal.setText(m.getLocalizacao());
+                txtAutores.setText(m.getAutores());
+                txtGeneros.setText(m.getGeneros());
+                
+                // Mostra o valor, mas TRAVA o campo para não editar o estoque aqui
+                txtEstoqueManga.setText(String.valueOf(m.getEstoque())); 
+                txtEstoqueManga.setEnabled(false); 
+                
+                // Define o ID para sabermos que é uma EDIÇÃO
+                idMangaEmEdicao = m.getId();
+                btnSalvarManga.setText("Salvar Alterações");
             }
+        } else if (tipo.equals("Menu")) {
+            Optional<Item_menu> opt = sistema.buscaItemPorID(id);
+            if (opt.isPresent()) {
+                Item_menu i = opt.get();
+                
+                txtNomeMenu.setText(i.getNome());
+                txtPrecoMenu.setText(String.format("%.2f", i.getPreco()));
+                txtIngredientes.setText(i.getIngredientes());
+                
+                // --- MUDANÇA AQUI TAMBÉM (Consistência) ---
+                txtEstoqueMenu.setText(String.valueOf(i.getEstoque()));
+                txtEstoqueMenu.setEnabled(false);
 
-            // Chamada ao sistema
-            sistema.adicionaManga(nome, autores, generos, serie, local, estoque, estoque, preco);
-            
-            JOptionPane.showMessageDialog(panel, "Mangá cadastrado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-            atualizarTabelaEstoque();
-            
-            // Limpar campos
-            txtNome.setText(""); txtSerie.setText("");
-            txtPreco.setText(""); txtEstoque.setText(""); txtLocal.setText("");
-            txtAutores.setText(""); txtGeneros.setText("");
-
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(panel, "Verifique se Preço e Estoque são números válidos.", "Erro de Formatação", JOptionPane.ERROR_MESSAGE);
-        }
-    });
-
-    // Espaço final para empurrar tudo para cima
-    gbc.gridy++; gbc.weighty = 1.0;
-    panel.add(Box.createVerticalGlue(), gbc);
-
-    return new JScrollPane(panel);
-}
-
-// ---------------------------------------------------------
-// PAINEL DE CADASTRO DE MENU (Completo com todos atributos)
-// ---------------------------------------------------------
-private JComponent createMenuFormPanel() {
-    JPanel panel = new JPanel(new GridBagLayout());
-    GridBagConstraints gbc = createGbc();
-
-    // Título
-    JLabel lblTitulo = new JLabel("Novo Item de Menu");
-    lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 14));
-    gbc.gridwidth = 2;
-    panel.add(lblTitulo, gbc);
-    gbc.gridwidth = 1; gbc.gridy++;
-
-    // Campos
-    JTextField txtNome = addLabelAndField(panel, "Nome do Prato/Bebida:", gbc);
-    JTextField txtPreco = addLabelAndField(panel, "Preço (R$):", gbc);
-    JTextField txtEstoque = addLabelAndField(panel, "Estoque:", gbc);
-    JTextField txtIngredientes = addLabelAndField(panel, "Ingredientes:", gbc);
-
-    // Botão Salvar
-    JButton btnSalvar = new JButton("Cadastrar Item Menu");
-    btnSalvar.setBackground(new Color(60, 179, 113)); // Verde
-    btnSalvar.setForeground(Color.WHITE);
-
-    gbc.gridy++; gbc.gridwidth = 2; gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.CENTER;
-    panel.add(btnSalvar, gbc);
-
-    // Lógica do Botão
-    btnSalvar.addActionListener(e -> {
-        try {
-            String nome = txtNome.getText().trim();
-            float preco = Float.parseFloat(txtPreco.getText().replace(",", ".").trim());
-            int estoque = Integer.parseInt(txtEstoque.getText().trim());
-            String ingredientes = txtIngredientes.getText().trim();
-
-            if (nome.isEmpty() || ingredientes.isEmpty()) {
-                JOptionPane.showMessageDialog(panel, "Preencha Nome e Ingredientes.", "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
+                idMenuEmEdicao = i.getID_menu();
+                btnSalvarMenu.setText("Salvar Alterações");
             }
-
-            // Chamada ao sistema (qtdVenda inicia em 0)
-            sistema.adicionaItem(nome, ingredientes, preco, estoque, 0);
-
-            JOptionPane.showMessageDialog(panel, "Item de Menu adicionado!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-            atualizarTabelaEstoque();
-
-            // Limpar campos
-            txtNome.setText(""); txtPreco.setText(""); 
-            txtEstoque.setText(""); txtIngredientes.setText("");
-
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(panel, "Preço e Estoque devem ser números.", "Erro", JOptionPane.ERROR_MESSAGE);
         }
-    });
+    }
 
-    gbc.gridy++; gbc.weighty = 1.0;
-    panel.add(Box.createVerticalGlue(), gbc);
+    private void limparFormularioManga() {
+        // Limpa os textos
+        txtNomeManga.setText(""); 
+        txtSerie.setText(""); 
+        txtPrecoManga.setText(""); 
+        txtEstoqueManga.setText(""); 
+        txtLocal.setText("");
+        txtAutores.setText(""); 
+        txtGeneros.setText("");
 
-    return panel;
+        // Reseta o estado de edição
+        idMangaEmEdicao = null; 
+        txtEstoqueManga.setEnabled(true); // Reativa o campo de estoque
+        btnSalvarManga.setText("Cadastrar Mangá"); // Volta o texto do botão ao normal
+        tabelaEstoque.clearSelection(); // Tira a seleção da tabela
+    }
+
+// ---------------------------------------------------------
+// PAINEL DE CADASTRO/EDIÇÃO DE MANGÁ
+// ---------------------------------------------------------
+    private JComponent createMangaFormPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = createGbc(); // Seu método auxiliar de layout
+
+        // Título da Seção
+        JLabel lblTitulo = new JLabel("Novo Mangá");
+        lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 14));
+        gbc.gridwidth = 2; 
+        panel.add(lblTitulo, gbc);
+        gbc.gridwidth = 1; gbc.gridy++;
+
+        // Campos (Usando as variáveis globais da classe)
+        txtNomeManga = addLabelAndField(panel, "Nome da Obra:", gbc);
+        txtSerie = addLabelAndField(panel, "Série:", gbc);
+        txtPrecoManga = addLabelAndField(panel, "Preço (Decimal separado por . ):", gbc);
+        txtEstoqueManga = addLabelAndField(panel, "Estoque Inicial:", gbc);
+        txtLocal = addLabelAndField(panel, "Localização (Estante):", gbc);
+        txtAutores = addLabelAndField(panel, "Autores:", gbc);
+        txtGeneros = addLabelAndField(panel, "Gêneros:", gbc);
+
+        // Painel de Botões
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        
+        // Botão Salvar
+        btnSalvarManga = new JButton("Cadastrar Mangá");
+        btnSalvarManga.setBackground(new Color(100, 149, 237)); // Azul Cornflower
+        btnSalvarManga.setForeground(Color.WHITE);
+        
+        // Botão Limpar/Cancelar
+        JButton btnLimpar = new JButton("Limpar / Cancelar");
+        btnLimpar.setBackground(new Color(220, 53, 69)); // Vermelho suave
+        btnLimpar.setForeground(Color.WHITE);
+
+        buttonPanel.add(btnSalvarManga);
+        buttonPanel.add(btnLimpar);
+
+        gbc.gridy++; gbc.gridwidth = 2; gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.CENTER;
+        panel.add(buttonPanel, gbc);
+        
+        // --- AÇÃO DO BOTÃO LIMPAR ---
+        btnLimpar.addActionListener(e -> limparFormularioManga());
+
+        // --- AÇÃO DO BOTÃO SALVAR (LÓGICA CORRIGIDA) ---
+        btnSalvarManga.addActionListener(e -> {
+            try {
+                // Coleta os textos PRIMEIRO (sem converter ainda)
+                String nome = txtNomeManga.getText().trim();
+                String serie = txtSerie.getText().trim();
+                String local = txtLocal.getText().trim();
+                String autores = txtAutores.getText().trim();
+                String generos = txtGeneros.getText().trim();
+                
+                // Tratamento prévio de strings numéricas (tira R$ e troca vírgula por ponto)
+                String precoStr = txtPrecoManga.getText().replace("R$", "").replace(",", ".").trim();
+                String estoqueStr = txtEstoqueManga.getText().trim();
+
+                // Validação de Campos Vazios
+                if (nome.isEmpty() || serie.isEmpty() || local.isEmpty()) {
+                    JOptionPane.showMessageDialog(panel, "Preencha os campos obrigatórios (Nome, Série, Local).", "Campo Vazio", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                if (precoStr.isEmpty() || estoqueStr.isEmpty()) {
+                    JOptionPane.showMessageDialog(panel, "Preencha o Preço e o Estoque.", "Campo Vazio", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                // Conversão Segura (Agora sabemos que não estão vazios)
+                float preco = Float.parseFloat(precoStr);
+                int estoque = Integer.parseInt(estoqueStr);
+
+                // DECISÃO: É CRIAÇÃO OU EDIÇÃO?
+                if (idMangaEmEdicao == null) {
+                    // --- MODO CRIAÇÃO (INSERT) ---
+                    sistema.adicionaManga(nome, autores, generos, serie, local, 0, estoque, preco);
+                    JOptionPane.showMessageDialog(panel, "Mangá cadastrado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                
+                } else {
+                    // --- MODO EDIÇÃO (UPDATE) ---
+                    // Cria o objeto Manga com o ID existente para atualizar
+                    // Note que passamos 0 para qtd_vendas pois o update não mexe nisso
+                    Manga m = new Manga(idMangaEmEdicao, nome, autores, generos, serie, local, 0, estoque, preco);
+                    
+                    sistema.atualizarManga(m);
+                    JOptionPane.showMessageDialog(panel, "Mangá atualizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                }
+                
+                // Finalização
+                atualizarTabelaEstoque(); // Atualiza a lista visual
+                limparFormularioManga();  // Reseta o formulário e a variável de ID
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(panel, "Erro numérico: Verifique se digitou letras no Preço ou Estoque.", "Erro de Formatação", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(panel, "Erro ao salvar: " + ex.getMessage(), "Erro Crítico", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
+        });
+
+        // Espaço final para empurrar tudo para cima
+        gbc.gridy++; gbc.weighty = 1.0;
+        panel.add(Box.createVerticalGlue(), gbc);
+
+        return new JScrollPane(panel);
+    }
+
+// ---------------------------------------------------------
+// PAINEL DE CADASTRO/EDIÇÃO DE MENU (CORRIGIDO)
+// ---------------------------------------------------------
+    private JComponent createMenuFormPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = createGbc();
+
+        // Título
+        JLabel lblTitulo = new JLabel("Novo Item de Menu");
+        lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 14));
+        gbc.gridwidth = 2;
+        panel.add(lblTitulo, gbc);
+        gbc.gridwidth = 1; gbc.gridy++;
+
+        // Campos (Usando as variáveis GLOBAIS: txtNomeMenu, txtPrecoMenu, etc.)
+        // Note que removemos o "JTextField" do início das linhas
+        txtNomeMenu = addLabelAndField(panel, "Nome do Prato/Bebida:", gbc);
+        txtPrecoMenu = addLabelAndField(panel, "Preço (R$):", gbc);
+        txtEstoqueMenu = addLabelAndField(panel, "Estoque Inicial:", gbc);
+        txtIngredientes = addLabelAndField(panel, "Ingredientes:", gbc);
+
+        // Painel de Botões
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        
+        // Botão Salvar
+        btnSalvarMenu = new JButton("Cadastrar Item Menu");
+        btnSalvarMenu.setBackground(new Color(60, 179, 113)); // Verde
+        btnSalvarMenu.setForeground(Color.WHITE);
+
+        // Botão Limpar
+        JButton btnLimpar = new JButton("Limpar / Cancelar");
+        btnLimpar.setBackground(new Color(220, 53, 69)); // Vermelho
+        btnLimpar.setForeground(Color.WHITE);
+
+        buttonPanel.add(btnSalvarMenu);
+        buttonPanel.add(btnLimpar);
+
+        gbc.gridy++; gbc.gridwidth = 2; gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.CENTER;
+        panel.add(buttonPanel, gbc);
+
+        // --- AÇÃO DO BOTÃO LIMPAR ---
+        btnLimpar.addActionListener(e -> limparFormularioMenu());
+
+        // --- AÇÃO DO BOTÃO SALVAR (LÓGICA HÍBRIDA) ---
+        btnSalvarMenu.addActionListener(e -> {
+            try {
+                // Coleta e Tratamento
+                String nome = txtNomeMenu.getText().trim();
+                String ingredientes = txtIngredientes.getText().trim();
+                String precoStr = txtPrecoMenu.getText().replace("R$", "").replace(",", ".").trim();
+                String estoqueStr = txtEstoqueMenu.getText().trim();
+
+                // Validação Básica
+                if (nome.isEmpty() || ingredientes.isEmpty() || precoStr.isEmpty()) {
+                    JOptionPane.showMessageDialog(panel, "Preencha Nome, Preço e Ingredientes.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                float preco = Float.parseFloat(precoStr);
+                int estoque = 0;
+
+                // DECISÃO: CRIAR OU EDITAR?
+                if (idMenuEmEdicao == null) {
+                    // --- MODO CRIAÇÃO ---
+                    // Verifica estoque obrigatório
+                    if (estoqueStr.isEmpty()) {
+                        JOptionPane.showMessageDialog(panel, "Para novos itens, o Estoque é obrigatório.", "Erro", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    estoque = Integer.parseInt(estoqueStr);
+
+                    sistema.adicionaItem(nome, ingredientes, preco, estoque, 0);
+                    JOptionPane.showMessageDialog(panel, "Item de Menu adicionado!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                
+                } else {
+                    // --- MODO EDIÇÃO ---
+                    // Ignora o campo estoque (mantém o que está no banco passando 0, pois o UPDATE ignora)
+                    Item_menu item = new Item_menu(idMenuEmEdicao, nome, ingredientes, preco, 0, 0);
+                    
+                    sistema.atualizarItemMenu(item);
+                    JOptionPane.showMessageDialog(panel, "Item de Menu atualizado!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                }
+
+                // 4. Finalização
+                atualizarTabelaEstoque();
+                limparFormularioMenu();
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(panel, "Preço e Estoque devem ser números válidos.", "Erro", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(panel, "Erro ao salvar: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        gbc.gridy++; gbc.weighty = 1.0;
+        panel.add(Box.createVerticalGlue(), gbc);
+
+        return new JScrollPane(panel);
+    }
+
+    private void limparFormularioMenu() {
+    // Limpa os textos
+    txtNomeMenu.setText(""); 
+    txtPrecoMenu.setText(""); 
+    txtEstoqueMenu.setText(""); 
+    txtIngredientes.setText("");
+
+    // Reseta o estado de edição
+    idMenuEmEdicao = null; 
+    
+    // Destrava o campo para permitir novos cadastros
+    txtEstoqueMenu.setEnabled(true); 
+    
+    btnSalvarMenu.setText("Cadastrar Item Menu");
+    tabelaEstoque.clearSelection();
 }
 
 // ---------------------------------------------------------
@@ -701,7 +866,6 @@ private GridBagConstraints createGbc() {
 private void atualizarTabelaEstoque() {
     modeloEstoque.setRowCount(0);
     
-    // sistema.getListaMangas() agora faz um SELECT * FROM mangas
     for (Manga m : sistema.getListaMangas()) {
         modeloEstoque.addRow(new Object[]{
             "Mangá", m.getNome(), String.format("%.2f", m.getPreco()), 
@@ -709,7 +873,6 @@ private void atualizarTabelaEstoque() {
         });
     }
 
-    // sistema.getListaItemMenu() agora faz um SELECT * FROM menu
     for (Item_menu i : sistema.getListaItemMenu()) {
         modeloEstoque.addRow(new Object[]{
             "Menu", i.getNome(), String.format("%.2f", i.getPreco()), 
@@ -723,7 +886,6 @@ private JPanel createUpdatePanel() {
     JPanel formPanel = new JPanel(new GridBagLayout());
     GridBagConstraints gbc = createGbc();
 
-    // --- NOVIDADE: Mensagem de Instrução ---
     JLabel lblAviso = new JLabel("<html><center>Clique em um item na tabela à direita<br>para carregá-lo aqui.</center></html>");
     lblAviso.setForeground(new Color(0, 102, 204)); // Azul para chamar atenção (ou use Color.RED)
     lblAviso.setFont(new Font("SansSerif", Font.BOLD, 11));
@@ -970,7 +1132,7 @@ private JPanel createUpdatePanel() {
             }
         }
     }
-    // 2. Equivalente a salvarUsuario
+    
     private void salvarFuncionario() {
         String nome = txtNomeFunc.getText().trim();
         String cpf = txtCpfFunc.getText().trim();
@@ -1005,7 +1167,6 @@ private JPanel createUpdatePanel() {
                 JOptionPane.showMessageDialog(this, "Funcionário atualizado com sucesso!");
 
             } else if (funcOpt.isPresent() && txtCpfFunc.isEditable()) {
-                // --- ERRO: TENTANDO CRIAR DUPLICADO ---
                 JOptionPane.showMessageDialog(this, "Erro: Já existe um funcionário com este CPF.", "Erro", JOptionPane.WARNING_MESSAGE);
                 return;
 
@@ -1050,8 +1211,6 @@ private JPanel createUpdatePanel() {
     int row = tabelaFuncionarios.getSelectedRow();
     if (row == -1) return;
 
-    // 0: CPF, 1: Nome, 2: Cargo, 3: Salário, 4: Email, 5: Telefone
-
     txtCpfFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 0).toString());
     txtNomeFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 1).toString());
     txtCargoFunc.setText(modeloTabelaFuncionarios.getValueAt(row, 2).toString());
@@ -1071,7 +1230,7 @@ private JPanel createUpdatePanel() {
     txtCpfFunc.setEditable(false); 
 }
 
-    // 5. Equivalente a limparFormularioPessoas
+    // Equivalente a limparFormularioPessoas
     private void limparFormularioFuncionario() {
         txtNomeFunc.setText("");
         txtCpfFunc.setText("");
@@ -1262,7 +1421,6 @@ private JPanel createUpdatePanel() {
         tabelaUsuarios.clearSelection();
     }
 
-    // Método MAIN (Deve estar DENTRO da classe, mas fora de outros métodos)
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new RyuseiCafeGUI());
     }

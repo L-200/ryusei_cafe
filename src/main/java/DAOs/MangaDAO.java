@@ -170,5 +170,21 @@ public class MangaDAO {
             throw new RuntimeException("Erro ao atualizar vendas do mangá: " + e.getMessage(), e);
         }
     }
+
+    public void atualizarGeral(Manga manga) {
+        String sql = "UPDATE Mangas SET titulo = ?, autores = ?, generos = ?, serie = ?, localizacao = ?, preco = ? WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, manga.getNome());
+            stmt.setString(2, manga.getAutores());
+            stmt.setString(3, manga.getGeneros());
+            stmt.setString(4, manga.getSerie());
+            stmt.setString(5, manga.getLocalizacao());
+            stmt.setFloat(6, manga.getPreco());
+            stmt.setInt(7, manga.getId());
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao atualizar dados do mangá: " + e.getMessage(), e);
+        }
+    }
     
 }

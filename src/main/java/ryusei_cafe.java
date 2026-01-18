@@ -226,15 +226,45 @@ Bem-vindo ao sistema do ryusei cafe!
             int qtd = lerOpcao();
             if (qtd > 0) {
                 
-                item.add_estoque(qtd);                
+                item.add_estoque(qtd);     
                 sistema_ryusei.atualizarEstoqueItemMenu(item);
                 System.out.println("Estoque atualizado: " + item.getEstoque());
+                
             } else {
                 System.out.println("Quantidade inválida.");
             }
         } else {
             System.out.println("Item do menu não encontrado");
         }
+    }
+
+    private static void adicionarManga() {
+        System.out.print("Título do mangá: ");
+        String titulo = sc.nextLine();
+        
+        // Verifica se já existe antes de tentar inserir
+        if (sistema_ryusei.buscaMangaPorNome(titulo).isPresent()) {
+            System.out.println("Mangá já existe!");
+            return;
+        }
+
+        System.out.print("Autores: ");
+        String autores = sc.nextLine();
+        System.out.print("Gêneros: ");
+        String generos = sc.nextLine();
+        System.out.print("Série: ");
+        String serie = sc.nextLine();
+        System.out.print("Localização: ");
+        String localizacao = sc.nextLine();
+        System.out.print("Quantidade de Vendas inicial: ");
+        int qtd_venda = Integer.parseInt(sc.nextLine());
+        System.out.print("Estoque inicial: ");
+        int estoque = Integer.parseInt(sc.nextLine());
+        System.out.print("Preço: ");
+        float preco = Float.parseFloat(sc.nextLine());
+
+        sistema_ryusei.adicionaManga(titulo, autores, generos, serie, localizacao, qtd_venda, estoque, preco);
+        System.out.println("Mangá salvo no banco com sucesso.");
     }
 
     // --- Menus ---
@@ -263,18 +293,20 @@ Bem-vindo ao sistema do ryusei cafe!
 
     private static void menuMangas() {
         System.out.println("\n--- Gerenciar Mangás ---");
-        System.out.println("1. Listar Todos os Mangás");
-        System.out.println("2. Buscar Mangá por Nome");
-        System.out.println("3. Adicionar Estoque em Mangá");
-        System.out.println("4. Voltar");
+        System.out.println("1. Adicionar Novo Mangá");
+        System.out.println("2. Listar Todos os Mangás");
+        System.out.println("3. Buscar Mangá por Nome");
+        System.out.println("4. Adicionar Estoque em Mangá");
+        System.out.println("5. Voltar");
         System.out.print("Escolha uma opção: ");
 
         int opcao = lerOpcao();
         switch (opcao) {
-            case 1: sistema_ryusei.mostraMangas(); break;
-            case 2: buscarManga(); break;
-            case 3: adicionarEstoqueManga(); break;
-            case 4: break;
+            case 1: ryusei_cafe.adicionarManga(); break;
+            case 2: sistema_ryusei.mostraMangas(); break;
+            case 3: buscarManga(); break;
+            case 4: adicionarEstoqueManga(); break;
+            case 5: break;
             default: System.out.println("Opção inválida.");
         }
     }
@@ -357,7 +389,7 @@ Bem-vindo ao sistema do ryusei cafe!
 
         System.out.print("Confirmar (S/N)? ");
         if (sc.nextLine().toUpperCase().equals("S")) {
-            
+
             // Salva o pagamento no Banco
             sistema_ryusei.adicionaPagamento(novo_pagamento);
             System.out.println("Pagamento registrado no banco!");

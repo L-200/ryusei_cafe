@@ -43,6 +43,7 @@ Este projeto foca fortemente na aplicação acadêmica de conceitos de POO:
 * **Java JDK** instalado (Recomendado versão 11 ou superior).
 * Terminal ou IDE de sua preferência (VS Code, IntelliJ, Eclipse).
 * **Postgres** instalado em sua máquina com um usuário ryusei( de senha ryusei e com acesso a uma Database ryusei_cafe ).
+* **Maven** instalado.
 
 ### 📦 Instalação e Execução
 
@@ -61,14 +62,14 @@ Após isso, escolha qual das duas seguintes opções você deseja usar.
 Ideal para a experiência completa do usuário.
 
 ```bash
-mvn exec:java -Dexec.mainClass=RyuseiCafeGUI
+mvn exec:java -Dexec.mainClass="RyuseiCafeGUI"
 ```
 
 #### Opção 2: Versão Linha de Comando (CLI)
 Ideal para verificar a lógica sem dependência de janelas.
 
 ```bash
-mvn exec:java -Dexec.mainClass=ryusei_cafe
+mvn exec:java -Dexec.mainClass="ryusei_cafe"
 ```
 
 ---

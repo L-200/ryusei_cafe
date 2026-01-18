@@ -149,4 +149,28 @@ public class ItemMenuDAO {
             throw new RuntimeException("Erro ao atualizar quantidade de vendas do Item do Menu: " + e.getMessage(), e);
         }
     }
+
+    public void atualizarGeral (Item_menu item) {
+
+        String sql = "UPDATE Itens_menu SET nome = ?, ingredientes = ?, preco = ?, estoque = ?, qtd_venda = ? WHERE id_menu = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, item.getNome());
+
+            stmt.setString(2, item.getIngredientes());
+
+            stmt.setFloat(3, item.getPreco());
+
+            stmt.setInt(4, item.getEstoque());
+
+            stmt.setInt(5, item.getQtdVenda());
+
+            stmt.setInt(6, item.getID_menu());
+
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao atualizar Item do Menu: " + e.getMessage(), e);
+        }
+    }
 }

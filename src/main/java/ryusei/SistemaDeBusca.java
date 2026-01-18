@@ -298,4 +298,12 @@ public class SistemaDeBusca {
         this.funcionarioDAO.atualizar(f);
     }
 
+    public void atualizarManga(Manga m) {
+    this.mangaDAO.atualizarGeral(m);
+}
+
+    public void atualizarItemMenu(Item_menu item) {
+        this.menuDAO.atualizarGeral(item);
+    }
+
 }

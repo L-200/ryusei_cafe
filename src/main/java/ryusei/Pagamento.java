@@ -7,7 +7,6 @@ public class Pagamento {
     private float valor;
     private String metodo;
     private String data; //25/08/2025, etc
-    private String status; //pendente, pago...
 
     //construtor da classe
     public Pagamento(int id, String usr, float val, String met, String da){
@@ -17,9 +16,6 @@ public class Pagamento {
         this.metodo = met;
         this.data = da;
     }
-    public void Pago() { //chamado quando a pessoa realizar o pagamento para mudar o status
-        this.status = "pago";
-    }
 
     public void mostraPagamento() {
         System.out.println("ID do processo: " + this.id);
@@ -27,15 +23,10 @@ public class Pagamento {
         System.out.println("Valor: R$" + this.valor);
         System.out.println("Método: " + this.metodo);
         System.out.println("Data: " + this.data);
-        System.out.println("Status: " + this.status);
     }
 
     public int getID_pagamento () {
         return this.id;
-    }
-
-    public String getStatus () {
-        return this.status;
     }
 
     public float getValor () {
@@ -54,10 +45,6 @@ public class Pagamento {
         return this.data;
     }
 
-    public void setStatus (String novo_status) {
-        this.status = novo_status;
-    }
-    
     public void setID_pagamento (int novo_id) {
         this.id = novo_id;
     }

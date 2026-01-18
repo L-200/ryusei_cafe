@@ -20,7 +20,7 @@ public class FuncionarioDAO {
 
     public void salvarFuncionario (Funcionario funcionario) {
 
-        String sqlPessoa = "INSERT INTO Pessoas (cpf, nome, email, telefone) VALUES (?, ?, ?, ,?)";
+        String sqlPessoa = "INSERT INTO Pessoas (cpf, nome, email, telefone) VALUES (?, ?, ?,?)";
         String sqlFuncionario = "INSERT INTO Funcionarios (cpf, salario, funcao) VALUES (?, ?, ?)";
 
         try {
@@ -124,6 +124,43 @@ public class FuncionarioDAO {
             stmt.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException("Erro ao demitir funcionario: " + e.getMessage(), e);
+        }
+    }
+
+    public void atualizar(Funcionario f) {
+
+        String sqlPessoa = "UPDATE Pessoas SET nome = ?, email = ?, telefone = ? WHERE cpf = ?";
+        String sqlFuncionario = "UPDATE Funcionarios SET salario = ?, funcao = ? WHERE cpf = ?";
+
+        try {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement stmtP = conn.prepareStatement(sqlPessoa)) {
+
+                stmtP.setString(1, f.getNome());
+                stmtP.setString(2, f.getEmail());
+                stmtP.setString(3, f.getTelefone());
+                stmtP.setString(4, f.getCpf());
+                stmtP.executeUpdate();
+            }
+
+            try (PreparedStatement stmtF = conn.prepareStatement(sqlFuncionario)) {
+
+                stmtF.setDouble(1, f.getSalario());
+                stmtF.setString(2, f.getFuncao());
+                stmtF.setString(3, f.getCpf());
+                stmtF.executeUpdate();
+            }
+
+            conn.commit();
+ 
+        } catch (SQLException e) {
+            try { conn.rollback(); } catch (SQLException ex) {} // rollback
+            throw new RuntimeException("Erro ao atualizar funcionário" + e.getMessage(), e);
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {}
         }
     }
 }

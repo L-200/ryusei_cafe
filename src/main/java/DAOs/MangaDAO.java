@@ -18,7 +18,7 @@ public class MangaDAO {
     }
 
     public void salvar(Manga manga) {
-    String sql = "INSERT INTO Mangas (titulo, autores, generos, serie, volume, localizacao, qtd_vendas, estoque, preco) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO Mangas (titulo, autores, generos, serie, localizacao, qtd_vendas, estoque, preco) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     try (PreparedStatement stmt = conn.prepareStatement(sql)) { // preparação da consulta sql para o postgres
         
@@ -26,7 +26,7 @@ public class MangaDAO {
         stmt.setString(1, manga.getNome()); // setando os valores da consulta
 
         // 2. Autores
-        stmt.setString(2, manga.getNome());
+        stmt.setString(2, manga.getAutores());
 
         // 3. Gêneros 
         stmt.setString(3, manga.getGeneros());
@@ -35,16 +35,16 @@ public class MangaDAO {
         stmt.setString(4, manga.getSerie());
 
         // 5. Localização
-        stmt.setString(6, manga.getLocalizacao());
+        stmt.setString(5, manga.getLocalizacao());
 
         // 6. Vendas
-        stmt.setInt(7, manga.getVendas());
+        stmt.setInt(6, manga.getVendas());
 
         // 7. Estoque
-        stmt.setInt(8, manga.getEstoque());
+        stmt.setInt(7, manga.getEstoque());
 
         // 8. Preço
-        stmt.setFloat(9, manga.getPreco()); 
+        stmt.setFloat(8, manga.getPreco()); 
 
         stmt.executeUpdate();
 
@@ -70,7 +70,7 @@ public class MangaDAO {
                     rs.getString("autores"), 
                     rs.getString("generos"), 
                     rs.getString("serie"),
-                    rs.getString("localização"),
+                    rs.getString("localizacao"),
                     rs.getInt("qtd_vendas"),
                     rs.getInt("estoque"), 
                     rs.getFloat("preco"));

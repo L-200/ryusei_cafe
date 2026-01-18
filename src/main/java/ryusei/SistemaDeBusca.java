@@ -3,6 +3,9 @@ package ryusei;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.sql.Statement;
 
 import DAOs.FuncionarioDAO;
 import DAOs.MangaDAO;
@@ -29,16 +32,42 @@ public class SistemaDeBusca {
     private ItemMenuDAO menuDAO;
 
     public SistemaDeBusca() {
-        // 1. Cria a conexão com o banco
+        // Cria a conexão com o banco
         this.connection = new ConnectionFactory().recuperarConexao();
 
-        // 2. Inicializa os DAOs passando a conexão
+        this.inicializarBanco();
+
+        // Inicializa os DAOs passando a conexão
         this.mangaDAO = new MangaDAO(this.connection);
         this.usuarioDAO = new UsuarioDAO(this.connection);
         this.funcionarioDAO = new FuncionarioDAO(this.connection);
         this.pagamentoDAO = new PagamentoDAO(this.connection);
         this.menuDAO = new ItemMenuDAO(this.connection);
         
+    }
+
+    private void inicializarBanco() {
+        try {
+            // Tenta encontrar o arquivo na pasta 'resources'
+            InputStream arquivoSql = getClass().getClassLoader().getResourceAsStream("init.sql");
+
+            if (arquivoSql == null) {
+                System.err.println("ERRO: Arquivo init.sql não foi encontrado em src/main/resources!");
+                return;
+            }
+
+            // Lê todo o conteúdo do arquivo para uma String
+            String sql = new String(arquivoSql.readAllBytes(), StandardCharsets.UTF_8);
+
+            // Executa o SQL no banco
+            try (Statement stmt = connection.createStatement()) {
+                stmt.execute(sql);
+                System.out.println("Banco de dados inicializado com sucesso.");
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Erro crítico ao ler/executar init.sql: " + e.getMessage(), e);
+        }
     }
 
     // MÉTODOS DE ESCRITA 
@@ -148,6 +177,11 @@ public class SistemaDeBusca {
         return true;
     }
 
+    public boolean removerUsuario(String cpf) {
+        this.usuarioDAO.deletarUsuario(cpf);
+        return true;
+    }
+
     // MÉTODOS VISUAIS (CONSOLE)
 
     public void mostraMenu() {
@@ -237,4 +271,31 @@ public class SistemaDeBusca {
             System.out.println("Erro ao fechar conexão: " + e.getMessage());
         }
     }
+
+    // UPDATES 
+
+    public void atualizarEstoqueManga(Manga manga) {
+        this.mangaDAO.atualizarEstoque(manga);
+    }
+
+    public void atualizarqntdVendasManga(Manga manga) {
+        this.mangaDAO.atualizarVendas(manga);
+    }
+
+    public void atualizarEstoqueItemMenu(Item_menu item) {
+        this.menuDAO.atualizarEstoque(item);
+    }
+
+    public void atualizarqntdVendasItemeMenu(Item_menu item) {
+        this.menuDAO.atualizarQtdVendas(item);
+    }
+
+    public void atualizarUsuario(Usuario u) {
+        this.usuarioDAO.atualizar(u);
+    }
+
+    public void atualizarFuncionario(Funcionario f) {
+        this.funcionarioDAO.atualizar(f);
+    }
+
 }
